@@ -1,158 +1,152 @@
-import datetime, sqlite3, markdown2 as markdown
-md = markdown.markdown
-import bottle
+import datetime, apsw, markdown2 as markdown, bottle, re, logging, pubmed, ConfigParser
 from bottle import route, debug, template, request, validate, send_file, error
 
-#For the wiki links substitution. I global it thinking to save computation
-import re
-pnote = re.compile(r'\[(.+?)\]\[note:(\d+?)\]')
-
-import ConfigParser
+#Config file
 config = ConfigParser.RawConfigParser()
+
+#database name
 dbname = None
 
-import pubmed
-
-import logging
+#set up logging
 logger = logging.getLogger('chotha')
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 logger.addHandler(ch)
 
-#Always start with id
-source_fields = [
-['id ','INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL'],
-['abstract', 'TEXT'],
-['address','VARCHAR(255)'],
-['author','VARCHAR(255)'],
-['booktitle','VARCHAR(255)'],
-['body', 'TEXT'],
-['chapter','VARCHAR(255)'],
-['citekey','VARCHAR(255)'],
-['created_at','DATETIME'],
-['doi','VARCHAR(255)'],
-['edition','VARCHAR(255)'],
-['editor','VARCHAR(255)'],
-['filing_index','VARCHAR(255)'],
-['howpublished','VARCHAR(255)'],
-['institution','VARCHAR(255)'],
-['journal','VARCHAR(255)'],
-['month','VARCHAR(255)'],
-['number','VARCHAR(255)'],
-['organization','VARCHAR(255)'],
-['pages','VARCHAR(255)'],
-['publisher','VARCHAR(255)'],
-['school','VARCHAR(255)'],
-['series','VARCHAR(255)'],
-['title','VARCHAR(255)'],
-['source_type','VARCHAR(255)'],
-['volume','VARCHAR(255)'],
-['year','INTEGER'],
-]
-
-def get_cursor():
-  """Returns us a cursor and connection object to our database."""
-  conn = sqlite3.connect(dbname)
-  conn.row_factory = sqlite3.Row
+def dbq(query, bindings = [], many = False, conn = None):
+  """Utility function to handle db queries. Based on query type, the function
+  returns last rowid or rows (which is a list of dictionaries)"""
+  
+  #Get the first word of the query to figure out what we should return
+  cmd = query.split(' ',1)[0].upper()
+  
+  if conn == None:
+    conn = apsw.Connection(dbname)
   c = conn.cursor()
-  return c, conn
+  if many:
+    c.executemany(query, bindings)
+  else:
+    c.execute(query, bindings)
+  if cmd == 'SELECT':
+    try:
+      col_names = c.getdescription()
+    except:
+      pass #Just means returned no rows
+    rows_in = c.fetchall()
+    rows_out = []
+    for row_in in rows_in:
+      row_out = {}
+      for c in range(len(col_names)):
+        row_out[col_names[c][0]] = row_in[c]
+      rows_out.append(row_out)
+    return rows_out
+  if cmd == 'INSERT':
+    return conn.last_insert_rowid()
 
 def create_database():
-  """Creates a new empty database.
-  source_fields list."""
-  c, conn = get_cursor()
-  c.execute('CREATE TABLE "notes" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" VARCHAR(255), "date" DATETIME, "body" TEXT)')
-  #c.execute('CREATE TABLE "sources" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "abstract" text, "address" varchar(255), "author" varchar(255), "booktitle" varchar(255), "chapter" varchar(255), "citekey" varchar(255), "edition" varchar(255), "editor" varchar(255), "filing_index" varchar(255), "howpublished" varchar(255), "institution" varchar(255), "journal" varchar(255), "month" varchar(255), "number" varchar(255), "organization" varchar(255), "pages" varchar(255), "publisher" varchar(255), "school" varchar(255), "series" varchar(255), "title" varchar(255), "source_type" varchar(255), "url" varchar(255), "volume" varchar(255), "year" integer, "body" text)')
+  """Creates a new empty database."""
+  #Always start with id
+  source_fields = [
+  ['id','INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL'],
+  ['abstract', 'TEXT'],
+  ['address','VARCHAR(255)'],
+  ['author','VARCHAR(255)'],
+  ['booktitle','VARCHAR(255)'],
+  ['chapter','VARCHAR(255)'],
+  ['citekey','VARCHAR(255)'],
+  ['created_at','DATETIME'],
+  ['doi','VARCHAR(255)'],
+  ['edition','VARCHAR(255)'],
+  ['editor','VARCHAR(255)'],
+  ['filing_index','VARCHAR(255)'],
+  ['howpublished','VARCHAR(255)'],
+  ['institution','VARCHAR(255)'],
+  ['journal','VARCHAR(255)'],
+  ['month','VARCHAR(255)'],
+  ['note_id', 'INTEGER'],
+  ['number','VARCHAR(255)'],
+  ['organization','VARCHAR(255)'],
+  ['pages','VARCHAR(255)'],
+  ['publisher','VARCHAR(255)'],
+  ['school','VARCHAR(255)'],
+  ['series','VARCHAR(255)'],
+  ['title','VARCHAR(255)'],
+  ['source_type','VARCHAR(255)'],
+  ['volume','VARCHAR(255)'],
+  ['year','INTEGER']
+  ]
+  
+  dbq('CREATE TABLE "notes" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" VARCHAR(255) DEFAULT "A title", "date" DATETIME, "body" TEXT DEFAULT "A body", "key_list" VARCHAR(255) DEFAULT "", "source_id" INTEGER)')
   query = 'CREATE TABLE "sources" ('
-  query += '"%s" %s' %(source_field[0][0], source_field[0][1]) 
-  for n in range(1,len(source_field)):
-    query += ', "%s" %s' %(source_field[n][0], source_field[n][1])
+  query += '"%s" %s' %(source_fields[0][0], source_fields[0][1]) 
+  for n in range(1,len(source_fields)):
+    query += ', "%s" %s' %(source_fields[n][0], source_fields[n][1])
   query += ')'
-  c.execute(query)
-  c.execute('CREATE TABLE "keywords" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "name" VARCHAR(255))')  
-  c.execute('CREATE TABLE "keywords_notes" ("keyword_id" INTEGER, "note_id" INTEGER, PRIMARY KEY (keyword_id, note_id))')
-  c.execute('CREATE TABLE "keywords_sources" ("keyword_id" INTEGER, "source_id" INTEGER, PRIMARY KEY (keyword_id, source_id))')
-  conn.commit()
-
-def find_or_create_keyword(word, c):
-  """Find or create a keyword and return the keyword id. c is a cursor"""
-  c.execute('SELECT id FROM keywords WHERE word LIKE ?', (word))
-  row = c.fetchone()
-  if len(row) == 0:
-    c.execute('INSERT INTO keywords (word) VALUES (?)', (word))
-    id = c.lastrowid
-  else:
-    id = row['id']
-  return id
+  dbq(query)
+  dbq('CREATE TABLE "keywords" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "name" VARCHAR(255))')  
+  dbq('CREATE TABLE "keywords_notes" ("keyword_id" INTEGER, "note_id" INTEGER, PRIMARY KEY (keyword_id, note_id))')
+  trigger = \
+  """CREATE TRIGGER notesource1 
+  AFTER UPDATE OF title ON sources 
+  BEGIN
+    UPDATE notes SET title = new.title || ' (' || new.citekey || ')' WHERE source_id = new.id;
+  END"""
+  dbq(trigger)
+  trigger = \
+  """CREATE TRIGGER notesource2 
+  AFTER UPDATE OF citekey ON sources 
+  BEGIN
+    UPDATE notes SET title = new.title || ' (' || new.citekey || ')' WHERE source_id = new.id;
+  END"""
+  dbq(trigger)
   
-def save_note_keywords(note, c):
-  """Keywords are a comma separated list, we first extract that."""
-  keywords = note['keywords'].split(',')
-  note_id = note['id']
+#Keyword ops -------------------------------------------------------------------
+def cskeystring_to_list(cskeystring):
+  keyword_strings = cskeystring.split(',')
+  keywords = []
+  for name in keyword_strings:
+    name = name.strip()
+    if name == '':#Ignore blanks
+      continue
+    keywords.append(name)
+  return keywords
+
+def find_or_create_keywords(keywords):
+  """Find or create keywords in a list and return the keyword id."""
+  kids = []
   for keyword in keywords:
-    keyword_id = find_or_create_keyword(keyword.strip(), c)
-    c.execute('INSERT OR REPLACE INTO keywords_notes (keyword_id,note_id) values (?,?)', (keyword_id,note_id))
+    name = keyword.strip()
+    row = dbq('SELECT id FROM keywords WHERE name LIKE ?', (name,))
+    if len(row) == 0:
+      id = dbq('INSERT INTO keywords (name) VALUES (?)', (name,))
+    else:
+      id = row[0]['id']
+    kids.append(id)
+  return kids
 
-def create_new_note(note):
-  c, conn = get_cursor()
-  now = datetime.datetime.now()
-  c.execute("INSERT INTO notes (title,date,body) VALUES (?,?,?)", 
-            (note['title'], now, note['body']))
-  note['id'] = c.lastrowid #Now needed for the keyword saves
-  save_note_keywords(note, c)
-  conn.commit()
+def save_note_keywords(note):
+  """Keywords are a comma separated list, we first extract that."""
 
-def save_note(note):
-  """We then refetch the saved note so we can display it."""
-  c, conn = get_cursor()
-  c.execute("UPDATE notes SET date = ?, title = ?, body = ? WHERE id LIKE ?", 
-            (note['date'], note['title'], note['body'], note['id']))
-  save_note_keywords(note, c)
-  conn.commit()
-  return fetch_single_note(note['id'])[0]
-
-def parse_notes(rows_in):
-  """Given a list of row objects returned by a fetch, copy the data into a new
-  dictionary after running each entry through the markdown parser."""
-  def nice_date(date):
-    nd = datetime.date(int(date[0:4]),int(date[5:7]),int(date[8:10]))
-    return nd.strftime('%a %b %d, %Y')
+  note_id = note['id']    
+  #Delete original list
+  dbq('DELETE FROM keywords_notes WHERE note_id=?', (note_id,))
+  #Create new list
+  keywords = cskeystring_to_list(note['key_list'])
+  new_kids = find_or_create_keywords(keywords)
+  if len(new_kids) > 0:
+    bindings = []
+    for kid in new_kids:
+      bindings.append([kid, note_id])
+    dbq('INSERT INTO keywords_notes (keyword_id,note_id) VALUES (?,?)', 
+        bindings, many=True)
+  #Clean up unused keywords
+  dbq('DELETE FROM keywords WHERE id NOT IN (SELECT keyword_id FROM keywords_notes)')
   
-  def format_body(body):
-    def linx(match):
-      return '<a href="/note/%s">%s</a>' %(match.group(2),match.group(1))
-      
-    text = pnote.sub(linx, body)
-    return md(text)
-  
-  rows = []
-  for this_row in rows_in:
-    new_row = {
-      'id': this_row['id'],
-      'date': this_row['date'],
-      'nicedate': nice_date(this_row['date']),
-      'title': this_row['title'],
-      'body': format_body(this_row['body']),
-      'markup text': this_row['body']}
-    rows.append(new_row)
-  return rows
 
-def fetch_single_note(id):
-  c, conn = get_cursor()
-  c.execute('SELECT * FROM notes WHERE id LIKE ?', (id,))
-  return parse_notes(c.fetchall())
-
-def save_note(note):
-  """We then refetch the saved note so we can display it."""
-  c, conn = get_cursor()
-  c.execute("UPDATE notes SET date = ?, title = ?, body = ? WHERE id LIKE ?", 
-            (note['date'], note['title'], note['body'], note['id']))
-  conn.commit()
-  return fetch_single_note(note['id'])[0]
-
-def fetch_conjunction_candidates(keywords = None):
+#TODO fix to remove references to sources
+def fetch_conjunction_candidates(keywords = []):
   """Given the keyword, fetch a list of keywords that appear in conjunction
-  with it in the database.
+  with it in the database in notes and sources.
   
   Important SQL snippets:
   -> This allows us to do keyword intersection (also see below)
@@ -179,7 +173,7 @@ def fetch_conjunction_candidates(keywords = None):
       
   """
   arg_list = []
-  if keywords != None:
+  if len(keywords) > 0:
     kq = ' k.name=? ' 
     for n in range(1,len(keywords)):
       kq += ' OR k.name=? ' 
@@ -189,24 +183,66 @@ def fetch_conjunction_candidates(keywords = None):
       (SELECT DISTINCT kn.keyword_id FROM keywords k, keywords_notes kn WHERE kn.note_id IN \
         (SELECT kn.note_id FROM keywords_notes AS kn WHERE kn.keyword_id IN \
          (SELECT k.id FROM keywords k WHERE %s) \
-         GROUP BY kn.note_id HAVING COUNT(*) = ?) \
-       UNION \
-       SELECT DISTINCT ks.keyword_id FROM keywords k, keywords_sources ks WHERE ks.source_id IN \
-        (SELECT ks.source_id FROM keywords_sources AS ks WHERE ks.keyword_id IN \
-         (SELECT k.id FROM keywords k WHERE %s) \
-         GROUP BY ks.source_id HAVING COUNT(*) = ?)) \
-     AND k.id NOT IN (SELECT k.id FROM keywords k WHERE %s)' %(kq,kq,kq)
-    arg_list = keywords + [len(keywords)] + keywords + [len(keywords)] + keywords
+         GROUP BY kn.note_id HAVING COUNT(*) = ?)) \
+     AND k.id NOT IN (SELECT k.id FROM keywords k WHERE %s) ORDER BY k.name ASC' %(kq,kq)
+    arg_list = keywords + [len(keywords)] + keywords
   else:
-    query = 'SELECT k.name FROM keywords k'
+    query = 'SELECT k.name FROM keywords k ORDER BY k.name ASC'
   logger.debug(query)
-  c, conn = get_cursor()
-  c.execute(query, arg_list)
-  return c.fetchall()
+  return dbq(query, arg_list)
 
+# Note ops ---------------------------------------------------------------------
+def create_new_note(note):
+  now = datetime.datetime.now().isoformat()
+  note['id'] = dbq("INSERT INTO notes (title,date,body,key_list) VALUES (?,?,?,?)", 
+                   (note['title'], now, note['body'], note['key_list'])) #id needed for the keyword saves
+  save_note_keywords(note)
+  return fetch_single_note(note['id'])[0]  
+
+def save_note(note):
+  """We then refetch the saved note so we can display it."""
+  dbq("UPDATE notes SET date = ?, title = ?, body = ?, key_list = ? WHERE id LIKE ?", 
+      (note['date'], note['title'], note['body'], note['key_list'], note['id']))
+  save_note_keywords(note)
+  return fetch_single_note(note['id'])[0]
+
+#TODO handle flag for sources
+def parse_notes(rows_in):
+  """Given a list of row objects returned by a fetch, copy the data into a new
+  dictionary after running each entry through the markdown parser."""
+
+  md = markdown.markdown #To save time
+  pnote = re.compile(r'\[(.+?)\]\[note:(\d+?)\]')#For the wiki links substitution.
   
+  def nice_date(date):
+    nd = datetime.date(int(date[0:4]),int(date[5:7]),int(date[8:10]))
+    return nd.strftime('%a %b %d, %Y')
+  
+  def format_body(body):
+    def linx(match):
+      return '<a href="/note/%s">%s</a>' %(match.group(2),match.group(1))
+      
+    text = pnote.sub(linx, body)
+    return md(text)
+  
+  rows = []
+  for this_row in rows_in:
+    new_row = {
+      'id': this_row['id'],
+      'date': this_row['date'],
+      'nicedate': nice_date(this_row['date']),
+      'title': this_row['title'],
+      'body': format_body(this_row['body']),
+      'markup text': this_row['body'],
+      'key_list': this_row['key_list']}
+    rows.append(new_row)
+  return rows
 
-def fetch_notes_by_criteria(keywords = None, search_text = None,
+def fetch_single_note(id):
+  return parse_notes(dbq('SELECT * FROM notes WHERE id LIKE ?', (id,)))
+
+# Search ops -------------------------------------------------------------------
+def fetch_notes_by_criteria(keywords = [], search_text = '',
                             limit = 30, offset = 0):
   """Returns note summary via keyword intersection and search. If either is None,
   they are ignored. If both are None all notes are returned
@@ -238,20 +274,17 @@ def fetch_notes_by_criteria(keywords = None, search_text = None,
     
     
   """
-  c, conn = get_cursor()
   #This allows us to select keywords as a comma separated list
-  query = 'SELECT notes.*, group_concat(keywords.name) AS kwds FROM notes \
-    INNER JOIN keywords_notes ON keywords_notes.note_id = notes.id \
-    INNER JOIN keywords on keywords_notes.keyword_id = keywords.id'
+  query = 'SELECT * FROM notes'
   arg_list = []
-  if search_text != None:
-    search_text = search_text.strip()
+  search_text = search_text.strip()
+  if search_text != '':
     query += ' WHERE (notes.title LIKE ? OR notes.body LIKE ?)'
     arg_list += ["%%%s%%" %search_text]
     arg_list += ["%%%s%%" %search_text]
      
-  if keywords != None:
-    if search_text != None:
+  if len(keywords) > 0:
+    if search_text != '':
       query += ' AND '
     else:
       query += ' WHERE '
@@ -270,8 +303,7 @@ def fetch_notes_by_criteria(keywords = None, search_text = None,
   query += ' GROUP BY notes.id ORDER BY date DESC LIMIT %d OFFSET %d' %(limit, offset)
   logger.debug(query)
   logger.debug(arg_list)
-  c.execute(query, arg_list)
-  return parse_notes(c.fetchall())
+  return parse_notes(dbq(query, arg_list))
 
 def populate_new_source_from_pubmed_query(query):
   """Given a query fetch the first matching citation from pubmed."""
@@ -313,16 +345,6 @@ def save_source(source):
   conn.commit()
   return fetch_single_source()
 
-def populate_database_with_test_data():
-  """Populate the tables with some deterministic data"""
-
-  note = {'title': 'Rabbits', 'body': 'Rabbits are lagomorphs with big ears'}
-  create_new_note(note)
-  note = {'title': 'Cats', 'body': 'Cats are cuddly felines with pointy ears'}
-  create_new_note(note)
-  note = {'title': 'Pandas', 'body': 'Pandas are just cute'}
-  create_new_note(note)  
-
 def get_year_count_list():
   """Return a list of years that are in our database and the number of entries
   in that year."""
@@ -334,33 +356,29 @@ def get_year_count_list():
 # Common use pages -------------------------------------------------------------
   
 @route('/')  
-def v_index():
-  """Main page serve function. 
-  If edit is True and id has a integer value,
-  instead of showing a form for a new entry at the top, setup a form for
-  editing the entry with id. Scroll to that form using an anchor (all this magic
-  happens in the template)
-  If edit is False but id is an integer, scroll to that entry using an anchor.
-  This is used to show us an entry we have just edited."""
-  
-  search_text = request.GET.get('search_text', None)
-  cskeyword_list = request.GET.get('cskeyword_list', None)
-  if cskeyword_list != None:
-    current_keywords = cskeyword_list.split(',')
-    for keyword in current_keywords:
-      keyword = keyword.strip()
-  else:
-    current_keywords = None
-  
-  rows = []
-  candidate_keywords = []
-  #rows = fetch_notes_by_criteria(keywords = current_keywords, search_text = search_text, limit=100)
+def index_page():
+  """Main page served by chotha. If called by itself it pulls out all the notes
+  and papers in reverse time order, showing the  ."""
+  search_text = request.GET.get('search_text', '')
+  cskeyword_list = request.GET.get('cskeyword_list', '')
+  page = int(request.GET.get('page', 0))
+  perpage = int(request.GET.get('perpage', 30))
+  offset = page * perpage
+  limit = perpage
+  current_keywords = cskeystring_to_list(cskeyword_list)
+  rows = fetch_notes_by_criteria(keywords = current_keywords, 
+                                 search_text = search_text, limit=limit, offset=offset)
   candidate_keywords = fetch_conjunction_candidates(current_keywords)
-  output = template('index', rows=rows, candidate_keywords=candidate_keywords, view='list')
+  output = template('index', rows=rows, candidate_keywords=candidate_keywords, 
+                    cskeyword_list = cskeyword_list,
+                    search_text = search_text,
+                    page = page,
+                    perpage = perpage,
+                    view='list')
   return output
 
 @route('/note/:id')
-def v_show_note(id):
+def show_note_page(id):
   rows = fetch_single_note(id)
   output = template('index', rows=rows, view='single')
   return output
@@ -369,16 +387,17 @@ def v_show_note(id):
 #lasting observable effects on the state of the world
 #
 @route('/new', method='POST')
-def v_new_note():
+def create_note_action():
 
   title = unicode(request.POST.get('title', '').strip(),'utf_8')
   body = unicode(request.POST.get('body', '').strip(),'utf_8')
-  note = {'title': title, 'body': body}
-  create_new_note(note)  
-  return index()
+  key_list = unicode(request.POST.get('key_list', '').strip(),'utf_8')
+  note = {'title': title, 'body': body, 'key_list': key_list}
+  create_new_note(note)
+  return index_page()
 
 @route('/edit/:id')
-def v_edit_note(id=None):
+def edit_page(id=None):
   
   note = fetch_single_note(id)[0]
   output = template('index', note=note, 
@@ -386,12 +405,13 @@ def v_edit_note(id=None):
   return output
 
 @route('/save/:id', method='POST')
-def v_save_note(id=None):
+def save_note_action(id=None):
 
   date = request.POST.get('date', '').strip()
   title = unicode(request.POST.get('title', '').strip(),'utf_8')
   body = unicode(request.POST.get('body', '').strip(),'utf_8')
-  note = {'id': int(id), 'date': date, 'title': title, 'body': body}
+  key_list = unicode(request.POST.get('key_list', '').strip(),'utf_8')  
+  note = {'id': int(id), 'date': date, 'title': title, 'body': body, 'key_list': key_list}
   note = save_note(note)
   output = template('index', note=note,
                     title='Saved', view='saved')  
@@ -476,7 +496,15 @@ def new_testing_database(newdbname='chotha_test.sqlite3'):
   populate_database_with_test_data()
   config.set('Basic', 'dbname', newdbname)
   save_config()
-  return index()
+  return index_page()
+
+def populate_database_with_test_data():
+  """Populate the tables with some deterministic data"""  
+  query = """INSERT INTO notes (title,date) VALUES ('Michaela','2010-12-31');
+  INSERT INTO sources (title,citekey) VALUES ('A paper','crusty1956');  
+  INSERT INTO notes (title,date,source_id) VALUES ('A paper','2010-12-31',1);"""
+  dbq(query)
+  
   
 if __name__ == "__main__":
   
