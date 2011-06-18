@@ -107,7 +107,8 @@ body {
 %if view=='list': #In the traditional list view we get the new note box 
 <div class='content'>
 <form action="/new" method="POST">
-<p><input type="text" name="title" class="entry" title="Note title" autocomplete="off"></p>
+<p><input type="text" name="title" class="entry" title="Note title" autocomplete="off">
+<input type="checkbox" name="ispaper" value='yes' />This is a paper</p>
 <p><textarea rows="10" wrap="virtual" name="body" class="entry" title="Text of note"></textarea></p>
 <p><input type="text" name="key_list" class="entry" title="Keyword list" value="{{cskeyword_list}}"></p>
 <input type="submit" name="save" value="save">
@@ -120,7 +121,7 @@ body {
 <div class="content">
   <div class='date'>{{row['nicedate']}}</div>
   <div class='title'>{{row['title']}}</div>
-  <p>{{!row['body']}}</p>
+  <p>{{!row['html']}}</p>
   <p>{{row['key_list']}}</p>
   <div class='lastupdated'>
   <a href="/edit/{{row['id']}}" title="click to edit">edit</a>
@@ -135,9 +136,11 @@ Editing <b>{{note['title']}}</b>
 <div class="content">
   <form action="/save/{{note['id']}}" method="POST">
    <p><input type="text" name="date" class="entry" title="Note date" value="{{note['date']}}"></p>  
+%if note['source_id'] == None:   
    <p><input type="text" name="title" class="entry" title="Note title" value="{{note['title']}}"></p>
-   <p><textarea rows="10" wrap="virtual" name="body" class="entry" title="Text of note">{{note['markup text']}}</textarea></p>
-	 <p><input type="text" name="key_list" class="entry" title="Keyword list" value={{note['key_list']}}></p>
+%end
+   <p><textarea rows="10" wrap="virtual" name="body" class="entry" title="Text of note">{{note['body']}}</textarea></p>
+	 <p><input type="text" name="key_list" class="entry" title="Keyword list" value="{{note['key_list']}}"></p>
    <input type="submit" name="save" value="save">
   </form>
 </div>

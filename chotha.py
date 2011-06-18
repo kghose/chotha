@@ -43,9 +43,7 @@ def dbq(query, bindings = [], many = False, conn = None):
   if cmd == 'INSERT':
     return conn.last_insert_rowid()
 
-def create_database():
-  """Creates a new empty database."""
-  #Always start with id
+def get_source_fields():
   source_fields = [
   ['id','INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL'],
   ['abstract', 'TEXT'],
@@ -58,7 +56,6 @@ def create_database():
   ['doi','VARCHAR(255)'],
   ['edition','VARCHAR(255)'],
   ['editor','VARCHAR(255)'],
-  ['filing_index','VARCHAR(255)'],
   ['howpublished','VARCHAR(255)'],
   ['institution','VARCHAR(255)'],
   ['journal','VARCHAR(255)'],
@@ -75,8 +72,13 @@ def create_database():
   ['volume','VARCHAR(255)'],
   ['year','INTEGER']
   ]
-  
+  return source_fields
+
+def create_database():
+  """Creates a new empty database."""
+  #Always start with id  
   dbq('CREATE TABLE "notes" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" VARCHAR(255) DEFAULT "A title", "date" DATETIME, "body" TEXT DEFAULT "A body", "key_list" VARCHAR(255) DEFAULT "", "source_id" INTEGER)')
+  source_fields = get_source_fields()
   query = 'CREATE TABLE "sources" ('
   query += '"%s" %s' %(source_fields[0][0], source_fields[0][1]) 
   for n in range(1,len(source_fields)):
@@ -188,16 +190,28 @@ def fetch_conjunction_candidates(keywords = []):
     arg_list = keywords + [len(keywords)] + keywords
   else:
     query = 'SELECT k.name FROM keywords k ORDER BY k.name ASC'
-  logger.debug(query)
   return dbq(query, arg_list)
 
 # Note ops ---------------------------------------------------------------------
 def create_new_note(note):
-  now = datetime.datetime.now().isoformat()
-  note['id'] = dbq("INSERT INTO notes (title,date,body,key_list) VALUES (?,?,?,?)", 
-                   (note['title'], now, note['body'], note['key_list'])) #id needed for the keyword saves
+  note['date'] = datetime.datetime.now().isoformat()
+  fields = note.keys()
+  query = 'INSERT INTO notes ('
+  query += fields[0]
+  for n in range(1,len(fields)):
+    query += ', ' + fields[n]
+  query += ') VALUES (?'
+  for n in range(1,len(fields)):
+    query += ',?'
+  query += ')'
+  bindings = []
+  for n in range(len(fields)):
+    bindings.append(note[fields[n]])
+  note['id'] = dbq(query, bindings)  
+#  note['id'] = dbq("INSERT INTO notes (title,date,body,key_list) VALUES (?,?,?,?)", 
+#                   (note['title'], now, note['body'], note['key_list'])) #id needed for the keyword saves
   save_note_keywords(note)
-  return fetch_single_note(note['id'])[0]  
+  return note
 
 def save_note(note):
   """We then refetch the saved note so we can display it."""
@@ -227,14 +241,9 @@ def parse_notes(rows_in):
   
   rows = []
   for this_row in rows_in:
-    new_row = {
-      'id': this_row['id'],
-      'date': this_row['date'],
-      'nicedate': nice_date(this_row['date']),
-      'title': this_row['title'],
-      'body': format_body(this_row['body']),
-      'markup text': this_row['body'],
-      'key_list': this_row['key_list']}
+    new_row = dict(this_row)
+    new_row['nicedate'] = nice_date(this_row['date'])
+    new_row['html'] = format_body(this_row['body'])
     rows.append(new_row)
   return rows
 
@@ -301,33 +310,32 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
     GROUP BY kn.note_id HAVING COUNT(*) = %d)""" %(key_query,len(keywords))
   
   query += ' GROUP BY notes.id ORDER BY date DESC LIMIT %d OFFSET %d' %(limit, offset)
-  logger.debug(query)
-  logger.debug(arg_list)
   return parse_notes(dbq(query, arg_list))
 
 def populate_new_source_from_pubmed_query(query):
   """Given a query fetch the first matching citation from pubmed."""
-  source = {}#Create the fields pubmed does not return
-  xml = pubmed.citation_from_query(query)
-  return pubmed.parse_pubmed_xml_to_source(xml, source = {})
+  source = {'title': query}#Need one field set, so we can save in db
+  if query != '':
+    xml = pubmed.citation_from_query(query)
+    source = pubmed.parse_pubmed_xml_to_source(xml, source = source)
+  return source
 
 def create_new_source(source):
+  """Make sure 'id' is not filled out."""
+  fields = source.keys()
   query = 'INSERT INTO sources ('
-  query += source_field[1][0]
-  for n in range(2,len(source_field)):
-    query += ', ' + source_field[n][0]
+  query += fields[0]
+  for n in range(1,len(fields)):
+    query += ', ' + fields[n]
   query += ') VALUES (?'
-  for n in range(2,len(source_field)):
+  for n in range(1,len(fields)):
     query += ',?'
   query += ')'
-  value_list = []
-  for n in range(1,len(source_field)):
-    value_list.append(source.get(source_field[n]),'')
-  
-  c, conn = get_cursor()
-  c.execute(query, value_list)
-  conn.commit()
-  return fetch_single_source()
+  bindings = []
+  for n in range(len(fields)):
+    bindings.append(source[fields[n]])
+  source['id'] = dbq(query, bindings)
+  return source
 
 def save_source(source):
   query = 'UPDATE sources SET '
@@ -392,12 +400,35 @@ def create_note_action():
   title = unicode(request.POST.get('title', '').strip(),'utf_8')
   body = unicode(request.POST.get('body', '').strip(),'utf_8')
   key_list = unicode(request.POST.get('key_list', '').strip(),'utf_8')
+  ispaper = request.POST.get('ispaper', 'no')
   note = {'title': title, 'body': body, 'key_list': key_list}
-  create_new_note(note)
-  return index_page()
+  if ispaper=='yes':
+    #Now, we should create the sidecar citation object and open for editing
+    #The title is interpreted as the doi or pmid
+    #If blank populate will just present us with a blank source forms for us 
+    #to fill out
+    query = title
+    source = populate_new_source_from_pubmed_query(query)
+    source = create_new_source(source)#Now we have the id
+    note['source_id'] = source['id']
+    
+  note = create_new_note(note)
 
+  if ispaper=='yes':
+    #We get a chance to see and edit the citation component
+    return edit_source(id=source['id'])
+  else:
+    return index_page()
+
+@route('/editsource/:id')
+def edit_source(id=None):
+  
+  source = dbq('SELECT * FROM sources WHERE id LIKE ?', (id,))[0]
+  output = template('source_form', source=source)
+  return output
+  
 @route('/edit/:id')
-def edit_page(id=None):
+def edit_note(id=None):
   
   note = fetch_single_note(id)[0]
   output = template('index', note=note, 
