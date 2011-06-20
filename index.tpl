@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Tika (টীকা)</title>
+<title>Tika (টীকা) {{title}}</title>
 
 <style type="text/css">
 
@@ -101,26 +101,31 @@ body {
 %         ('perpage',perpage)]
 <a href="/?{{urllib.urlencode(query)}}">{{keyword['name']}}</a></br>
 %end
-</div>
-%end
+</div> <!-- keywords pane -->
+%end #If view=='list'
 
-%if view=='list': #In the traditional list view we get the new note box 
+%if view=='list': #In the traditional list view we get the new item box 
 <div class='content'>
 <form action="/new" method="POST">
-<p><input type="text" name="title" class="entry" title="Note title" autocomplete="off">
+<p><input type="text" name="title" class="entry" title="Note title">
 <input type="checkbox" name="ispaper" value='yes' />This is a paper</p>
 <p><textarea rows="10" wrap="virtual" name="body" class="entry" title="Text of note"></textarea></p>
 <p><input type="text" name="key_list" class="entry" title="Keyword list" value="{{cskeyword_list}}"></p>
 <input type="submit" name="save" value="save">
 </form>
 </div>
-%end
+%end #If view=='list'
 
 %if view=='list' or view=='searchlist': #Show us the traditional list view
 %for row in rows:
 <div class="content">
   <div class='date'>{{row['nicedate']}}</div>
   <div class='title'>{{row['title']}}</div>
+%if row['source_id'] != None:
+  <div class='lastupdated'>
+  <a href="/editsource/{{row['source_id']}}" title="click to edit">edit</a>
+  </div>
+%end  
   <p>{{!row['html']}}</p>
   <p>{{row['key_list']}}</p>
   <div class='lastupdated'>
@@ -138,15 +143,18 @@ Editing <b>{{note['title']}}</b>
    <p><input type="text" name="date" class="entry" title="Note date" value="{{note['date']}}"></p>  
 %if note['source_id'] == None:   
    <p><input type="text" name="title" class="entry" title="Note title" value="{{note['title']}}"></p>
+%else:
+   <p>{{note['title']}}</p>
 %end
    <p><textarea rows="10" wrap="virtual" name="body" class="entry" title="Text of note">{{note['body']}}</textarea></p>
 	 <p><input type="text" name="key_list" class="entry" title="Keyword list" value="{{note['key_list']}}"></p>
    <input type="submit" name="save" value="save">
   </form>
 </div>
+
 %elif view=='saved': #Show us the edited note only
 <div class="content">
-Saved <b>{{note['title']}}</b>
+Saved:
 </div>
 <div class="content">
   <div class='date'>{{note['date']}}</div>
@@ -154,6 +162,58 @@ Saved <b>{{note['title']}}</b>
   <p>{{!note['body']}}</p>
   <p>{{note['key_list']}}</p>  
   <div align="right"><a href="/edit/{{note['id']}}">edit</a></div>
+</div>
+
+%elif view=='editsource': #Allow us to edit a single source
+<div class="content">
+<form action="/savesource/{{source['id']}}" method="POST">
+<input type="hidden" name="id" value={{source['id']}}>
+citekey <input type="text" name="citekey" class="source_edit" title="citekey" value="{{source['citekey']}}"><br/> 
+Title <input type="text" name="title" class="entry" title="title" value="{{source['title']}}"><br/>
+Abstract
+<textarea rows="10" wrap="virtual" name="abstract" class="entry" title="abstract">{{source['abstract']}}</textarea><br/>
+Type <input type="text" name="source_type" class="entry" title="source type" value="{{source['source_type']}}"><br/>
+Journal <input type="text" name="journal" class="entry" title="journal" value="{{source['journal']}}"><br/>
+<br/>
+    Vol <input type="text" size=4 name="volume" class="entry" title="volume" value="{{source['volume']}}">
+    No <input type="text" size=4 name="number" class="entry" title="number" value="{{source['number']}}">
+		Year <input type="text" size=4 name="year" class="entry" title="year" value="{{source['year']}}">
+    Month <input type="text" size=4 name="month" class="entry" title="month" value="{{source['month']}}">
+		Pages <input type="text" size=8 name="pages" class="entry" title="pages" value="{{source['pages']}}">
+<br/>
+<br/>Authors<br/>
+<textarea size="40x5" wrap="virtual" name="author" class="entry" title="Enter authors on separate lines. Last Name, First Name M.I">{{source['author']}}</textarea><br/>
+		
+<div id='book-source'>
+booktitle <input type="text" size=50 name="booktitle" title="book title" value="{{source['booktitle']}}">
+<br/>chapter<input type="text" size=3 name="chapter" title="chapter" value="{{source['chapter']}}">
+edition<input type="text" size=4 name="edition" title="edition" value="{{source['edition']}}">
+series<input type="text" size=50 name="series" title="series" value="{{source['series']}}">
+<br/>Editors <textarea size="40x5" wrap="virtual" name="editor" title="Enter names on separate lines. Last Name, First Name M.I">{{source['editor']}}</textarea><br/>
+<br/>publisher <input type="text" size=50 name="publisher" title="publisher" value="{{source['publisher']}}">
+<br/>address
+<br/><textarea size="20x4" wrap="virtual" name="address" title="Address">{{source['address']}}</textarea>
+</div>
+
+<div id='thesis-source'>howpublished <input type="text" size=5 name="howpublished" title="How published" value="{{source['howpublished']}}">
+institution <input type="text" size=20 name="institution" title="institution" value="{{source['institution']}}"><br/>
+organization <input type="text" size=20 name="organization" title="organization" value="{{source['organization']}}">
+school <input type="text" size=20 name="school" title="School" value="{{source['school']}}"><br/>
+doi <input type="text" size=20 name="doi" title="doi" value="{{source['doi']}}"
+</div>	
+
+<input type="submit" name="save" value="save">
+</form>
+</div>
+
+%elif view=='savedsource': #Show us the edited source only
+<div class="content">
+Saved:
+</div>
+<div class="content">
+  <div class='title'>{{source['title']}}</div>
+  <p>{{source['abstract']}}</p>
+  <div align="right"><a href="/editsource/{{source['id']}}">edit</a></div>
 </div>
 %end
 
