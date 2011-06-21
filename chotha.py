@@ -114,7 +114,7 @@ def create_database():
     UPDATE notes SET title = new.title || ' (' || new.citekey || ')' WHERE source_id = new.id;
   END"""
   dbq(trigger)
-  
+
 #Keyword ops -------------------------------------------------------------------
 def cskeystring_to_list(cskeystring):
   keyword_strings = cskeystring.split(',')
@@ -344,6 +344,34 @@ def populate_new_source_from_pubmed_query(query):
       source['title'] = query
   return source
 
+#TODO: see if it works for new sources (due to id <> ?)
+def generate_citekey(source):
+  """Generates a non duplicate citekey using first author last name and year"""
+  au_text = source['author']
+  last_name = ''
+  if au_text != '':
+    au_line = au_text.split("\n")
+    if au_line[0] != '':
+      name_frags = au_line[0].split(',')
+      if name_frags[0] != '':
+        last_name = name_frags[0]
+
+  citekey = 'source' + source['id']
+  if last_name != '':
+    base = last_name.lower() + source['year']
+    succ = 1
+    citekey = base
+    id = source['id']
+    query = "SELECT COUNT(*) FROM sources WHERE citekey=? AND id <> ?"
+    row = dbq(query, (citekey,id))
+    while row[0]['COUNT(*)'] != 0:
+      citekey = base + '(%d)' %succ
+      succ += 1
+      print citekey,row[0].keys()
+      row = dbq(query, (citekey,id))
+      
+  return citekey
+
 def create_new_source(source):
   fields = get_source_fields()
   query = 'INSERT INTO sources ('
@@ -361,6 +389,8 @@ def create_new_source(source):
   return source
 
 def save_source(source):
+  if source['citekey'] == '':
+    source['citekey'] = generate_citekey(source)
   fields = get_source_fields()
   query = 'UPDATE sources SET '
   query += fields[1] + '=?'
@@ -372,14 +402,6 @@ def save_source(source):
     bindings.append(source[fields[n]])
   bindings.append(source['id'])
   dbq(query, bindings)
-
-def get_year_count_list():
-  """Return a list of years that are in our database and the number of entries
-  in that year."""
-  c, conn = get_cursor()
-  c.execute("select strftime('%Y',date) as year, count(date) as cnt from entries group by year order by year desc")
-  rows = c.fetchall()
-  return rows
 
 # Common use pages -------------------------------------------------------------
   
