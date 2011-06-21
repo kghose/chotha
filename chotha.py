@@ -305,7 +305,7 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
     
   """
   #This allows us to select keywords as a comma separated list
-  query = 'SELECT * FROM notes'
+  query = 'SELECT * FROM notes '
   arg_list = []
   search_text = search_text.strip()
   if search_text != '':
@@ -329,8 +329,8 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
     WHERE kn.keyword_id IN 
     (SELECT k.id FROM keywords k WHERE %s) 
     GROUP BY kn.note_id HAVING COUNT(*) = %d)""" %(key_query,len(keywords))
-  
-  query += ' GROUP BY notes.id ORDER BY date DESC LIMIT %d OFFSET %d' %(limit, offset)
+  query += ' GROUP BY notes.id ORDER BY date DESC LIMIT ? OFFSET ?'
+  arg_list += [limit,offset]
   return parse_notes(dbq(query, arg_list))
 
 def populate_new_source_from_pubmed_query(query):
@@ -554,7 +554,7 @@ def select_database(newdbname='pylogdb.sqlite3'):
   globals()['dbname']=newdbname
   config.set('Basic', 'dbname', newdbname)
   save_config()
-  return index()
+  return index_page()
 
 @route('/createdb/:newdbname')
 def new_database(newdbname='pylogdb.sqlite3'):
