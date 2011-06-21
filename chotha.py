@@ -91,7 +91,7 @@ def create_database():
   """Creates a new empty database."""
   #Always start with id  
   dbq('CREATE TABLE "notes" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" VARCHAR(255) DEFAULT "A title", "date" DATETIME, "body" TEXT DEFAULT "A body", "key_list" VARCHAR(255) DEFAULT "", "source_id" INTEGER)')
-  source_fields = get_source_fields(include_column_types=True)
+  source_fields = get_source_fields(include_column_type=True)
   query = 'CREATE TABLE "sources" ('
   query += '"%s" %s' %(source_fields[0][0], source_fields[0][1]) 
   for n in range(1,len(source_fields)):
@@ -575,7 +575,7 @@ def static_file(filename):
 def new_testing_database(newdbname='chotha_test.sqlite3'):
   globals()['dbname']=newdbname
   create_database()
-  populate_database_with_test_data()
+  #populate_database_with_test_data()
   config.set('Basic', 'dbname', newdbname)
   save_config()
   return index_page()
