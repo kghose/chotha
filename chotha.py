@@ -43,7 +43,9 @@ def dbq(query, bindings = [], many = False, conn = None):
   if cmd == 'INSERT':
     return conn.last_insert_rowid()
 
-def get_source_fields():
+def get_source_fields(include_column_type = False):
+  """Need an ordered list that starts with id. INSERT and UPDATE operations
+  require us to treat the id differently compared to regular fields."""
   source_fields = [
   ['id','INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL'],
   ['abstract', 'TEXT'],
@@ -72,13 +74,24 @@ def get_source_fields():
   ['volume','VARCHAR(255)'],
   ['year','INTEGER']
   ]
-  return source_fields
+  if include_column_type:
+    return source_fields
+  else:
+    return [source_fields[n][0] for n in range(len(source_fields))]
+
+def get_empty_source():
+  """Return us a dummy source dictionary with the fields filled out with NULLS."""
+  sfs = get_source_fields()
+  source = {}
+  for f in sfs:
+    source[f] = '' 
+  return source
 
 def create_database():
   """Creates a new empty database."""
   #Always start with id  
   dbq('CREATE TABLE "notes" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" VARCHAR(255) DEFAULT "A title", "date" DATETIME, "body" TEXT DEFAULT "A body", "key_list" VARCHAR(255) DEFAULT "", "source_id" INTEGER)')
-  source_fields = get_source_fields()
+  source_fields = get_source_fields(include_column_types=True)
   query = 'CREATE TABLE "sources" ('
   query += '"%s" %s' %(source_fields[0][0], source_fields[0][1]) 
   for n in range(1,len(source_fields)):
@@ -208,8 +221,6 @@ def create_new_note(note):
   for n in range(len(fields)):
     bindings.append(note[fields[n]])
   note['id'] = dbq(query, bindings)  
-#  note['id'] = dbq("INSERT INTO notes (title,date,body,key_list) VALUES (?,?,?,?)", 
-#                   (note['title'], now, note['body'], note['key_list'])) #id needed for the keyword saves
   save_note_keywords(note)
   return note
 
@@ -218,7 +229,6 @@ def save_note(note):
   dbq("UPDATE notes SET date = ?, title = ?, body = ?, key_list = ? WHERE id LIKE ?", 
       (note['date'], note['title'], note['body'], note['key_list'], note['id']))
   save_note_keywords(note)
-  return fetch_single_note(note['id'])[0]
 
 #TODO handle flag for sources
 def parse_notes(rows_in):
@@ -248,7 +258,18 @@ def parse_notes(rows_in):
   return rows
 
 def fetch_single_note(id):
-  return parse_notes(dbq('SELECT * FROM notes WHERE id LIKE ?', (id,)))
+  rows = dbq('SELECT * FROM notes WHERE id LIKE ?', (id,))
+  if len(rows) > 0: 
+    return parse_notes(rows)[0]
+  else:
+    return None
+
+def fetch_single_source(id):
+  rows = dbq('SELECT * FROM notes WHERE id LIKE ?', (id,))
+  if len(rows) > 0: 
+    return parse_notes(rows)[0]
+  else:
+    return None
 
 # Search ops -------------------------------------------------------------------
 def fetch_notes_by_criteria(keywords = [], search_text = '',
@@ -314,44 +335,43 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
 
 def populate_new_source_from_pubmed_query(query):
   """Given a query fetch the first matching citation from pubmed."""
-  source = {'title': query}#Need one field set, so we can save in db
+  source = get_empty_source()
   if query != '':
     xml = pubmed.citation_from_query(query)
-    source = pubmed.parse_pubmed_xml_to_source(xml, source = source)
+    if xml != None:
+      source = pubmed.parse_pubmed_xml_to_source(xml, source = source)
+    else:
+      source['title'] = query
   return source
 
 def create_new_source(source):
-  """Make sure 'id' is not filled out."""
-  fields = source.keys()
+  fields = get_source_fields()
   query = 'INSERT INTO sources ('
-  query += fields[0]
-  for n in range(1,len(fields)):
+  query += fields[1] #ignore id
+  for n in range(2,len(fields)):
     query += ', ' + fields[n]
   query += ') VALUES (?'
-  for n in range(1,len(fields)):
+  for n in range(2,len(fields)):
     query += ',?'
   query += ')'
   bindings = []
-  for n in range(len(fields)):
+  for n in range(1,len(fields)):
     bindings.append(source[fields[n]])
   source['id'] = dbq(query, bindings)
   return source
 
 def save_source(source):
+  fields = get_source_fields()
   query = 'UPDATE sources SET '
-  query += source_field[1][0] + '=?'
-  for n in range(2,len(source_field)):
-    query += ',' + source_field[n][0] + '=?'
+  query += fields[1] + '=?'
+  for n in range(2,len(fields)):
+    query += ',' + fields[n] + '=?'
   query += ' WHERE id LIKE ?'
-  value_list = []
-  for n in range(1,len(source_field)):
-    value_list.append(source.get(source_field[n]),'')
-  value_list.append(source['id'])
-  
-  c, conn = get_cursor()
-  c.execute(query, value_list)
-  conn.commit()
-  return fetch_single_source()
+  bindings = []
+  for n in range(1,len(fields)):
+    bindings.append(source[fields[n]])
+  bindings.append(source['id'])
+  dbq(query, bindings)
 
 def get_year_count_list():
   """Return a list of years that are in our database and the number of entries
@@ -377,18 +397,37 @@ def index_page():
   rows = fetch_notes_by_criteria(keywords = current_keywords, 
                                  search_text = search_text, limit=limit, offset=offset)
   candidate_keywords = fetch_conjunction_candidates(current_keywords)
+  title = ''
+  if search_text != '':
+    title += '"' + search_text + '"'
+  if cskeyword_list != '':
+    if search_text != '':
+      title += '+'
+    title += cskeyword_list
   output = template('index', rows=rows, candidate_keywords=candidate_keywords, 
                     cskeyword_list = cskeyword_list,
                     search_text = search_text,
                     page = page,
                     perpage = perpage,
+                    title = title,
                     view='list')
   return output
 
 @route('/note/:id')
 def show_note_page(id):
-  rows = fetch_single_note(id)
-  output = template('index', rows=rows, view='single')
+  note = fetch_single_note(id)
+  title = note['title']
+  output = template('index', note=note, 
+                    title=title,
+                    view='note')
+  return output
+
+@route('/source/:id')
+def show_source_page(id):
+
+  source = dbq('SELECT * FROM sources WHERE id LIKE ?', (id,))[0]
+  output = template('index', source=source,
+                    title='%s' %source['citekey'], view='source')
   return output
 
 #We use POST for creating/editing the entries because these operations have 
@@ -404,7 +443,8 @@ def create_note_action():
   note = {'title': title, 'body': body, 'key_list': key_list}
   if ispaper=='yes':
     #Now, we should create the sidecar citation object and open for editing
-    #The title is interpreted as the doi or pmid
+    #The title is interpreted as a search string, and the first hit is 
+    #returned. It is best to enter the doi or pmid
     #If blank populate will just present us with a blank source forms for us 
     #to fill out
     query = title
@@ -420,21 +460,22 @@ def create_note_action():
   else:
     return index_page()
 
+@route('/edit/:id')
+def edit_note(id=None):
+  
+  note = fetch_single_note(id)
+  output = template('index', note=note, 
+                    title='Editing %s' %note['title'], view='edit')
+  return output
+
 @route('/editsource/:id')
 def edit_source(id=None):
   
   source = dbq('SELECT * FROM sources WHERE id LIKE ?', (id,))[0]
-  output = template('source_form', source=source)
+  output = template('index', source=source,
+                    title='Editing %s' %source['citekey'], view='editsource')
   return output
   
-@route('/edit/:id')
-def edit_note(id=None):
-  
-  note = fetch_single_note(id)[0]
-  output = template('index', note=note, 
-                    title='Editing', view='edit')
-  return output
-
 @route('/save/:id', method='POST')
 def save_note_action(id=None):
 
@@ -443,28 +484,23 @@ def save_note_action(id=None):
   body = unicode(request.POST.get('body', '').strip(),'utf_8')
   key_list = unicode(request.POST.get('key_list', '').strip(),'utf_8')  
   note = {'id': int(id), 'date': date, 'title': title, 'body': body, 'key_list': key_list}
-  note = save_note(note)
+  save_note(note)
   output = template('index', note=note,
-                    title='Saved', view='saved')  
+                    title='Saved %s' %note['title'], view='note')  
   return output
 
-@route('/search')
-def search(text=''):
-  """."""
-  text = unicode(request.GET.get('searchtext', '').strip(),'utf_8')
-  rows = fetch_entries_by_search(text)
-  output = template('index', rows=rows, 
-                    year=str(datetime.date.today().year), year_count=get_year_count_list(),
-                    title='Searched for "%s". Found %d entries' %(text,len(rows)), view='searchlist')
+@route('/savesource/:id', method='POST')
+def save_source_action(id):
+  fields = get_source_fields()
+  source = get_empty_source()
+  for f in fields:
+    val = request.POST.get(f, None)
+    if val != None:
+      source[f] = unicode(val.strip(),'utf_8')
+  save_source(source)
+  output = template('index', source=source,
+                    title='Saved %s' %source['citekey'], view='source')  
   return output
-
-
-@route('/quit')
-def quit_server():
-  """A bit extreme, but really the only thing that worked, including exit(0),
-  and SIGINT. Not needed if we use it from the command line or as a startup
-  server, but essential when we use it as an app."""
-  bottle.os._exit(0)  
 
 # Configuration helpers --------------------------------------------------------
 def create_default_config_file():
@@ -513,13 +549,6 @@ def static_file(filename):
 
 
 # For testing only -------------------------------------------------------------
-@route('/testme')
-def test_me():
-  search_text = request.GET.get('search_text', None)
-  cskeyword_list = request.GET.get('cskeyword_list', None)
-  return search_text, cskeyword_list
-  
-
 @route('/createtestdb/:newdbname')
 def new_testing_database(newdbname='chotha_test.sqlite3'):
   globals()['dbname']=newdbname

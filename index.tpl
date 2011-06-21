@@ -120,10 +120,11 @@ body {
 %for row in rows:
 <div class="content">
   <div class='date'>{{row['nicedate']}}</div>
+%if row['source_id'] == None:  
   <div class='title'>{{row['title']}}</div>
-%if row['source_id'] != None:
-  <div class='lastupdated'>
-  <a href="/editsource/{{row['source_id']}}" title="click to edit">edit</a>
+%else:
+  <div class='sourcetitle'>
+  <a href="/source/{{row['source_id']}}">{{row['title']}}</a>
   </div>
 %end  
   <p>{{!row['html']}}</p>
@@ -144,7 +145,7 @@ Editing <b>{{note['title']}}</b>
 %if note['source_id'] == None:   
    <p><input type="text" name="title" class="entry" title="Note title" value="{{note['title']}}"></p>
 %else:
-   <p>{{note['title']}}</p>
+   <input type="hidden" name="title" value="{{note['title']}}">   
 %end
    <p><textarea rows="10" wrap="virtual" name="body" class="entry" title="Text of note">{{note['body']}}</textarea></p>
 	 <p><input type="text" name="key_list" class="entry" title="Keyword list" value="{{note['key_list']}}"></p>
@@ -152,16 +153,17 @@ Editing <b>{{note['title']}}</b>
   </form>
 </div>
 
-%elif view=='saved': #Show us the edited note only
+%elif view=='note': #Show us the edited note only
 <div class="content">
-Saved:
-</div>
-<div class="content">
+%if note != None:
   <div class='date'>{{note['date']}}</div>
   <div class='title'>{{note['title']}}</div>
   <p>{{!note['body']}}</p>
   <p>{{note['key_list']}}</p>  
   <div align="right"><a href="/edit/{{note['id']}}">edit</a></div>
+%else:
+No such note
+%end
 </div>
 
 %elif view=='editsource': #Allow us to edit a single source
@@ -206,14 +208,10 @@ doi <input type="text" size=20 name="doi" title="doi" value="{{source['doi']}}"
 </form>
 </div>
 
-%elif view=='savedsource': #Show us the edited source only
+%elif view=='source': #Show us the edited source only
 <div class="content">
-Saved:
-</div>
-<div class="content">
-  <div class='title'>{{source['title']}}</div>
+  <div class='title'><a href="/editsource/{{source['id']}}" title="Click to edit">{{source['title']}}</a></div>
   <p>{{source['abstract']}}</p>
-  <div align="right"><a href="/editsource/{{source['id']}}">edit</a></div>
 </div>
 %end
 
