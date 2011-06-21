@@ -373,6 +373,7 @@ def generate_citekey(source):
   return citekey
 
 def create_new_source(source):
+  source['citekey'] = generate_citekey(source)
   fields = get_source_fields()
   query = 'INSERT INTO sources ('
   query += fields[1] #ignore id
