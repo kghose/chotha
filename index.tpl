@@ -158,7 +158,7 @@ Editing <b>{{note['title']}}</b>
 %if note != None:
   <div class='date'>{{note['date']}}</div>
   <div class='title'>{{note['title']}}</div>
-  <p>{{!note['body']}}</p>
+  <p>{{!note['html']}}</p>
   <p>{{note['key_list']}}</p>  
   <div align="right"><a href="/edit/{{note['id']}}">edit</a></div>
 %else:
