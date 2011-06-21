@@ -93,45 +93,6 @@ def parse_pubmed_xml_to_source(xml, source = {}):
   source['source_type'] = 'article'
   return source
 
-def old_parse_pubmed_xml_to_source(xml, source = {}):
-  """Parses XML returned from efetch into a source dictionary that we can
-  save into the database"""
-  
-  xmldoc = minidom.parseString(xml)
-  
-  title = xmldoc.getElementsByTagName('ArticleTitle')[0]
-  source['title'] = title.childNodes[0].data
-  
-  abstract = xmldoc.getElementsByTagName('AbstractText')[0]
-  source['abstract'] = abstract.childNodes[0].data
-  
-  authors = xmldoc.getElementsByTagName('AuthorList')[0]
-  authors = authors.getElementsByTagName('Author')
-  authortext = ''
-  for author in authors:
-    LastName = author.getElementsByTagName('LastName')[0].childNodes[0].data
-    ForeName = author.getElementsByTagName('ForeName')[0].childNodes[0].data
-    authortext += '%s, %s\n' % (LastName, ForeName)
-  source['author'] = authortext
-    
-  journalinfo = xmldoc.getElementsByTagName('Journal')[0]
-  source['journal'] = journalinfo.getElementsByTagName('Title')[0].childNodes[0].data
-  journalinfo = journalinfo.getElementsByTagName('JournalIssue')[0]
-  source['volume'] = journalinfo.getElementsByTagName('Volume')[0].childNodes[0].data
-  source['number'] = journalinfo.getElementsByTagName('Issue')[0].childNodes[0].data
-  source['year'] = journalinfo.getElementsByTagName('Year')[0].childNodes[0].data
-  source['month'] = journalinfo.getElementsByTagName('Month')[0].childNodes[0].data
-  
-  source['pages'] = xmldoc.getElementsByTagName('MedlinePgn')[0].childNodes[0].data
-  
-  aid = xmldoc.getElementsByTagName('ArticleId')
-  for a in aid:
-    if a.attributes['IdType'].value == 'doi':
-      source['doi'] = a.childNodes[0].data
-  
-  source['source_type'] = 'article'
-  return source
-
 if __name__ == '__main__':
   from sys import argv, exit
   if len(argv) == 1:
