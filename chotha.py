@@ -344,7 +344,6 @@ def populate_new_source_from_pubmed_query(query):
       source['title'] = query
   return source
 
-#TODO: see if it works for new sources (due to id <> ?)
 def generate_citekey(source):
   """Generates a non duplicate citekey using first author last name and year"""
   au_text = source['author']
