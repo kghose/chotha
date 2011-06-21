@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Tika (টীকা) {{title}}</title>
+<title>Chotha (চোথা) {{title}}</title>
 
 <style type="text/css">
 
@@ -78,9 +78,9 @@ body {
 <body>
 %import urllib
 
-%if view=='list': #In the traditional list view we see the keyword list
 <div class='year-pane'>
 <a href="/">Home</a>
+%if view=='list': #In the traditional list view we see the keyword list
 
 %query = [('cskeyword_list', cskeyword_list), \
 %         ('page',0), ('perpage',perpage)]
@@ -101,8 +101,8 @@ body {
 %         ('perpage',perpage)]
 <a href="/?{{urllib.urlencode(query)}}">{{keyword['name']}}</a></br>
 %end
-</div> <!-- keywords pane -->
 %end #If view=='list'
+</div> <!-- keywords pane -->
 
 %if view=='list': #In the traditional list view we get the new item box 
 <div class='content'>
@@ -116,7 +116,7 @@ body {
 </div>
 %end #If view=='list'
 
-%if view=='list' or view=='searchlist': #Show us the traditional list view
+%if view=='list': #Show us the traditional list view
 %for row in rows:
 <div class="content">
   <div class='date'>{{row['nicedate']}}</div>
