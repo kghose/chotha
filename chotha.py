@@ -54,7 +54,6 @@ def get_source_fields(include_column_type = False):
   ['booktitle','VARCHAR(255)'],
   ['chapter','VARCHAR(255)'],
   ['citekey','VARCHAR(255)'],
-  ['created_at','DATETIME'],
   ['doi','VARCHAR(255)'],
   ['edition','VARCHAR(255)'],
   ['editor','VARCHAR(255)'],
@@ -62,7 +61,6 @@ def get_source_fields(include_column_type = False):
   ['institution','VARCHAR(255)'],
   ['journal','VARCHAR(255)'],
   ['month','VARCHAR(255)'],
-  ['note_id', 'INTEGER'],
   ['number','VARCHAR(255)'],
   ['organization','VARCHAR(255)'],
   ['pages','VARCHAR(255)'],
@@ -237,16 +235,21 @@ def parse_notes(rows_in):
 
   md = markdown.markdown #To save time
   pnote = re.compile(r'\[(.+?)\]\[note:(\d+?)\]')#For the wiki links substitution.
+  psource = re.compile(r'\[source:(.+?)\]')#For the wiki links substitution.
   
   def nice_date(date):
     nd = datetime.date(int(date[0:4]),int(date[5:7]),int(date[8:10]))
     return nd.strftime('%a %b %d, %Y')
   
   def format_body(body):
-    def linx(match):
+    def nlinx(match):
       return '<a href="/note/%s">%s</a>' %(match.group(2),match.group(1))
+
+    def slinx(match):
+      return '<a href="/sourcecitekey/%s">%s</a>' %(match.group(1),match.group(1))
       
-    text = pnote.sub(linx, body)
+    text = pnote.sub(nlinx, body)
+    text = psource.sub(slinx, text)
     return md(text)
   
   rows = []
@@ -265,9 +268,16 @@ def fetch_single_note(id):
     return None
 
 def fetch_single_source(id):
-  rows = dbq('SELECT * FROM notes WHERE id LIKE ?', (id,))
+  rows = dbq('SELECT * FROM sources WHERE id LIKE ?', (id,))
   if len(rows) > 0: 
-    return parse_notes(rows)[0]
+    return rows[0]
+  else:
+    return None
+
+def fetch_single_source_by_citekey(citekey):
+  rows = dbq('SELECT * FROM sources WHERE citekey LIKE ?', (citekey,))
+  if len(rows) > 0: 
+    return rows[0]
   else:
     return None
 
@@ -447,10 +457,19 @@ def show_note_page(id):
 @route('/source/:id')
 def show_source_page(id):
 
-  source = dbq('SELECT * FROM sources WHERE id LIKE ?', (id,))[0]
+  source = fetch_single_source(id)
   output = template('index', source=source,
                     title='%s' %source['citekey'], view='source')
   return output
+
+@route('/sourcecitekey/:citekey')
+def show_source_page(citekey):
+
+  source = fetch_single_source_by_citekey(citekey)
+  output = template('index', source=source,
+                    title='%s' %source['citekey'], view='source')
+  return output
+
 
 #We use POST for creating/editing the entries because these operations have 
 #lasting observable effects on the state of the world
