@@ -96,8 +96,8 @@ body {
 
 %pre = cskeyword_list + ',' if cskeyword_list != '' else ''
 %for keyword in candidate_keywords:
-%query = [('cskeyword_list',pre + keyword['name']), \
-%         ('search_text', search_text), \
+%query = [('cskeyword_list',pre.encode('utf-8') + keyword['name'].encode('utf-8')), \
+%         ('search_text', search_text.encode('utf-8')), \
 %         ('perpage',perpage)]
 <a href="/?{{urllib.urlencode(query)}}">{{keyword['name']}}</a></br>
 %end
