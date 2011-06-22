@@ -156,22 +156,137 @@ def create_source_notes(rriki_db, chotha_db):
   query = 'ATTACH DATABASE ? AS rriki'
   c.execute(query, (rriki_db,))
   query = """INSERT INTO notes (date,title,body,source_id)
-  SELECT created_at,(title||'(')||(citekey||')'),body,id 
+  SELECT created_at,(title||' (')||(citekey||')'),body,id 
   FROM rriki.sources"""
   c.execute(query)
 
+"""
+* Go through all rriki keywords, break them up by path separator and comma to 
+  build a list of component keywords matched to the original keyword
+* At the same time insert the component keywords into chotha
+"""
+def transfer_keywords(rriki_db, chotha_db):
+  conn = apsw.Connection(chotha_db)
+  c = conn.cursor()
+  query = 'ATTACH DATABASE ? AS rriki'
+  c.execute(query, (rriki_db,))
+  
+  #First build up a list of keywords we have in the database
+  #key = rriki keyword id, value = component keywords
+  print 'Building keyword list'
+  component_keywords = {}
+  bindings = []#Needs to be a list of tuples (to put into executemany)
+  query = "SELECT rriki.keywords.id, rriki.keywords.path_text FROM rriki.keywords"
+  for row in c.execute(query):
+    keywords = []
+    kw_frags = row[1].split(',')
+    for kw_fr in kw_frags:
+      kws = kw_fr.split('/')
+      for kw in kws:
+        kw = kw.strip()
+        if kw != '':
+          keywords.append(kw)
+          bindings.append((kw,kw))
+    component_keywords[row[0]] = keywords
+  
+  print 'Inserting keywords'
+  query = """INSERT INTO keywords (name) SELECT ? WHERE NOT EXISTS 
+  (SELECT 1 FROM keywords WHERE name LIKE ?);"""
+  c.executemany(query, bindings)
+  
+  return component_keywords
 
 """
-* For each note, grab the keywords
-   * For each keyword, use the path to separate out the keywords into components words.
-   *  Keywords with commas - each part is a separate keyword.
-   * Associate each keyword with note
-* For each source, grab the keywords
-   * For each keyword, use the path to separate out the keywords into components words.
-   *  Keywords with commas - each part is a separate keyword.
-   * Find the note that goes with the source (source ids are conserved) and associate the keywords with that note
+* Read in the list of rriki keyword ids for each note, find the relevant component 
+  keywords and insert the pairs into chotha's keywords_notes
+"""
+def note_keywords(rriki_db, chotha_db, component_keywords):
+  conn = apsw.Connection(chotha_db)
+  c = conn.cursor()
+  query = 'ATTACH DATABASE ? AS rriki'
+  c.execute(query, (rriki_db,))
+  
+  print 'Associating keywords with notes'
+  query = """
+  SELECT rriki.notes.id, group_concat(rriki.keywords.id) AS kwds FROM rriki.notes 
+    INNER JOIN rriki.keywords_notes ON rriki.keywords_notes.note_id = rriki.notes.id 
+    INNER JOIN rriki.keywords on rriki.keywords_notes.keyword_id = rriki.keywords.id 
+    GROUP BY rriki.notes.id
+  """
+  bindings1 = []
+  bindings2 = []
+  for row in c.execute(query):
+    nid = row[0]
+    keylist = set([])
+    kidlist = row[1].split(',')
+    for kid in kidlist:
+      for kwd in component_keywords[int(kid)]:
+        keylist.add(kwd)
+    kl = ''
+    for kwd in keylist:
+      bindings1.append((nid,kwd))
+      kl += ',' + kwd
+    if kl != '':
+      kl = kl[1:] #Get rid of leading comma
+    bindings2.append((kl,nid)) #key_list, note.id
+    
+  print 'Performing SQL insert'  
+  query = """INSERT OR IGNORE INTO keywords_notes (keyword_id,note_id) 
+  SELECT keywords.id,? FROM keywords WHERE keywords.name LIKE ?
+  """ #bindings -> note_id, keyword
+  c.executemany(query, bindings1)
+
+  print 'Inserting note key_list string'
+  query = """UPDATE notes SET key_list=? WHERE id=?
+  """ #bindings -> key_list, note_id
+  c.executemany(query, bindings2)
 
 """
+* Read in the list of rriki keyword ids for each source, find the relevant component 
+  keywords and insert the pairs into chotha's keywords_notes
+"""
+def source_keywords(rriki_db, chotha_db, component_keywords):
+  conn = apsw.Connection(chotha_db)
+  c = conn.cursor()
+  query = 'ATTACH DATABASE ? AS rriki'
+  c.execute(query, (rriki_db,))
+  
+  print 'Associating keywords with sources'
+  query = """
+  SELECT rriki.sources.id, group_concat(rriki.keywords.id) AS kwds FROM rriki.sources 
+    INNER JOIN rriki.keywords_sources ON rriki.keywords_sources.source_id = rriki.sources.id 
+    INNER JOIN rriki.keywords on rriki.keywords_sources.keyword_id = rriki.keywords.id 
+    GROUP BY rriki.sources.id
+  """
+  bindings1 = []
+  bindings2 = []
+  for row in c.execute(query):
+    sid = row[0]
+    keylist = set([])
+    kidlist = row[1].split(',')
+    for kid in kidlist:
+      for kwd in component_keywords[int(kid)]:
+        keylist.add(kwd)
+    kl = ''
+    for kwd in keylist:
+      bindings1.append((kwd,sid))
+      kl += ',' + kwd
+    if kl != '':
+      kl = kl[1:] #Get rid of leading comma
+    bindings2.append((kl,sid)) #key_list, note.id
+
+  print 'Performing SQL insert'  
+  query = """INSERT OR IGNORE INTO keywords_notes (keyword_id,note_id) 
+  SELECT keywords.id,notes.id FROM keywords,notes WHERE 
+  keywords.name LIKE ? AND notes.source_id = ?
+  """ #bindings -> keyword, source_id
+  c.executemany(query, bindings1)
+
+  print 'Inserting note key_list string'
+  query = """UPDATE notes SET key_list=? WHERE source_id=?
+  """ #bindings -> key_list, note_id
+  c.executemany(query, bindings2)
+
 
 if __name__ == "__main__":
   if len(sys.argv) > 2:
@@ -179,6 +294,7 @@ if __name__ == "__main__":
     chotha_db = sys.argv[2]
   else:
     exit()
+
   print 'converting ' + rriki_db + ' to ' + chotha_db
   try:
     os.remove(chotha_db)
@@ -191,3 +307,6 @@ if __name__ == "__main__":
   copy_over_sources(rriki_db, chotha_db)
   print 'Creating source notes'
   create_source_notes(rriki_db, chotha_db)   
+  component_keywords = transfer_keywords(rriki_db, chotha_db)
+  note_keywords(rriki_db, chotha_db, component_keywords)
+  source_keywords(rriki_db, chotha_db, component_keywords)
