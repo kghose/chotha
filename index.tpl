@@ -20,35 +20,54 @@ body {
 	color: black;
 }
 
-.year-pane {
-	position:absolute;
+.keywords-pane {
+	position: absolute;
+	float:left;
 	top:10px;
-	left:5%;
+	left:10px;
 	width:20%;
-	border:solid;
-	padding:5px;
-	-moz-border-radius: 1em;
+	border-right:solid;
+	padding:20px;
+	//-moz-border-radius: 1em;
 	text-align: left;
+	font-size: 10pt;
 }
 
-.year-pane a:link {text-decoration: none; color: black;}
-.year-pane a:visited {text-decoration: none; color: black;}
-.year-pane a:hover {text-decoration: underline overline; color: red;}
+.keywords-pane a:link {text-decoration: none; color: black;}
+.keywords-pane a:visited {text-decoration: none; color: black;}
+.keywords-pane a:hover {text-decoration: underline overline; color: red;}
 
+.nav-pane {
+	position: absolute;
+	float:right;
+	top:10px;
+	right:10px;
+	width:20%;
+	border-left:solid;
+	padding:20px;
+	//-moz-border-radius: 1em;
+	text-align: left;
+	font-size: 10pt;
+}
+
+.nav-pane a:link {text-decoration: none; color: black;}
+.nav-pane a:visited {text-decoration: none; color: black;}
+.nav-pane a:hover {text-decoration: underline overline; color: red;}
 
 .entry {
   width: 100%; /*dynamic with div size*/
 }
 
 .content {
-	left:37%;
+	position: relative;
+	left:25%;
   font-family:"Century Gothic";	
 	font-size: 11pt;
 	padding-left:2em;
 	padding-right:2em;
-	padding-top:.1em;
+	padding-top:10px;
 	padding-bottom:.1em;
-	margin: 1em auto;	
+	//margin: 1em auto;	
   width: 12cm;
   text-align: left;
 	}
@@ -78,8 +97,7 @@ body {
 <body>
 %import urllib
 
-<div class='year-pane'>
-<a href="/">Home</a>
+<div class='keywords-pane'>
 %if view=='list': #In the traditional list view we see the keyword list
 
 %query = [('cskeyword_list', cskeyword_list), \
@@ -91,18 +109,23 @@ body {
 </form>
 %if cskeyword_list != '':
 {{'+' + cskeyword_list}}
-%end
 <hr/>
+%end
 
 %pre = cskeyword_list + ',' if cskeyword_list != '' else ''
 %for keyword in candidate_keywords:
 %query = [('cskeyword_list',pre.encode('utf-8') + keyword['name'].encode('utf-8')), \
 %         ('search_text', search_text.encode('utf-8')), \
 %         ('perpage',perpage)]
-<a href="/?{{urllib.urlencode(query)}}">{{keyword['name']}}</a></br>
+<a href="/?{{urllib.urlencode(query)}}">{{keyword['name']}}</a> 
 %end
 %end #If view=='list'
 </div> <!-- keywords pane -->
+
+<div class='nav-pane'>
+<a href="/">Home</a>
+</div>
+
 
 %if view=='list': #In the traditional list view we get the new item box 
 <div class='content'>
