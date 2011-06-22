@@ -526,6 +526,7 @@ def save_note_action(id=None):
   key_list = unicode(request.POST.get('key_list', '').strip(),'utf_8')  
   note = {'id': int(id), 'date': date, 'title': title, 'body': body, 'key_list': key_list}
   save_note(note)
+  note = fetch_single_note(note['id'])
   output = template('index', note=note,
                     title='Saved %s' %note['title'], view='note')  
   return output
@@ -568,8 +569,9 @@ def save_config():
   
 
 # Configuration pages ---------------------------------------------------------  
-@route('/selectdb/:newdbname')
+@route('/selectdb')
 def select_database(newdbname='pylogdb.sqlite3'):
+  newdbname = request.GET.get('newdbname', '').strip()
   globals()['dbname']=newdbname
   config.set('Basic', 'dbname', newdbname)
   save_config()
