@@ -12,14 +12,6 @@ body {
 	text-align:center;
 	}
 
-.year {
-	text-align: center;
-  font-size: 6em;
-	font-weight: bold;
-	font-family:"Century Gothic";
-	color: black;
-}
-
 .keywords-pane {
 	position: absolute;
 	float:left;
@@ -31,11 +23,12 @@ body {
 	//-moz-border-radius: 1em;
 	text-align: left;
 	font-size: 10pt;
+	background-color: yellow;
 }
 
 .keywords-pane a:link {text-decoration: none; color: black;}
 .keywords-pane a:visited {text-decoration: none; color: black;}
-.keywords-pane a:hover {text-decoration: underline overline; color: red;}
+.keywords-pane a:hover {text-decoration: none; color: black; background-color: white;}
 
 .nav-pane {
 	position: absolute;
@@ -48,11 +41,12 @@ body {
 	//-moz-border-radius: 1em;
 	text-align: left;
 	font-size: 10pt;
+	background-color: yellow;
 }
 
 .nav-pane a:link {text-decoration: none; color: black;}
 .nav-pane a:visited {text-decoration: none; color: black;}
-.nav-pane a:hover {text-decoration: underline overline; color: red;}
+.nav-pane a:hover {text-decoration: none; background-color: yellow;}
 
 .entry {
   width: 100%; /*dynamic with div size*/
@@ -67,9 +61,9 @@ body {
 	padding-right:2em;
 	padding-top:10px;
 	padding-bottom:.1em;
-	//margin: 1em auto;	
   width: 12cm;
   text-align: left;
+  margin-bottom: 10px;
 	}
 
 .title {
@@ -79,8 +73,21 @@ body {
 	border-bottom: 1px dotted #ba0000;
 }
 
+.sourcetitle {
+	font-size:10pt;
+	font-weight: bold;
+	border: 1px dotted #ba0000;
+	color: black;
+	background-color: yellow;
+	padding: 5px;
+}
+
+.sourcetitle a:link {text-decoration: none; color: black;}
+.sourcetitle a:visited {text-decoration: none; color: black;}
+.sourcetitle hover {text-decoration: bold; background-color: yellow;}
+
 .date {
-  font-weight: normal;
+  font-weight: bold;
 	font-size: .8em;
 }
 
@@ -92,18 +99,24 @@ body {
 .lastupdated a:link {color: black;}
 .lastupdated a:visited {color: black;}
 
+.key_list {
+	padding: 5px;
+	font-weight: bold;
+	font-style: italic;
+}
+
+
 </style>
 </head>   
 <body>
 %import urllib
 
-<div class='keywords-pane'>
 %if view=='list': #In the traditional list view we see the keyword list
-
+<div class='keywords-pane'>
 %query = [('cskeyword_list', cskeyword_list), \
 %         ('page',0), ('perpage',perpage)]
 <form action="/?{{urllib.urlencode(query)}}" method="GET">
-<input class="entry" type="text" size=20 name="search_text" title="Search" value={{search_text}}>
+<input class="entry" type="text" size=20 name="search_text" title="Search" value="{{search_text}}">
 <input type="hidden" name="cskeyword_list" value={{cskeyword_list}}>
 <input type="hidden" name="perpage" value={{perpage}}>
 </form>
@@ -119,12 +132,13 @@ body {
 %         ('perpage',perpage)]
 <a href="/?{{urllib.urlencode(query)}}">{{keyword['name']}}</a> 
 %end
-%end #If view=='list'
 </div> <!-- keywords pane -->
+%end #If view=='list'
 
 <div class='nav-pane'>
 <a href="/">Home</a>
-</div>
+
+</div> <!-- 'keywords-pane' -->
 
 
 %if view=='list': #In the traditional list view we get the new item box 
@@ -151,7 +165,7 @@ body {
   </div>
 %end  
   <p>{{!row['html']}}</p>
-  <p>{{row['key_list']}}</p>
+  <div class='key_list'>{{row['key_list']}}</div>
   <div class='lastupdated'>
   <a href="/edit/{{row['id']}}" title="click to edit">edit</a>
   </div>
@@ -170,7 +184,7 @@ Editing <b>{{note['title']}}</b>
 %else:
    <input type="hidden" name="title" value="{{note['title']}}">   
 %end
-   <p><textarea rows="10" wrap="virtual" name="body" class="entry" title="Text of note">{{note['body']}}</textarea></p>
+   <p><textarea rows="30" wrap="virtual" name="body" class="entry" title="Text of note">{{note['body']}}</textarea></p>
 	 <p><input type="text" name="key_list" class="entry" title="Keyword list" value="{{note['key_list']}}"></p>
    <input type="submit" name="save" value="save">
   </form>
@@ -191,7 +205,12 @@ No such note
 
 %elif view=='editsource': #Allow us to edit a single source
 <div class="content">
-<form action="/savesource/{{source['id']}}" method="POST">
+<form action="/refetchsource" method="POST">
+Refetch source <input type="text" name="query" size='20' title="Enter pubmed query and hit enter to refetch the bibliographic data">
+<input type="hidden" name="id" value={{source['id']}}>
+</form>
+
+<form action="/savesource" method="POST">
 <input type="hidden" name="id" value={{source['id']}}>
 citekey <input type="text" name="citekey" class="source_edit" title="citekey" value="{{source['citekey']}}"><br/> 
 Title <input type="text" name="title" class="entry" title="title" value="{{source['title']}}"><br/>

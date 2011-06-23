@@ -531,8 +531,8 @@ def save_note_action(id=None):
                     title='Saved %s' %note['title'], view='note')  
   return output
 
-@route('/savesource/:id', method='POST')
-def save_source_action(id):
+@route('/savesource', method='POST')
+def save_source_action():
   fields = get_source_fields()
   source = get_empty_source()
   for f in fields:
@@ -542,6 +542,17 @@ def save_source_action(id):
   save_source(source)
   output = template('index', source=source,
                     title='Saved %s' %source['citekey'], view='source')  
+  return output
+
+@route('/refetchsource', method='POST')
+def refetch_source_action():
+  query = unicode(request.POST.get('query', '').strip(),'utf_8')
+  id = request.POST.get('id','').strip()
+  source = populate_new_source_from_pubmed_query(query)
+  source['id'] = id #Need if before we can generate citekey  
+  source['citekey'] = generate_citekey(source)
+  output = template('index', source=source,
+                    title='Editing %s' %source['citekey'], view='editsource')
   return output
 
 # Configuration helpers --------------------------------------------------------
