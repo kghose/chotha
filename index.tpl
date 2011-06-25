@@ -1,6 +1,7 @@
 <html>
 <head>
 <title>Chotha (চোথা) {{title}}</title>
+<link rel="shortcut icon" href="/static/favicon.ico" />
 
 <style type="text/css">
 
@@ -12,15 +13,21 @@ body {
 	text-align:center;
 	}
 
+h1 {
+	font-size: 13pt;	
+}
+
+h2 {
+	font-size: 12pt;	
+}
+
 .keywords-pane {
 	position: absolute;
 	float:left;
-	top:10px;
 	left:10px;
 	width:20%;
 	border-right:solid;
 	padding:20px;
-	//-moz-border-radius: 1em;
 	text-align: left;
 	font-size: 10pt;
 	background-color: yellow;
@@ -33,7 +40,6 @@ body {
 .nav-pane {
 	position: absolute;
 	float:right;
-	top:10px;
 	right:10px;
 	width:20%;
 	border-left:solid;
@@ -59,7 +65,7 @@ body {
 	font-size: 11pt;
 	padding-left:2em;
 	padding-right:2em;
-	padding-top:10px;
+	margin-top:10px;
 	padding-bottom:.1em;
   width: 12cm;
   text-align: left;
@@ -105,7 +111,6 @@ body {
 	font-style: italic;
 }
 
-
 </style>
 </head>   
 <body>
@@ -117,7 +122,7 @@ body {
 %         ('page',0), ('perpage',perpage)]
 <form action="/?{{urllib.urlencode(query)}}" method="GET">
 <input class="entry" type="text" size=20 name="search_text" title="Search" value="{{search_text}}">
-<input type="hidden" name="cskeyword_list" value={{cskeyword_list}}>
+<input type="hidden" name="cskeyword_list" value="{{cskeyword_list}}">
 <input type="hidden" name="perpage" value={{perpage}}>
 </form>
 %if cskeyword_list != '':
@@ -136,15 +141,14 @@ body {
 %end #If view=='list'
 
 <div class='nav-pane'>
-<a href="/">Home</a>
-
-</div> <!-- 'keywords-pane' -->
+<a href="/">Home</a> <a href="/static/abouthelp.html">Help/About</a>
+</div> <!-- 'nav-pane' -->
 
 
 %if view=='list': #In the traditional list view we get the new item box 
 <div class='content'>
 <form action="/new" method="POST">
-<p><input type="text" name="title" class="entry" title="Note title">
+<p><input type="text" name="title" class="entry" title="Note title or pubmed query">
 <input type="checkbox" name="ispaper" value='yes' />This is a paper</p>
 <p><textarea rows="10" wrap="virtual" name="body" class="entry" title="Text of note"></textarea></p>
 <p><input type="text" name="key_list" class="entry" title="Keyword list" value="{{cskeyword_list}}"></p>
@@ -196,7 +200,7 @@ Editing <b>{{note['title']}}</b>
   <div class='date'>{{note['date']}}</div>
   <div class='title'>{{note['title']}}</div>
   <p>{{!note['html']}}</p>
-  <p>{{note['key_list']}}</p>  
+  <p><div class='key_list'>{{note['key_list']}}</div></p>  
   <div align="right"><a href="/edit/{{note['id']}}">edit</a></div>
 %else:
 No such note
