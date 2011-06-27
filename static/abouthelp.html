@@ -1,0 +1,88 @@
+<html>
+<head>
+<link rel="shortcut icon" href="/static/favicon.ico" />
+<style type="text/css">
+
+body {
+	font-family:"Century Gothic";
+	font-size: 12pt;
+  background-color: #fff; 
+	color: #333;
+	width: 50%;
+	margin-left:auto;
+	margin-right:auto;
+	}
+</style>	
+</head>
+<body>
+
+<a href="/">Home</a>
+
+<h1>Description</h1>
+<p>Chotha is a program to store and organize notes and citations for, primarily, 
+academic research. </p>
+
+<h1>Usage</h1>
+Most operations are self explanatory, especially with the help in the popup text.
+Only the more non-intuitive operations are described here:
+
+<h3>Creating a source</h3>
+<p>Type in a pubmed id, a DOI or any other pubmed query into the title box (where
+you would otherwise type in the title of the note you are creating). Check the
+'this is a paper' checkbox right below that. Type in your notes about the paper
+and your keywords as usual. </p>
+
+<p>When you click save, Chotha will save your note as usual, and then will go 
+to pubmed, fetch the citation data, create a new citation and link your note to
+it.</p>
+ 
+<p>It will then display a citation editing page, where you can review the
+citation information. When you click save, the citation information is saved.</p>
+
+<p>If you leave the title blank then a blank citation from will be returned</p>
+
+<p>The program actually fetches the <i>first</i> hit returned by the query. If you
+type a pubmed id or a DOI then there is only one hit. If you type a title or 
+some other search term, chances are there will be several of which you will get
+only the first.</p> 
+
+<p>Chotha is not meant for doing searches on pubmed - only for 
+retrieving targeted individual papers at a time.</p>
+ 
+<h3>Links between items</h3>
+You can make links to another note or source. To make a link to another note, 
+in the text field type <code>[text to link][note:XXX]</code> where XXX is the 
+note id. To make a link to a source type in <code>[source:citeykey]</code> 
+where citekey is the citekey of the source (e.g. savitzky1964)
+
+<h3>Math text</h3>
+Chotha uses Peter Jipsen's <a href="http://www1.chapman.edu/~jipsen/mathml/asciimath.html">ASCIIMathML</a> to convert latex strings to equations. Type 
+"amath" in a field to activate the relevant javascript so that your text will
+be displayed as math when you view it.
+
+<h1>About Chotha (চোথা)</h1>
+<p><img src="/static/icon.png" title="The icon is based on the Bengali letter 'ch'"/ width="100px" align="right">
+The name: Chotha (চোথা) is a Bengali slang word for notes that I picked up when 
+I was at Jadavpur University. I believe it is general college slang for 
+lecture notes or notes of any kind about a topic. Even my mother knew the word
+so I guess it is a fairly polite word that has been in use for some time.</p>
+
+<p>The origins of Chotha were probably the little hanDbase database I created on
+my handspring visor (which somebody stole from my office at A.V. Williams building grr.)
+This was replaced by R-A which I wrote in C++ and QT and which used MySQl. I then
+learned about Rails and migrated it to RRiki (written in Ruby, Rails and which 
+used MySQL). Then I decided it was getting confusing, in my old age, to write
+code in Ruby (This stuff) AND Python (work work) and I was getting ever more 
+infatuated with Python, and getting disgruntled by the complexity of Rails.</p>
+
+<p>Finally, I found Bottle, and over the course of a few weeks, split off the
+Diary sub-app and the the main RRiki app into two Python programs that used the
+Bottle framework. Chotha is RRiki with the hierarchical keywords replaced by
+conjunction keywords and with all that fancy AJAX crap removed. The program
+that spanned oh, I don't know, perhaps 40 files, now uses perhaps three files
+that I actually like maintaining and looking at.</p>
+
+<p>Rails had its place, but for my simple single user requirements, I think I
+will stick to micro-frameworks, and Bottle is just awesome for that</p>
+</body>
+</html>
