@@ -260,6 +260,13 @@ def parse_notes(rows_in):
     rows.append(new_row)
   return rows
 
+def extract_sources_from_note(note):
+  psource = re.compile(r'\[source:(.+?)\]')
+  scks = psource.findall(note['body'])
+  scks_string = ', '.join('?' for dummy in scks)
+  rows = dbq('SELECT * FROM sources WHERE citekey IN (%s)' %scks_string, scks)
+  return rows
+
 def fetch_single_note(id):
   rows = dbq('SELECT * FROM notes WHERE id LIKE ?', (id,))
   if len(rows) > 0: 
@@ -454,6 +461,16 @@ def show_note_page(id):
                     view='note')
   return output
 
+@route('/notesourceexport/:id')
+def export_sources_from_note(id):
+  note = fetch_single_note(id)
+  sources = extract_sources_from_note(note)
+  import citation_export as ce
+  ce.export_MSWord_XML(sources)
+  
+  msg = '<center><h2>Exported %d sources present in this note.</h1></center>' %(len(sources))
+  return msg
+
 @route('/source/:id')
 def show_source_page(id):
 
@@ -596,10 +613,10 @@ def new_database(newdbname='pylogdb.sqlite3'):
   save_config()
   return index()
 
-# Nasty stuff -------------------------------------------------------------------
-@bottle.route('/lib/:filename#.*#')
+# File stuff -------------------------------------------------------------------
+@bottle.route('/static/:filename#.*#')
 def static_file(filename):
-    bottle.send_file(filename, root='./lib')
+    bottle.send_file(filename, root='./static')
 
 
 # For testing only -------------------------------------------------------------
