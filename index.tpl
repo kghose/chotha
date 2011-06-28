@@ -2,6 +2,9 @@
 <head>
 <title>Chotha (চোথা) {{title}}</title>
 <link rel="shortcut icon" href="/static/favicon.ico" />
+<script type="text/javascript" src="/static/asciiMathML.js"></script>
+<!--<script type="text/javascript" src="/static/LaTeXMathML.js"></script>-->
+<script>mathcolor="Black"</script>
 
 <style type="text/css">
 
@@ -44,7 +47,6 @@ h2 {
 	width:20%;
 	border-left:solid;
 	padding:20px;
-	//-moz-border-radius: 1em;
 	text-align: left;
 	font-size: 10pt;
 	background-color: yellow;
@@ -93,7 +95,7 @@ h2 {
 
 .itemid a:link {text-decoration: none; color: black;}
 .itemid a:visited {text-decoration: none; color: black;}
-.itemid hover {text-decoration: bold; background-color: yellow;}
+.itemid a:hover {text-decoration: none; background-color: yellow;}
 
 
 .title {
@@ -105,7 +107,7 @@ h2 {
 
 .title a:link {text-decoration: none; color: black;}
 .title a:visited {text-decoration: none; color: black;}
-.title hover {text-decoration: bold; background-color: yellow;}
+.title hover {text-decoration: none; background-color: yellow;}
 
 .sourcetitle {
 	font-size:10pt;
@@ -119,7 +121,7 @@ h2 {
 
 .sourcetitle a:link {text-decoration: none; color: black;}
 .sourcetitle a:visited {text-decoration: none; color: black;}
-.sourcetitle hover {text-decoration: bold; background-color: yellow;}
+.sourcetitle hover {text-decoration: none; background-color: yellow;}
 
 .date {
   font-weight: bold;
