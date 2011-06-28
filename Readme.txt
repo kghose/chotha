@@ -39,21 +39,25 @@ is generated when the source attributes are modified (using a trigger)
 
 Conversion of RRiki database to Chotha:
 --------------------------------------
-Keep track of all ids
+* Create a new chotha database
+* Copy over all the notes as is, dropping the created_at and updated_at columns
+* Copy over all the sources as is, dropping the created_at, updated_at and url columns
+* For each source, create a new note and fill in the source_id appropriately,
+set the note date as the source created_at date and the note title as the paper
+title + citekey
+=> note and source ids remain the same, but now we have a bunch of extra notes at the end
+* For each note, grab the keywords
+   * For each keyword, use the path to separate out the keywords into components words.
+   *  Keywords with commas - each part is a separate keyword.
+   * Associate each keyword with note
+* For each source, grab the keywords
+   * For each keyword, use the path to separate out the keywords into components words.
+   *  Keywords with commas - each part is a separate keyword.
+	 * Find the note that goes with the source (source ids are conserved) and associate the keywords with that note
 
-sources: 
-Change the 'url' field to 'doi'
-Ignore the last_updated_at field
-Create a new note with date as the created_at field, title as some function of
-paper title, citekey and year and link it to the paper
 
-
-
-notes:
-Ignore the last_updated_at and created_at fields
-
-keywords handling:
------------------
+keywords handling in Chotha:
+----------------------------
 The keywords_notes and keywords_sources are defined as:
 
 create table "a" ("x" integer, "y" integer, primary key (x,y));
@@ -64,20 +68,24 @@ insert or replace into a (x,y) values (1,2);
 
 and not have annoying duplicate entries in the table
 
-Converting keywords
--------------------
-for each item, read in the path_text for each linked keyword, split each path
-component into keywords and use those as the keywords.
-
 
 Todo:
 
-1. Enable FTS in sqlite install
-2. Search (notes and papers) just retrieves basic information, clicking on
-items pulls up full info (could speed things up for large notes + papers)
-3. Use snippets for text search
-4. No more fancy AJAX crap - make it stateless, so I can open and edit in new 
-tabs and use the browser backbutton : worked well in pylog.
+* (done - apsw apparently has this activated) Enable FTS in sqlite install
+* Modify db to use FTS
+* (done in a way) Search (notes and papers) just retrieves basic information, clicking on
+  items pulls up full info (could speed things up for large notes + papers)
+* Use snippets for text search
+* (done) No more fancy AJAX crap - make it stateless, so I can open and edit in new 
+  tabs and use the browser backbutton : worked well in pylog. (done)
+* (done) Implement keyword conjunction UI -> need to be able to generate url links properly (urllib.encode)
+* (done) Rewrite for new database format
+* (done) Test new database format using dummy database
+* (done) Convert rriki db to chotha format
+* Implement sensible paging, based on date/year for eg
+* make the jumping between note and citation data cleaner
+* (done) On sources edit page make a "refetch" button where you can put a query in and
+  refetch the citation data
 
 Some useful SQL queries:
 ------------------------
@@ -87,3 +95,5 @@ select keywords.name from notes inner join keywords_notes on keywords_notes.note
 
 select notes.id, group_concat(keywords.name) from notes inner join keywords_notes on keywords_notes.note_id = notes.id inner join keywords on keywords_notes.keyword_id = keywords.id where notes.id in (564,667) group by notes.id;
  
+ 
+UPDATE notes SET notes.key_list=kwd WHERE notes.id=nid  (SELECT notes.id AS nid, group_concat(keywords.name) AS kwd FROM notes,keywords,keywords_notes WHERE keywords_notes.keyword_id = keywords.id AND keywords_notes.note_id = notes.id GROUP BY notes.id LIMIT 10) 
