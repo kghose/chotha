@@ -95,6 +95,7 @@ def export_MSWord_XML(sources=None):
     xmlsources = myzip.read('customXml/item1.xml')
     
     citekey_list = []
+    max_refo = 1
     doc = minidom.parseString(xmlsources)
     xmldoc = doc.documentElement
     print xmldoc.toprettyxml()
@@ -104,22 +105,25 @@ def export_MSWord_XML(sources=None):
         citekey_list.append(ck)
       except:
         print 'Cheap way to not do proper error checking'
-      #print 'Hi'
+      
+      refo = int(ref.getElementsByTagName("b:RefOrder")[0].childNodes[0].wholeText)
+      max_refo = refo if refo > max_refo else max_refo
       #print ref.attributes["Tag"].value
-    return doc, citekey_list
+    return doc, citekey_list, max_refo
     
   def save_MSWord_XML(doc, fname='Sandbox/test.docx'):
     #with zipfile.ZipFile(fname, 'w') as myzip:
     myzip = zipfile.ZipFile(fname, 'a',compression=zipfile.ZIP_DEFLATED)
-    myzip.writestr('customXml/test1.xml', doc.documentElement.toxml())
+    myzip.writestr('customXml/test1.xml', doc.toxml().encode('utf-8'))
     myzip.close()
       
-  def add_source_to_XML(doc, source):
-    """Add this source to the existing document."""
+  def add_source_to_XML(doc, source, refo=None):
+    """If max_refo is not none then we assume we are messing with the document 
+    ref file and we need to put in the reforder tag"""
     def add_element(tag, value, doc, child):
       tag = doc.createElement(tag)
       child.appendChild(tag)
-      if value != None:
+      if value != None and value != '':
         tagtext = doc.createTextNode(value)
         tag.appendChild(tagtext)
       return doc, tag
@@ -156,18 +160,22 @@ def export_MSWord_XML(sources=None):
     doc,tag = add_element('b:Title', source['title'], doc, cite)
     doc,tag = add_element('b:Volume', source['volume'], doc, cite)
     doc,tag = add_element('b:Year', str(source['year']), doc, cite)
+    if refo != None:
+      doc,tag = add_element('b:RefOrder', str(refo), doc, cite)
+
     return doc
     
-  def add_sources_to_XML(doc, sources, citekey_list):
+  def add_sources_to_XML(doc, sources, citekey_list, max_refo=None):
+    """If max_refo is NOT none then we assume we are messing with the document 
+    ref file and we need to put in the reforder tag"""
+    refo = max_refo
     for source in sources:
       if source['citekey'] not in citekey_list:
-        doc = add_source_to_XML(doc, source)
+        if refo!= None:
+          refo += 1
+        doc = add_source_to_XML(doc, source,refo)
     return doc
   
-#  doc, citekey_list = read_and_parse_MSWord_master_source_XML()
-  #doc = add_source_to_XML(doc, source)
-#  save_MSWord_master_source_XML(doc)
-
   doc, citekey_list = read_and_parse_MSWord_master_source_XML()
   doc = add_sources_to_XML(doc, sources, citekey_list)
   save_MSWord_master_source_XML(doc)
