@@ -61,16 +61,40 @@ h2 {
 .content {
 	position: relative;
 	left:25%;
-  font-family:"Century Gothic";	
+
+	width: 12cm;
+
+	margin-top: 20px;
+	margin-left:2em;
+	margin-right:2em;
+
+	padding-bottom: 20px;
+
+	font-family:"Century Gothic";	
 	font-size: 11pt;
-	padding-left:2em;
-	padding-right:2em;
-	margin-top:10px;
-	padding-bottom:.1em;
-  width: 12cm;
   text-align: left;
-  margin-bottom: 10px;
-	}
+}
+
+.itemid-box {
+	position: absolute;
+	right:0px;
+	top:0px;
+}
+.itemid {
+	border:solid;
+	border-width:thin;
+	padding-left:.2em;
+	padding-right:.2em;
+	font-size:7pt;
+	font-weight: bold;
+	width:auto;
+	background-color: aqua;
+}
+
+.itemid a:link {text-decoration: none; color: black;}
+.itemid a:visited {text-decoration: none; color: black;}
+.itemid hover {text-decoration: bold; background-color: yellow;}
+
 
 .title {
 	width: 100%;
@@ -79,10 +103,15 @@ h2 {
 	border-bottom: 1px dotted #ba0000;
 }
 
+.title a:link {text-decoration: none; color: black;}
+.title a:visited {text-decoration: none; color: black;}
+.title hover {text-decoration: bold; background-color: yellow;}
+
 .sourcetitle {
 	font-size:10pt;
 	font-weight: bold;
-	border: 1px dotted #ba0000;
+	border-left: 1px dotted #ba0000;
+	border-bottom: 1px dotted #ba0000;	
 	color: black;
 	background-color: yellow;
 	padding: 5px;
@@ -106,9 +135,12 @@ h2 {
 .lastupdated a:visited {color: black;}
 
 .key_list {
-	padding: 5px;
+	position: absolute;
+	border-bottom: thin dotted;	
+	left: 0px;
+	bottom: 10px;
 	font-weight: bold;
-	font-style: italic;
+	font-size: 10px;
 }
 
 </style>
@@ -161,18 +193,24 @@ h2 {
 %for row in rows:
 <div class="content">
   <div class='date'>{{row['nicedate']}}</div>
-%if row['source_id'] == None:  
-  <div class='title'>{{row['title']}}</div>
-%else:
-  <div class='sourcetitle'>
-  <a href="/source/{{row['source_id']}}">{{row['title']}}</a>
+
+%if row['source_id'] != None:  
+  <div class='itemid-box'>
+  <span class="itemid"><a href="/note/{{row['id']}}" title="Go to note">{{'note:%d' %row['id']}}</a></span>
+  <span class="itemid"><a href="/source/{{row['source_id']}}" title="Go to citation">{{'s%04d' %row['source_id']}}</a></span>
   </div>
-%end  
+  <div class='sourcetitle'>{{row['title']}}</div>
+%else:
+  <div class='itemid-box'>
+  <span class="itemid"><a href="/note/{{row['id']}}" title="Go to note">{{'note:%d' %row['id']}}</a></span>
+  </div>
+  <div class='title'>{{row['title']}}</div>
+%end
   <p>{{!row['html']}}</p>
   <div class='key_list'>{{row['key_list']}}</div>
-  <div class='lastupdated'>
+<!--  <div class='lastupdated'>
   <a href="/edit/{{row['id']}}" title="click to edit">edit</a>
-  </div>
+  </div> -->
 </div>
 %end
 
@@ -202,6 +240,8 @@ Editing <b>{{note['title']}}</b>
   <p>{{!note['html']}}</p>
   <p><div class='key_list'>{{note['key_list']}}</div></p>  
   <div align="right"><a href="/edit/{{note['id']}}">edit</a></div>
+  <div align="right"><a href="/notesourceexport/{{note['id']}}">
+  export sources</a></div>
 %else:
 No such note
 %end
