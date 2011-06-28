@@ -1,4 +1,4 @@
-import datetime, apsw, markdown2 as markdown, bottle, re, logging, pubmed, ConfigParser
+import datetime, apsw, markdown, bottle, re, logging, pubmed, ConfigParser
 from bottle import route, debug, template, request, validate, send_file, error
 
 #Config file
@@ -233,7 +233,8 @@ def parse_notes(rows_in):
   """Given a list of row objects returned by a fetch, copy the data into a new
   dictionary after running each entry through the markdown parser."""
 
-  md = markdown.markdown #To save time
+#  md = markdown.markdown #To save time
+  md = markdown.Markdown(extensions=['chothamathml']).convert
   pnote = re.compile(r'\[(.+?)\]\[note:(\d+?)\]')#For the wiki links substitution.
   psource = re.compile(r'\[source:(.+?)\]')#For the wiki links substitution.
   
@@ -247,7 +248,7 @@ def parse_notes(rows_in):
 
     def slinx(match):
       return '<a href="/sourcecitekey/%s">%s</a>' %(match.group(1),match.group(1))
-      
+          
     text = pnote.sub(nlinx, body)
     text = psource.sub(slinx, text)
     return md(text)
