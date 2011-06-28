@@ -617,7 +617,7 @@ def new_database(newdbname='pylogdb.sqlite3'):
 # File stuff -------------------------------------------------------------------
 @bottle.route('/static/:filename#.*#')
 def static_file(filename):
-    bottle.send_file(filename, root='./static')
+  return bottle.static_file(filename, root='./static')
 
 
 # For testing only -------------------------------------------------------------
