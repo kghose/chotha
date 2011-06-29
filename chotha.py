@@ -325,7 +325,7 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
   #This allows us to select keywords as a comma separated list
   query = 'SELECT * FROM notes '
   arg_list = []
-  search_text = search_text.strip()
+  #search_text = search_text.strip()
   if search_text != '':
     query += ' WHERE (notes.title LIKE ? OR notes.body LIKE ?)'
     arg_list += ["%%%s%%" %search_text]
