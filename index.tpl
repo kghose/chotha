@@ -99,7 +99,14 @@ Editing <b>{{note['title']}}</b>
 <div class="content">
 %if note != None:
   <div class='date'>{{note['date']}}</div>
+%if note['source_id'] == None:  
   <div class='title'>{{note['title']}}</div>
+%else:
+	<span class='itemid'><a href="/edit/{{note['id']}}" title="Click to edit note">note:{{note['id']}}</a></span>
+	<span class='itemid'><a href="/source/{{note['source_id']}}" title="Click to see source">Source</a></span>
+  <div class='sourcetitle'>{{note['title']}}</div>
+%end  
+  
   <p>{{!note['html']}}</p>
   <p><div class='key_list'>{{note['key_list']}}</div></p>  
   <div align="right"><a href="/edit/{{note['id']}}">edit</a></div>
@@ -160,6 +167,7 @@ doi <input type="text" size=20 name="doi" title="doi" value="{{source['doi']}}"
 %elif view=='source': #Show us the edited source only
 <div class="content">
 	<span class='itemid'><a href="/editsource/{{source['id']}}" title="Click to edit">{{source['citekey']}}</a></span>
+	<span class='itemid'><a href="/note/{{source['nid']}}" title="Click to see notes">note:{{source['nid']}}</a></span>
 	<div class='sourcetitle'>{{source['title']}}</div>
 
 %if source['source_type'] == 'article':
