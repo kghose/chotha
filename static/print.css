@@ -1,0 +1,17 @@
+.keywords-pane {
+	display: none;
+}
+
+.nav-pane {
+	display: none;
+}
+
+.content {
+	position: relative;
+	left:10%;
+	width: 80%;
+}
+
+.key_list {
+	position: relative;
+}

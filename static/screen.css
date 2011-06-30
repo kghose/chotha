@@ -1,0 +1,136 @@
+body {
+	font-family:"Century Gothic";
+	font-size: 12pt;
+  background-color: #fff; 
+	color: #333;
+	text-align:center;
+	}
+
+h1 {
+	font-size: 13pt;	
+}
+
+h2 {
+	font-size: 12pt;	
+}
+
+.keywords-pane {
+	position: absolute;
+	float:left;
+	left:10px;
+	width:20%;
+	border-right:solid;
+	padding:20px;
+	text-align: left;
+	font-size: 10pt;
+	background-color: yellow;
+}
+
+.keywords-pane a:link {text-decoration: none; color: black;}
+.keywords-pane a:visited {text-decoration: none; color: black;}
+.keywords-pane a:hover {text-decoration: none; color: black; background-color: white;}
+
+.nav-pane {
+	position: absolute;
+	float:right;
+	right:10px;
+	width:20%;
+	border-left:solid;
+	padding:20px;
+	text-align: left;
+	font-size: 10pt;
+	background-color: yellow;
+}
+
+.nav-pane a:link {text-decoration: none; color: black;}
+.nav-pane a:visited {text-decoration: none; color: black;}
+.nav-pane a:hover {text-decoration: none; background-color: yellow;}
+
+.entry {
+  width: 100%; /*dynamic with div size*/
+}
+
+.content {
+	position: relative;
+	left:25%;
+
+	width: 12cm;
+
+	margin-top: 20px;
+	margin-left:2em;
+	margin-right:2em;
+
+	padding-bottom: 20px;
+
+	font-family:"Century Gothic";	
+	font-size: 11pt;
+  text-align: left;
+}
+
+.itemid-box {
+	position: absolute;
+	right:0px;
+	top:0px;
+}
+.itemid {
+	border:solid;
+	border-width:thin;
+	padding-left:.2em;
+	padding-right:.2em;
+	font-size:7pt;
+	font-weight: bold;
+	width:auto;
+	background-color: aqua;
+}
+
+.itemid a:link {text-decoration: none; color: black;}
+.itemid a:visited {text-decoration: none; color: black;}
+.itemid a:hover {text-decoration: none; background-color: yellow;}
+
+
+.title {
+	width: 100%;
+	font-size:large;
+	font-weight: bold;
+	border-bottom: 1px dotted #ba0000;
+}
+
+.title a:link {text-decoration: none; color: black;}
+.title a:visited {text-decoration: none; color: black;}
+.title hover {text-decoration: none; background-color: yellow;}
+
+.sourcetitle {
+	font-size:10pt;
+	font-weight: bold;
+	border-left: 1px dotted #ba0000;
+	border-bottom: 1px dotted #ba0000;	
+	color: black;
+	background-color: yellow;
+	padding: 5px;
+}
+
+.sourcetitle a:link {text-decoration: none; color: black;}
+.sourcetitle a:visited {text-decoration: none; color: black;}
+.sourcetitle hover {text-decoration: none; background-color: yellow;}
+
+.date {
+  font-weight: bold;
+	font-size: .8em;
+}
+
+.lastupdated {
+	text-align:right;
+  font-weight: bold;
+	font-size: .6em;
+}
+.lastupdated a:link {color: black;}
+.lastupdated a:visited {color: black;}
+
+.key_list {
+	position: absolute;
+	border-bottom: thin dotted;	
+	left: 0px;
+	bottom: 10px;
+	font-weight: bold;
+	font-size: 10px;
+}
