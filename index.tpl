@@ -41,7 +41,7 @@
 
 
 %if view=='list': #In the traditional list view we get the new item box 
-<div class='content'>
+<div class='content noprint'>
 <form action="/new" method="POST">
 <p><input type="text" name="title" class="entry" title="Note title or pubmed query">
 <input type="checkbox" name="ispaper" value='yes' />This is a paper</p>
