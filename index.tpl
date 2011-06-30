@@ -159,29 +159,38 @@ doi <input type="text" size=20 name="doi" title="doi" value="{{source['doi']}}"
 
 %elif view=='source': #Show us the edited source only
 <div class="content">
-	<span class='source-citekey'><a href="/editsource/{{source['id']}}" title="Click to edit">{{source['citekey']}}</a></span>
-	<span class='source-title'>{{source['title']}}</span>
+	<span class='itemid'><a href="/editsource/{{source['id']}}" title="Click to edit">{{source['citekey']}}</a></span>
+	<div class='sourcetitle'>{{source['title']}}</div>
 
 %if source['source_type'] == 'article':
-	<span class='source-journal'>
-	{{source['journal']}} {{source['year']}} {{source['month']}} n{{source['number']}}
-	v{{source['volume']}} pp{{source['pages']}}
+	<span class='sourcejournal'>
+	{{source['journal']}} {{source['month']}} {{source['year']}}, 
+	n<b>{{source['number']}}</b>
+	v<b>{{source['volume']}}</b> pp{{source['pages']}}
+	</span>
+%elif source['source_type'] == 'book':
+	<span class='sourcejournal'>
+	{{source['booktitle']}} {{source['publisher']}}, {{source['address']}}, {{source['year']}}
 	</span>
 %end
 
-	<span class='source-authors'>
+	<span class='sourceauthors'>
 	{{source['author']}}
 	</span>
 
 %if source['source_type'] == 'inbook':
-	in <span class='source-title'>{{source['booktitle']}}</span>
+	in <span class='sourcejournal'>{{source['booktitle']}}</span>
 	Eds.
-	<span class='source-authors'>
+	<span class='sourceauthors'>
 	{{source['editors']}}
 	</span>
 %end
+
+%if source['source_type'] == 'article':
   <h2>Abstract</h2>
-  <p>{{source['abstract']}}</p>  
+  <p>{{source['abstract']}}</p>
+%end
+  
 </div>
 %end
 
