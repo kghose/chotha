@@ -159,8 +159,29 @@ doi <input type="text" size=20 name="doi" title="doi" value="{{source['doi']}}"
 
 %elif view=='source': #Show us the edited source only
 <div class="content">
-  <div class='title'><a href="/editsource/{{source['id']}}" title="Click to edit">{{source['title']}}</a></div>
-  <p>{{source['abstract']}}</p>
+	<span class='source-citekey'><a href="/editsource/{{source['id']}}" title="Click to edit">{{source['citekey']}}</a></span>
+	<span class='source-title'>{{source['title']}}</span>
+
+%if source['source_type'] == 'article':
+	<span class='source-journal'>
+	{{source['journal']}} {{source['year']}} {{source['month']}} n{{source['number']}}
+	v{{source['volume']}} pp{{source['pages']}}
+	</span>
+%end
+
+	<span class='source-authors'>
+	{{source['author']}}
+	</span>
+
+%if source['source_type'] == 'inbook':
+	in <span class='source-title'>{{source['booktitle']}}</span>
+	Eds.
+	<span class='source-authors'>
+	{{source['editors']}}
+	</span>
+%end
+  <h2>Abstract</h2>
+  <p>{{source['abstract']}}</p>  
 </div>
 %end
 
