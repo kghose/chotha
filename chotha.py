@@ -481,7 +481,7 @@ def show_source_page(id):
   return output
 
 @route('/sourcecitekey/:citekey')
-def show_source_page(citekey):
+def show_source_page_citekey(citekey):
 
   source = fetch_single_source_by_citekey(citekey)
   output = template('index', source=source,
