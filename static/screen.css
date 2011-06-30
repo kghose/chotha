@@ -113,6 +113,17 @@ h2 {
 .sourcetitle a:visited {text-decoration: none; color: black;}
 .sourcetitle hover {text-decoration: none; background-color: yellow;}
 
+.sourcejournal {
+	font-size:10pt;
+	font-weight: bold;
+}
+
+.sourceauthors {
+	font-size:10pt;
+	font-style: italic;
+}
+
+
 .date {
   font-weight: bold;
 	font-size: .8em;
