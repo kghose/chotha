@@ -40,7 +40,7 @@ class escapeLaTeXPattern(markdown.inlinepatterns.Pattern):
     """Markdown regexp processes the whole block, and so out regexp match is
     group(2)."""
     el = markdown.etree.Element('span')
-    el.text = markdown.AtomicString("$" + m.group(2) + "$")
+    el.text = markdown.AtomicString("`" + m.group(2) + "`")
     return el
 
 def makeExtension(configs=None):
