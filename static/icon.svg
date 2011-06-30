@@ -16,8 +16,8 @@
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="icon.svg"
    inkscape:export-filename="/Users/kghose/Source/Chotha/static/icon.png"
-   inkscape:export-xdpi="300"
-   inkscape:export-ydpi="300">
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -27,16 +27,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.64"
-     inkscape:cx="105.46803"
-     inkscape:cy="313.73001"
+     inkscape:zoom="0.45254834"
+     inkscape:cx="-17.867744"
+     inkscape:cy="173.48856"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1148"
      inkscape:window-height="696"
-     inkscape:window-x="168"
-     inkscape:window-y="48"
+     inkscape:window-x="1386"
+     inkscape:window-y="199"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -54,7 +54,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -64,12 +64,12 @@
      id="layer1"
      transform="translate(0,-540.36218)">
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:10.62992095999999975;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:#fff900;fill-opacity:1;stroke:none"
        id="rect3784-4"
-       width="501.12097"
-       height="500.879"
-       x="546.23999"
-       y="-506.1319"
+       width="512.1236"
+       height="511.87637"
+       x="540.23853"
+       y="-512.13049"
        transform="matrix(-2.414629e-4,0.99999997,-0.99999997,-2.414629e-4,0,0)"
        ry="71.325729"
        rx="69.6362" />
