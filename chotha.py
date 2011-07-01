@@ -530,7 +530,7 @@ def edit_note(id=None):
 @route('/editsource/:id')
 def edit_source(id=None):
   
-  source = dbq('SELECT * FROM sources WHERE id LIKE ?', (id,))[0]
+  source = dbq('SELECT sources.*,notes.id AS nid FROM sources,notes WHERE sources.id LIKE ? AND notes.source_id = sources.id', (id,))[0]
   output = template('index', source=source,
                     title='Editing %s' %source['citekey'], view='editsource')
   return output
