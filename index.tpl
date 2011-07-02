@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Chotha (চোথা) {{title}}</title>
+<title>চোথা {{title}}</title>
 <link rel="shortcut icon" href="/static/shortcut_icon.png" />
 <script type="text/javascript" src="/static/asciiMathML.js"></script>
 <!--<script type="text/javascript" src="/static/LaTeXMathML.js"></script>-->
