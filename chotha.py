@@ -323,6 +323,7 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
     
   """
   #This allows us to select keywords as a comma separated list
+  #query = 'SELECT id,title,date,key_list,source_id,SUBSTR(body,0,500) AS body FROM notes '
   query = 'SELECT * FROM notes '
   arg_list = []
   #search_text = search_text.strip()
@@ -558,6 +559,7 @@ def save_source_action():
     if val != None:
       source[f] = unicode(val.strip(),'utf_8')
   save_source(source)
+  source = fetch_single_source(source['id']) #We need the note id
   output = template('index', source=source,
                     title='Saved %s' %source['citekey'], view='source')  
   return output
