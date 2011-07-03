@@ -138,7 +138,7 @@ h2 {
 .lastupdated a:visited {color: black;}
 
 .key_list {
-	position: absolute;
+	position: relative;
 	border-bottom: thin dotted;	
 	left: 0px;
 	bottom: 10px;
