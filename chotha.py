@@ -445,6 +445,8 @@ def index_page():
     if search_text != '':
       title += '+'
     title += cskeyword_list
+  if title == '':
+    title = 'Home'
   output = template('index', rows=rows, candidate_keywords=candidate_keywords, 
                     cskeyword_list = cskeyword_list,
                     search_text = search_text,
