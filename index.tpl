@@ -59,13 +59,24 @@
 
 %if row['source_id'] != None:  
   <div class='itemid-box'>
-  <span class="itemid"><a href="/note/{{row['id']}}" title="Go to note">{{'note:%d' %row['id']}}</a></span>
-  <span class="itemid"><a href="/source/{{row['source_id']}}" title="Go to citation">{{'s%04d' %row['source_id']}}</a></span>
+  <div>Source 
+  <span>
+  <br/><a href="/note/{{row['id']}}" title="Go to note">Show note</a>
+  <br/><a href="/source/{{row['source_id']}}" title="Go to citation">Show source</a>
+  <br/><a href="/edit/{{row['id']}}" title="Go to citation">Edit note</a>
+  <br/><a href="/editsource/{{row['source_id']}}" title="Go to citation">Edit source</a>
+  </span>
+	</div>
   </div>
   <div class='sourcetitle'>{{row['title']}}</div>
 %else:
   <div class='itemid-box'>
-  <span class="itemid"><a href="/note/{{row['id']}}" title="Go to note">{{'note:%d' %row['id']}}</a></span>
+  <div>{{'note:%d' %row['id']}}
+  <span>
+  <br/><a href="/note/{{row['id']}}" title="Go to note">show</a>
+  <br/><a href="/edit/{{row['id']}}" title="Go to note">edit</a>
+  </span>
+  </div>
   </div>
   <div class='title'>{{row['title']}}</div>
 %end

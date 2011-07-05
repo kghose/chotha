@@ -71,7 +71,23 @@ h2 {
 	position: absolute;
 	right:0px;
 	top:0px;
+	border:solid;
+	border-width:thin;
+	padding-left:.2em;
+	padding-right:.2em;
+	font-size:7pt;
+	font-weight: bold;
+	width:auto;
+	background-color: aqua;
 }
+
+.itemid-box div span {display: none;}
+.itemid-box div:hover span {display: inline;}
+
+.itemid-box a:link {text-decoration: none; color: black;}
+.itemid-box a:visited {text-decoration: none; color: black;}
+.itemid-box a:hover {text-decoration: none; background-color: yellow;}
+
 .itemid {
 	border:solid;
 	border-width:thin;
@@ -87,6 +103,7 @@ h2 {
 .itemid a:visited {text-decoration: none; color: black;}
 .itemid a:hover {text-decoration: none; background-color: yellow;}
 
+   
 
 .title {
 	width: 100%;
