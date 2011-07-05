@@ -110,11 +110,25 @@ Editing <b>{{note['title']}}</b>
 <div class="content">
 %if note != None:
   <div class='date'>{{note['date']}}</div>
-%if note['source_id'] == None:  
+%if note['source_id'] == None:
+  <div class='itemid-box'>
+  <div>note:{{note['id']}}
+  <span>
+  <br/><a href="/edit/{{note['id']}}" title="Go to citation">Edit note</a>
+  </span>
+	</div>
+  </div>
   <div class='title'>{{note['title']}}</div>
 %else:
-	<span class='itemid'><a href="/edit/{{note['id']}}" title="Click to edit note">note:{{note['id']}}</a></span>
-	<span class='itemid'><a href="/source/{{note['source_id']}}" title="Click to see source">Source</a></span>
+  <div class='itemid-box'>
+  <div>Source 
+  <span>
+  <br/><a href="/source/{{note['source_id']}}" title="Go to citation">Show source</a>
+  <br/><a href="/edit/{{note['id']}}" title="Go to citation">Edit note</a>
+  <br/><a href="/editsource/{{note['source_id']}}" title="Go to citation">Edit source</a>
+  </span>
+	</div>
+  </div>
   <div class='sourcetitle'>{{note['title']}}</div>
 %end  
   
@@ -177,8 +191,16 @@ doi <input type="text" size=20 name="doi" title="doi" value="{{source['doi']}}"
 
 %elif view=='source': #Show us the edited source only
 <div class="content">
-	<span class='itemid'><a href="/editsource/{{source['id']}}" title="Click to edit">{{source['citekey']}}</a></span>
-	<span class='itemid'><a href="/note/{{source['nid']}}" title="Click to see notes">note:{{source['nid']}}</a></span>
+	<br/> <!-- Need this for proper spacing -->
+  <div class='itemid-box'>
+  <div>{{source['citekey']}} 
+  <span>
+  <br/><a href="/note/{{source['nid']}}" title="Go to note">Show note</a>
+  <br/><a href="/edit/{{source['nid']}}" title="Go to citation">Edit note</a>
+  <br/><a href="/editsource/{{source['id']}}" title="Go to citation">Edit source</a>
+  </span>
+	</div>
+  </div>
 	<div class='sourcetitle'>{{source['title']}}</div>
 
 %if source['source_type'] == 'article':
