@@ -216,7 +216,10 @@ doi <input type="text" size=20 name="doi" title="doi" value="{{source['doi']}}"
 %end
 
 	<span class='sourceauthors'>
-	{{source['author']}}
+%for au in source['author'].split('\n'):
+% nm = au.split(',')
+{{nm[1]}} {{nm[0]}},
+%end
 	</span>
 
 %if source['source_type'] == 'inbook':
