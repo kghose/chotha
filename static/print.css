@@ -9,6 +9,7 @@
 .content {
 	position: relative;
 	left:10%;
+	margin-left:2em;
 	width: 80%;
 	widows:4;
   orphans:4;

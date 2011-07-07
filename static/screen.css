@@ -23,7 +23,7 @@ h2 {
 	padding:20px;
 	text-align: left;
 	font-size: 10pt;
-	background-color: yellow;
+	background-color: bisque;
 }
 
 .keywords-pane a:link {text-decoration: none; color: black;}
@@ -39,7 +39,7 @@ h2 {
 	padding:20px;
 	text-align: left;
 	font-size: 10pt;
-	background-color: yellow;
+	background-color: bisque;
 }
 
 .nav-pane a:link {text-decoration: none; color: black;}
@@ -52,12 +52,12 @@ h2 {
 
 .content {
 	position: relative;
-	left:25%;
+	left:50%;
 
 	width: 12cm;
 
 	margin-top: 20px;
-	margin-left:2em;
+	margin-left:-6cm;
 	margin-right:2em;
 
 	padding-bottom: 20px;
@@ -123,7 +123,7 @@ h2 {
 	border-left: 1px dotted #ba0000;
 	border-bottom: 1px dotted #ba0000;	
 	color: black;
-	background-color: yellow;
+	background-color: olive;
 	padding: 5px;
 }
 
