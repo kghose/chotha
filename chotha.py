@@ -423,7 +423,11 @@ def save_source(source):
   dbq(query, bindings)
 
 # Common use pages -------------------------------------------------------------
-  
+def wtemplate(tmplt,**kwargs):
+  """Needed a wrapper to the template call to include common options etc."""
+  kwargs['desktop_cskeyword_list'] = config.get('User','desktop')
+  return template(tmplt,**kwargs)
+
 @route('/')  
 def index_page():
   """Main page served by chotha. If called by itself it pulls out all the notes
@@ -447,7 +451,7 @@ def index_page():
     title += cskeyword_list
   if title == '':
     title = 'Home'
-  output = template('index', rows=rows, candidate_keywords=candidate_keywords, 
+  output = wtemplate('index', rows=rows, candidate_keywords=candidate_keywords, 
                     cskeyword_list = cskeyword_list,
                     search_text = search_text,
                     page = page,
@@ -460,7 +464,7 @@ def index_page():
 def show_note_page(id):
   note = fetch_single_note(id)
   title = note['title']
-  output = template('index', note=note, 
+  output = wtemplate('index', note=note, 
                     title=title,
                     view='note')
   return output
@@ -479,15 +483,16 @@ def export_sources_from_note(id):
 def show_source_page(id):
 
   source = fetch_single_source(id)
-  output = template('index', source=source,
-                    title='%s' %source['citekey'], view='source')
+  output = wtemplate('index', source=source,
+                    title='%s' %source['citekey'], 
+                    view='source')
   return output
 
 @route('/sourcecitekey/:citekey')
 def show_source_page_citekey(citekey):
 
   source = fetch_single_source_by_citekey(citekey)
-  output = template('index', source=source,
+  output = wtemplate('index', source=source,
                     title='%s' %source['citekey'], view='source')
   return output
 
@@ -526,7 +531,7 @@ def create_note_action():
 def edit_note(id=None):
   
   note = fetch_single_note(id)
-  output = template('index', note=note, 
+  output = wtemplate('index', note=note, 
                     title='Editing %s' %note['title'], view='edit')
   return output
 
@@ -534,7 +539,7 @@ def edit_note(id=None):
 def edit_source(id=None):
   
   source = dbq('SELECT sources.*,notes.id AS nid FROM sources,notes WHERE sources.id LIKE ? AND notes.source_id = sources.id', (id,))[0]
-  output = template('index', source=source,
+  output = wtemplate('index', source=source,
                     title='Editing %s' %source['citekey'], view='editsource')
   return output
   
@@ -548,7 +553,7 @@ def save_note_action(id=None):
   note = {'id': int(id), 'date': date, 'title': title, 'body': body, 'key_list': key_list}
   save_note(note)
   note = fetch_single_note(note['id'])
-  output = template('index', note=note,
+  output = wtemplate('index', note=note,
                     title='Saved %s' %note['title'], view='note')  
   return output
 
@@ -562,7 +567,7 @@ def save_source_action():
       source[f] = unicode(val.strip(),'utf_8')
   save_source(source)
   source = fetch_single_source(source['id']) #We need the note id
-  output = template('index', source=source,
+  output = wtemplate('index', source=source,
                     title='Saved %s' %source['citekey'], view='source')  
   return output
 
@@ -573,7 +578,7 @@ def refetch_source_action():
   source = populate_new_source_from_pubmed_query(query)
   source['id'] = id #Need if before we can generate citekey  
   source['citekey'] = generate_citekey(source)
-  output = template('index', source=source,
+  output = wtemplate('index', source=source,
                     title='Editing %s' %source['citekey'], view='editsource')
   return output
 
@@ -587,6 +592,9 @@ def create_default_config_file():
   config.add_section('Advanced')  
   config.set('Advanced', 'debug', 'True')
   config.set('Advanced', 'reloader', 'True')
+  
+  config.add_section('User')
+  config.set('User','desktop','')
   
   with open('chotha.cfg', 'wb') as configfile:
     config.write(configfile)  
@@ -617,6 +625,13 @@ def new_database(newdbname='pylogdb.sqlite3'):
   config.set('Basic', 'dbname', newdbname)
   save_config()
   return index()
+
+@route('/options/setdesktop/')
+def set_desktop():
+  cskeyword_list = request.GET.get('cskeyword_list', '')
+  config.set('User', 'desktop', cskeyword_list)
+  save_config()
+  return index_page()
 
 # File stuff -------------------------------------------------------------------
 @bottle.route('/static/:filename#.*#')

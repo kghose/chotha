@@ -35,8 +35,15 @@
 </div> <!-- keywords pane -->
 %end #If view=='list'
 
-<div class='nav-pane'>
-<a href="/">Home</a> <a href="/static/abouthelp.html">Help/About</a>
+<div class='nav-pane'> 
+%query = [('cskeyword_list',desktop_cskeyword_list)]
+<a href="/?{{urllib.urlencode(query)}}" title="Go to the desktop">Desktop</a> 
+%if view == 'list':
+%query = [('cskeyword_list',cskeyword_list)]
+(<a href="/options/setdesktop/?{{urllib.urlencode(query)}}" title="Set this keyword combination as desktop">Set</a>)
+%end
+<br/><a href="/">Home</a> 
+<br/><a href="/static/abouthelp.html">Help/About</a>
 </div> <!-- 'nav-pane' -->
 
 
