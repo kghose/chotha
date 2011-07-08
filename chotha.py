@@ -628,11 +628,21 @@ def new_database(newdbname='pylogdb.sqlite3'):
 
 @route('/options/setdesktop/')
 def set_desktop():
+  """Set the current keyword conjunction list as the desktop. Passed in via GET."""
   cskeyword_list = request.GET.get('cskeyword_list', '')
   config.set('User', 'desktop', cskeyword_list)
   save_config()
   return index_page()
 
+@route('/config')
+def show_config_page():
+  """Show a page with some configuration data and some simple stats."""
+  dbinfo = {}
+  dbinfo['note count'] = dbq("SELECT COUNT(id) FROM NOTES WHERE source_id IS NULL")[0]["COUNT(id)"]
+  dbinfo['source count'] = dbq("SELECT COUNT(id) FROM NOTES WHERE source_id IS NOT NULL")[0]["COUNT(id)"]
+  dbinfo['sqlite version'] = apsw.sqlitelibversion()
+  return template('config', dbinfo=dbinfo, config=config)
+  
 # File stuff -------------------------------------------------------------------
 @bottle.route('/static/:filename#.*#')
 def static_file(filename):
