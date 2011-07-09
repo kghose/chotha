@@ -1,7 +1,8 @@
 <!-- This gadget allows us to select date ranges -->
+
 %import urllib, datetime
 
-<table width="100">
+<table>
 %for year in range(drd['end year'],drd['start year']-1,-1):
 <tr>
 <td>{{year}}</td>
@@ -21,9 +22,9 @@
 %					('search_text', search_text), \
 %         ('start_date',current_start_date), ('end_date',this_date)]
 
-<td bgcolor="{{color}}" nowrap color="{{color}}"><span>
+<td bgcolor="{{color}}" nowrap color="{{color}}">
 <a href="/?{{urllib.urlencode(query1)}}">[</a>
-<a href="/?{{urllib.urlencode(query2)}}">]</a></span>
+<a href="/?{{urllib.urlencode(query2)}}">]</a>
 </td>
 %end
 </tr>
