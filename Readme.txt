@@ -71,6 +71,15 @@ and not have annoying duplicate entries in the table
 
 Todo:
 
+* Break up index.tpl into sub templates - pass data using dicts
+* (not doing) Add a 'window' parameter to date selector, and have fwd,bkwd buttons? 
+* (done) Restrict returned notes by date (have two columns, start and end date)
+* About should show some db stats and db location etc.
+* (done) Desktop feature, that allows us to store a keyword conjunction that opens when
+  we go 'home'. Store it in config. Basically a way to collect all our current notes
+  together as we work on it.
+* Add table + directory to store svg sketches that can be inserted into notes
+* Integrate svg-edit with the app so we can create SVGs on the fly.
 * (done - apsw apparently has this activated) Enable FTS in sqlite install
 * Modify db to use FTS
 * (done in a way) Search (notes and papers) just retrieves basic information, clicking on
@@ -83,7 +92,7 @@ Todo:
 * (done) Test new database format using dummy database
 * (done) Convert rriki db to chotha format
 * Implement sensible paging, based on date/year for eg
-* make the jumping between note and citation data cleaner
+* (done) make the jumping between note and citation data cleaner
 * (done) On sources edit page make a "refetch" button where you can put a query in and
   refetch the citation data
 
