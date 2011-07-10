@@ -32,7 +32,7 @@ h2 {
 	left:10px;
 	width:20%;
 }
-.keywords-pane input {margin-top:10px;}
+.keywords-pane input {margin-top:10px;border-radius: 5px;}
 
 .nav-pane {
 	float:right;
@@ -64,6 +64,9 @@ h2 {
 	font-size: 11pt;
   text-align: left;
 }
+
+.content input {border-radius: 5px;}
+.content textarea {border-radius: 5px;}
 
 .newentry {
 	padding-top:0px;
