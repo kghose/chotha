@@ -11,7 +11,7 @@
 <body>
 %import urllib, datetime
 
-<div class='keywords-pane'>
+<div class='pane keywords-pane'>
 %query = [('cskeyword_list',desktop_cskeyword_list)]
 <a href="/?{{urllib.urlencode(query)}}" title="Go to the desktop">Desktop</a> 
 <br/><a href="/">Home</a> 
@@ -46,10 +46,10 @@
 %end #If view=='list'
 </div> <!-- keywords pane -->
 
-<div class='nav-pane'> 
+<div class='pane nav-pane'> 
 %if view=='list':
-<p>{{start_date}} to {{end_date}}<br/>
-<b>{{len(rows)}} notes and sources</b></p>
+{{start_date}} to {{end_date}}<br/>
+<b>{{len(rows)}} notes and sources</b></br></br>
 
 %dd = datetime.timedelta(weeks=-52)
 
@@ -69,7 +69,7 @@
 
 
 %if view=='list': #In the traditional list view we get the new item box 
-<div class='content noprint'>
+<div class='content newentry noprint'>
 <form action="/new" method="POST">
 <p><input type="text" name="title" class="entry" title="Note title or pubmed query">
 <input type="checkbox" name="ispaper" value='yes' />This is a paper</p>

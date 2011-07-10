@@ -14,37 +14,33 @@ h2 {
 	font-size: 12pt;	
 }
 
-.keywords-pane {
+.pane {
 	position: absolute;
+	padding:20px;
+	text-align: left;
+	font-size: 10pt;
+	border-radius: 15px;
+	border-color:gray;
+	background-color: lightgray;
+}		
+
+.pane a:link {text-decoration: none; color: black;}
+.pane a:visited {text-decoration: none; color: black;}
+.pane a:hover {text-decoration: none; color: black; background-color: white;}
+
+.keywords-pane {
 	float:left;
 	left:10px;
 	width:20%;
-	border-right:solid;
-	padding:20px;
-	text-align: left;
-	font-size: 10pt;
-	background-color: bisque;
 }
 
-.keywords-pane a:link {text-decoration: none; color: black;}
-.keywords-pane a:visited {text-decoration: none; color: black;}
-.keywords-pane a:hover {text-decoration: none; color: black; background-color: white;}
+.keywords-pane input {margin-top:10px;}
 
 .nav-pane {
-	position: absolute;
 	float:right;
 	right:10px;
-	width:20%;
-	border-left:solid;
-	padding:20px;
-	text-align: left;
-	font-size: 10pt;
-	background-color: bisque;
+	width:20%;	
 }
-
-.nav-pane a:link {text-decoration: none; color: black;}
-.nav-pane a:visited {text-decoration: none; color: black;}
-.nav-pane a:hover {text-decoration: none; background-color: yellow;}
 
 .entry {
   width: 100%; /*dynamic with div size*/
@@ -67,6 +63,10 @@ h2 {
   text-align: left;
 }
 
+.newentry {
+	padding-top:5px;
+}
+	
 .itemid-box {
 	position: absolute;
 	right:0px;
