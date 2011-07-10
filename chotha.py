@@ -449,6 +449,9 @@ def index_page():
   else:
     end_date = datetime.date.today()
     start_date = end_date - datetime.timedelta(days=7)
+  one_day = datetime.timedelta(days=1) #We want it to include everything upto the end of the day  
+  end_date += one_day
+  
   current_keywords = cskeystring_to_list(cskeyword_list)
   rows = fetch_notes_by_criteria(keywords = current_keywords, 
                                  search_text = search_text, 
