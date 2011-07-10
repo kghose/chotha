@@ -48,8 +48,8 @@
 
 <div class='nav-pane'> 
 %if view=='list':
-
-<h3>{{len(rows)}} notes and sources</h3>
+<p>{{start_date}} to {{end_date}}<br/>
+<b>{{len(rows)}} notes and sources</b></p>
 
 %dd = datetime.timedelta(weeks=-52)
 
