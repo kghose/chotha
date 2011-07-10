@@ -23,7 +23,6 @@ h2 {
 	border-color:gray;
 	background-color: lightgray;
 }		
-
 .pane a:link {text-decoration: none; color: black;}
 .pane a:visited {text-decoration: none; color: black;}
 .pane a:hover {text-decoration: none; color: black; background-color: white;}
@@ -33,7 +32,6 @@ h2 {
 	left:10px;
 	width:20%;
 }
-
 .keywords-pane input {margin-top:10px;}
 
 .nav-pane {
@@ -41,7 +39,11 @@ h2 {
 	right:10px;
 	width:20%;	
 }
-
+.date-column {
+	float: left;
+	margin-left: 10px;
+}
+	
 .entry {
   width: 100%; /*dynamic with div size*/
 }
@@ -64,7 +66,7 @@ h2 {
 }
 
 .newentry {
-	padding-top:5px;
+	padding-top:0px;
 }
 	
 .itemid-box {
@@ -73,6 +75,7 @@ h2 {
 	top:0px;
 	border:solid;
 	border-width:thin;
+	border-radius: 5px;
 	padding-left:.2em;
 	padding-right:.2em;
 	text-align:right;
@@ -120,8 +123,9 @@ h2 {
 .sourcetitle {
 	font-size:10pt;
 	font-weight: bold;
-	border-left: 1px dotted #ba0000;
-	border-bottom: 1px dotted #ba0000;	
+	/*border-left: 1px dotted #ba0000;
+	border-bottom: 1px dotted #ba0000;*/
+	border-radius: 10px;
 	color: black;
 	background-color: lemonchiffon;
 	padding: 5px;
