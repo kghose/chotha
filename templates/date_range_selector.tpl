@@ -4,8 +4,8 @@
 %from calendar import monthrange
 
 %sel_year = end_date.year
-%sel_month = end_date.month
-%sel_day = end_date.day
+%sel_month1 = end_date.month
+%sel_month2 = start_date.month
 
 <!-- years -->
 <div class="date-column">
@@ -40,7 +40,7 @@ Month</br>
 %					('search_text', search_text), \
 %         ('start_date',this_start_date), ('end_date',this_end_date)]
 
-%if month == sel_month:
+%if month >= sel_month2 and month <= sel_month1:
 <a href="/?{{urllib.urlencode(query1)}}"><b>{{month}}</b></a></br>
 %else:
 <a href="/?{{urllib.urlencode(query1)}}">{{month}}</a></br>
