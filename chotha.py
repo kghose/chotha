@@ -13,6 +13,7 @@ logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 logger.addHandler(ch)
 
+# Database operations ---------------------------------------------------------
 def dbq(query, bindings = [], many = False, conn = None):
   """Utility function to handle db queries. Based on query type, the function
   returns last rowid or rows (which is a list of dictionaries)"""
@@ -291,7 +292,7 @@ def fetch_single_source_by_citekey(citekey):
 
 # Search ops -------------------------------------------------------------------
 def fetch_notes_by_criteria(keywords = [], search_text = '',
-                            limit = 30, offset = 0):
+                            start_date = None, end_date = None):
   """Returns note summary via keyword intersection and search. If either is None,
   they are ignored. If both are None all notes are returned
   
@@ -323,20 +324,16 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
     
   """
   #This allows us to select keywords as a comma separated list
-  #query = 'SELECT id,title,date,key_list,source_id,SUBSTR(body,0,500) AS body FROM notes '
-  query = 'SELECT * FROM notes '
-  arg_list = []
+  query = 'SELECT * FROM notes WHERE (notes.date >= DATE(?) and notes.date <= DATE(?)) '
+  arg_list = [start_date, end_date]
   #search_text = search_text.strip()
   if search_text != '':
-    query += ' WHERE (notes.title LIKE ? OR notes.body LIKE ?)'
+    query += ' AND (notes.title LIKE ? OR notes.body LIKE ?) '
     arg_list += ["%%%s%%" %search_text]
     arg_list += ["%%%s%%" %search_text]
      
   if len(keywords) > 0:
-    if search_text != '':
-      query += ' AND '
-    else:
-      query += ' WHERE '
+    query += ' AND '
     key_query = ' k.name=? '
     arg_list += [keywords[0]]
     for n in range(1,len(keywords)):
@@ -348,8 +345,8 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
     WHERE kn.keyword_id IN 
     (SELECT k.id FROM keywords k WHERE %s) 
     GROUP BY kn.note_id HAVING COUNT(*) = %d)""" %(key_query,len(keywords))
-  query += ' GROUP BY notes.id ORDER BY date DESC LIMIT ? OFFSET ?'
-  arg_list += [limit,offset]
+  query += ' GROUP BY notes.id ORDER BY date DESC' #LIMIT ? OFFSET ?'
+  #arg_list += [limit,offset]
   return parse_notes(dbq(query, arg_list))
 
 def populate_new_source_from_pubmed_query(query):
@@ -421,12 +418,22 @@ def save_source(source):
     bindings.append(source[fields[n]])
   bindings.append(source['id'])
   dbq(query, bindings)
+# Utility functions ------------------------------------------------------------
+def daterangedata():
+  """This function returns us a dictionary that the daterange gadget can use."""
+  ret = dbq('SELECT MIN(date) AS start,MAX(date) AS end FROM notes')[0]
+  drd = {}
+  drd['start year'] = int(ret['start'][:4])
+  drd['end year'] = int(ret['end'][:4])#datetime.date.today().year
+  return drd
 
-# Common use pages -------------------------------------------------------------
 def wtemplate(tmplt,**kwargs):
   """Needed a wrapper to the template call to include common options etc."""
   kwargs['desktop_cskeyword_list'] = config.get('User','desktop')
+  kwargs['daterangedata'] = daterangedata()
   return template(tmplt,**kwargs)
+
+# Common use pages -------------------------------------------------------------
 
 @route('/')  
 def index_page():
@@ -434,13 +441,16 @@ def index_page():
   and papers in reverse time order, showing the  ."""
   search_text = request.GET.get('search_text', '')
   cskeyword_list = request.GET.get('cskeyword_list', '')
-  page = int(request.GET.get('page', 0))
-  perpage = int(request.GET.get('perpage', 30))
-  offset = page * perpage
-  limit = perpage
+#  page = int(request.GET.get('page', 0))
+#  perpage = int(request.GET.get('perpage', 30))
+#  offset = page * perpage
+#  limit = perpage
+  end_date = datetime.datetime.strptime(request.GET.get('end_date', '2011-12-31'),'%Y-%m-%d').date()
+  start_date = datetime.datetime.strptime(request.GET.get('start_date', '2011-01-01'),'%Y-%m-%d').date()
   current_keywords = cskeystring_to_list(cskeyword_list)
   rows = fetch_notes_by_criteria(keywords = current_keywords, 
-                                 search_text = search_text, limit=limit, offset=offset)
+                                 search_text = search_text, 
+                                 start_date=start_date.isoformat(), end_date=end_date.isoformat())
   candidate_keywords = fetch_conjunction_candidates(current_keywords)
   title = ''
   if search_text != '':
@@ -454,8 +464,8 @@ def index_page():
   output = wtemplate('index', rows=rows, candidate_keywords=candidate_keywords, 
                     cskeyword_list = cskeyword_list,
                     search_text = search_text,
-                    page = page,
-                    perpage = perpage,
+                    start_date = start_date,
+                    end_date = end_date,
                     title = title,
                     view='list')
   return output

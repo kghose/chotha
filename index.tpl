@@ -9,19 +9,29 @@
 <link rel="stylesheet" href="/static/print.css" type="text/css" media="print" />
 </head>
 <body>
-%import urllib
+%import urllib, datetime
 
-%if view=='list': #In the traditional list view we see the keyword list
 <div class='keywords-pane'>
+%query = [('cskeyword_list',desktop_cskeyword_list)]
+<a href="/?{{urllib.urlencode(query)}}" title="Go to the desktop">Desktop</a> 
+<br/><a href="/">Home</a> 
+<br/><a href="/static/abouthelp.html">Help/About</a>
+
+%if view=='list': #In the traditional list view we see the search box and keyword list
+
 %query = [('cskeyword_list', cskeyword_list), \
-%         ('page',0), ('perpage',perpage)]
+%         ('start_date',start_date), ('end_date',end_date)]
 <form action="/?{{urllib.urlencode(query)}}" method="GET">
 <input class="entry" type="text" size=20 name="search_text" title="Search" value="{{search_text}}">
+<!-- These need to be passed too, secretly -->
 <input type="hidden" name="cskeyword_list" value="{{cskeyword_list}}">
-<input type="hidden" name="perpage" value={{perpage}}>
+<input type="hidden" name="start_date" value="{{start_date}}">
+<input type="hidden" name="end_date" value="{{end_date}}">
 </form>
 %if cskeyword_list != '':
 {{'+' + cskeyword_list}}
+%query = [('cskeyword_list',cskeyword_list)]
+(<a href="/options/setdesktop/?{{urllib.urlencode(query)}}" title="Set this keyword combination as desktop">Set as desktop</a>)
 <hr/>
 %end
 
@@ -29,21 +39,32 @@
 %for keyword in candidate_keywords:
 %query = [('cskeyword_list',pre.encode('utf-8') + keyword['name'].encode('utf-8')), \
 %         ('search_text', search_text.encode('utf-8')), \
-%         ('perpage',perpage)]
+%         ('start_date',start_date), ('end_date',end_date)]
 <a href="/?{{urllib.urlencode(query)}}">{{keyword['name']}}</a> 
 %end
-</div> <!-- keywords pane -->
+
 %end #If view=='list'
+</div> <!-- keywords pane -->
 
 <div class='nav-pane'> 
-%query = [('cskeyword_list',desktop_cskeyword_list)]
-<a href="/?{{urllib.urlencode(query)}}" title="Go to the desktop">Desktop</a> 
-%if view == 'list':
-%query = [('cskeyword_list',cskeyword_list)]
-(<a href="/options/setdesktop/?{{urllib.urlencode(query)}}" title="Set this keyword combination as desktop">Set</a>)
+%if view=='list':
+
+<h3>{{len(rows)}} notes and sources</h3>
+
+%dd = datetime.timedelta(weeks=-52)
+
+%for year in range(daterangedata['end year'],daterangedata['start year']-1,-1):
+
+%end_date = datetime.date(year=year,month=12,day=31)
+%start_date = end_date + dd
+%query1 = [('cskeyword_list', cskeyword_list), \
+%					('search_text', search_text), \
+%         ('start_date',start_date), ('end_date',end_date)]
+
+<a href="/?{{urllib.urlencode(query1)}}">{{year}}</a></br>
 %end
-<br/><a href="/">Home</a> 
-<br/><a href="/static/abouthelp.html">Help/About</a>
+
+%end
 </div> <!-- 'nav-pane' -->
 
 
@@ -60,6 +81,7 @@
 %end #If view=='list'
 
 %if view=='list': #Show us the traditional list view
+
 %for row in rows:
 <div class="content">
   <div class='date'>{{row['nicedate']}}</div>
