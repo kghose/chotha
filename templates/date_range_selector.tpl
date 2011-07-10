@@ -10,6 +10,13 @@
 <!-- years -->
 <div class="date-column">
 Year</br>
+%this_end_date = datetime.date(year=daterangedata['end year'],month=12,day=31)
+%this_start_date = datetime.date(year=daterangedata['start year'],month=1,day=1)
+%query1 = [('cskeyword_list', cskeyword_list), \
+%					('search_text', search_text), \
+%         ('start_date',this_start_date), ('end_date',this_end_date)]
+<a href="/?{{urllib.urlencode(query1)}}">All</a></br>
+
 %for year in range(daterangedata['end year'],daterangedata['start year']-1,-1):
 
 %this_end_date = datetime.date(year=year,month=12,day=31)
