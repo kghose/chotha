@@ -441,12 +441,14 @@ def index_page():
   and papers in reverse time order, showing the  ."""
   search_text = request.GET.get('search_text', '')
   cskeyword_list = request.GET.get('cskeyword_list', '')
-#  page = int(request.GET.get('page', 0))
-#  perpage = int(request.GET.get('perpage', 30))
-#  offset = page * perpage
-#  limit = perpage
-  end_date = datetime.datetime.strptime(request.GET.get('end_date', '2011-12-31'),'%Y-%m-%d').date()
-  start_date = datetime.datetime.strptime(request.GET.get('start_date', '2011-01-01'),'%Y-%m-%d').date()
+  end_date_str = request.GET.get('end_date')
+  start_date_str = request.GET.get('start_date')
+  if end_date_str != None and start_date_str != None:
+    end_date = datetime.datetime.strptime(end_date_str,'%Y-%m-%d').date()
+    start_date = datetime.datetime.strptime(start_date_str,'%Y-%m-%d').date()
+  else:
+    end_date = datetime.date.today()
+    start_date = end_date - datetime.timedelta(days=7)
   current_keywords = cskeystring_to_list(cskeyword_list)
   rows = fetch_notes_by_criteria(keywords = current_keywords, 
                                  search_text = search_text, 
