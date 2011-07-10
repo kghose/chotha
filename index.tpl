@@ -48,22 +48,11 @@
 
 <div class='pane nav-pane'> 
 %if view=='list':
+
 {{start_date}} to {{end_date}}<br/>
 <b>{{len(rows)}} notes and sources</b></br></br>
 
-%dd = datetime.timedelta(weeks=-52)
-
-%for year in range(daterangedata['end year'],daterangedata['start year']-1,-1):
-
-%end_date = datetime.date(year=year,month=12,day=31)
-%start_date = end_date + dd
-%query1 = [('cskeyword_list', cskeyword_list), \
-%					('search_text', search_text), \
-%         ('start_date',start_date), ('end_date',end_date)]
-
-<a href="/?{{urllib.urlencode(query1)}}">{{year}}</a></br>
-%end
-
+%include templates/date_range_selector daterangedata=daterangedata,start_date=start_date,end_date=end_date,cskeyword_list=cskeyword_list,search_text=search_text
 %end
 </div> <!-- 'nav-pane' -->
 
