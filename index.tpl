@@ -48,9 +48,9 @@
 
 <div class='pane nav-pane'> 
 %if view=='list':
-
+<p>
 {{start_date}} to {{end_date}}<br/>
-<b>{{len(rows)}} notes and sources</b></br></br>
+<b>{{len(rows)}} notes and sources</b></p>
 
 %include templates/date_range_selector daterangedata=daterangedata,start_date=start_date,end_date=end_date,cskeyword_list=cskeyword_list,search_text=search_text
 %end
