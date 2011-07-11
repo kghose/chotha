@@ -323,9 +323,12 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
     
     
   """
-  #This allows us to select keywords as a comma separated list
+  #Some date manipulations
+  one_day = datetime.timedelta(days=1) #We want it to include everything upto the end of the day  
+  end_date += one_day
+  
   query = 'SELECT * FROM notes WHERE (notes.date >= DATE(?) and notes.date <= DATE(?)) '
-  arg_list = [start_date, end_date]
+  arg_list = [start_date.isoformat(), end_date.isoformat()]
   #search_text = search_text.strip()
   if search_text != '':
     query += ' AND (notes.title LIKE ? OR notes.body LIKE ?) '
@@ -448,14 +451,11 @@ def index_page():
     start_date = datetime.datetime.strptime(start_date_str,'%Y-%m-%d').date()
   else:
     end_date = datetime.date.today()
-    start_date = end_date - datetime.timedelta(days=7)
-  one_day = datetime.timedelta(days=1) #We want it to include everything upto the end of the day  
-  end_date += one_day
-  
+    start_date = end_date - datetime.timedelta(days=7)  
   current_keywords = cskeystring_to_list(cskeyword_list)
   rows = fetch_notes_by_criteria(keywords = current_keywords, 
                                  search_text = search_text, 
-                                 start_date=start_date.isoformat(), end_date=end_date.isoformat())
+                                 start_date=start_date, end_date=end_date)
   candidate_keywords = fetch_conjunction_candidates(current_keywords)
   title = ''
   if search_text != '':
