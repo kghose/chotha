@@ -42,7 +42,25 @@ h2 {
 .date-column {
 	float: left;
 	margin-left: 10px;
+	padding-left:5px;
 }
+.date-column b {
+	color: white;
+	background-color: red;
+	border-radius: 5px;
+	margin-left:-5px;
+	padding-left:5px;
+	padding-right:5px;
+}
+.date-column span {
+	color: black;
+	background-color: white;
+	border-radius: 5px;
+	margin-left:-5px;
+	padding-left:5px;
+	padding-right:5px;
+}
+
 	
 .entry {
   width: 100%; /*dynamic with div size*/

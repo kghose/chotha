@@ -9,7 +9,7 @@
 
 <!-- years -->
 <div class="date-column">
-Year</br>
+<span>Year</span><br/>
 %this_end_date = datetime.date(year=daterangedata['end year'],month=12,day=31)
 %this_start_date = datetime.date(year=daterangedata['start year'],month=1,day=1)
 %query1 = [('cskeyword_list', cskeyword_list), \
@@ -37,7 +37,7 @@ Year</br>
 
 <!-- months -->
 <div class="date-column">
-Month</br>
+<span>Month</span><br/>
 %for month in range(1,13):
 
 %mdays = monthrange(sel_year,month)
