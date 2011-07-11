@@ -71,6 +71,7 @@ and not have annoying duplicate entries in the table
 
 Todo:
 
+* add an export page that will export to different formats (currently just exports to word)
 * Break up index.tpl into sub templates - pass data using dicts
 * (not doing) Add a 'window' parameter to date selector, and have fwd,bkwd buttons? 
 * (done) Restrict returned notes by date (have two columns, start and end date)
