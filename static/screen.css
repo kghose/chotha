@@ -47,6 +47,7 @@ h2 {
 }
 .date-column {
 	float: left;
+	text-align:center;
 	margin-left: 10px;
 	padding-left:5px;
 }
@@ -54,7 +55,7 @@ h2 {
 	color: white;
 	background-color: red;
 	border-radius: 5px;
-	margin-left:-5px;
+	/*margin-left:-5px;*/
 	padding-left:5px;
 	padding-right:5px;
 }
