@@ -1,0 +1,198 @@
+body {
+	font-family:"Century Gothic";
+	font-size: 12pt;
+  background-color: #fff; 
+	color: #333;
+	text-align:center;
+	}
+
+h1 {
+	font-size: 13pt;	
+}
+
+h2 {
+	font-size: 12pt;	
+}
+
+.pane {
+	position: absolute;
+	padding:20px;
+	text-align: left;
+	font-size: 10pt;
+	border-radius: 15px;
+	border-color:gray;
+	background-color: lightgray;
+}		
+.pane a:link {text-decoration: none; color: black;}
+.pane a:visited {text-decoration: none; color: black;}
+.pane a:hover {text-decoration: none; color: black; background-color: white;}
+
+.keywords-pane {
+	float:left;
+	left:10px;
+	width:20%;
+}
+.keywords-pane input {margin-top:10px;border-radius: 5px;}
+
+.nav-pane {
+	float:right;
+	right:10px;
+	width:20%;	
+	padding-top:5px;
+}
+.nav-pane p {
+	padding: 5px;
+	background-color: white;
+	border-radius: 5px;	
+}
+.date-column {
+	float: left;
+	text-align:center;
+	margin-left: 10px;
+	padding-left:5px;
+}
+.date-column b {
+	color: white;
+	background-color: red;
+	border-radius: 5px;
+	/*margin-left:-5px;*/
+	padding-left:5px;
+	padding-right:5px;
+}
+.date-column span {
+	color: black;
+	background-color: white;
+	border-radius: 5px;
+	margin-left:-5px;
+	padding-left:5px;
+	padding-right:5px;
+}
+
+	
+.entry {
+  width: 100%; /*dynamic with div size*/
+}
+
+.content {
+	position: relative;
+	left:50%;
+
+	width: 12cm;
+
+	margin-top: 20px;
+	margin-left:-6cm;
+	margin-right:2em;
+
+	padding-bottom: 20px;
+
+	font-family:"Century Gothic";	
+	font-size: 11pt;
+  text-align: left;
+}
+
+.content input {border-radius: 5px;}
+.content textarea {border-radius: 5px;}
+
+.newentry {
+	padding-top:0px;
+}
+	
+.itemid-box {
+	position: absolute;
+	right:0px;
+	top:0px;
+	border:solid;
+	border-width:thin;
+	border-radius: 5px;
+	padding-left:.2em;
+	padding-right:.2em;
+	text-align:right;
+	font-size:7pt;
+	font-weight: bold;
+	width:auto;
+	background-color: aqua;
+	z-index:+1; /*If there are no notes, the hl at the end goes above us*/
+}
+
+.itemid-box div span {display: none;}
+.itemid-box div:hover span {display: inline;}
+
+.itemid-box a:link {text-decoration: none; color: black;}
+.itemid-box a:visited {text-decoration: none; color: black;}
+.itemid-box a:hover {text-decoration: none; background-color: yellow;}
+
+.itemid {
+	border:solid;
+	border-width:thin;
+	padding-left:.2em;
+	padding-right:.2em;
+	font-size:7pt;
+	font-weight: bold;
+	width:auto;
+	background-color: aqua;
+}
+
+.itemid a:link {text-decoration: none; color: black;}
+.itemid a:visited {text-decoration: none; color: black;}
+.itemid a:hover {text-decoration: none; background-color: yellow;}
+
+   
+
+.title {
+	width: 100%;
+	font-size:large;
+	font-weight: bold;
+	border-bottom: 1px dotted #ba0000;
+}
+
+.title a:link {text-decoration: none; color: black;}
+.title a:visited {text-decoration: none; color: black;}
+.title hover {text-decoration: none; background-color: yellow;}
+
+.sourcetitle {
+	font-size:10pt;
+	font-weight: bold;
+	/*border-left: 1px dotted #ba0000;
+	border-bottom: 1px dotted #ba0000;*/
+	border-radius: 10px;
+	color: black;
+	background-color: lemonchiffon;
+	padding: 5px;
+}
+
+.sourcetitle a:link {text-decoration: none; color: black;}
+.sourcetitle a:visited {text-decoration: none; color: black;}
+.sourcetitle hover {text-decoration: none; background-color: yellow;}
+
+.sourcejournal {
+	font-size:10pt;
+	font-weight: bold;
+}
+
+.sourceauthors {
+	font-size:10pt;
+	font-style: italic;
+}
+
+
+.date {
+  font-weight: bold;
+	font-size: .8em;
+}
+
+.lastupdated {
+	text-align:right;
+  font-weight: bold;
+	font-size: .6em;
+}
+.lastupdated a:link {color: black;}
+.lastupdated a:visited {color: black;}
+
+.key_list {
+	position: relative;
+	border-bottom: thin dotted;	
+	left: 0px;
+	bottom: 10px;
+	font-weight: bold;
+	font-size: 10px;
+}

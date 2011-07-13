@@ -1,0 +1,37 @@
+.keywords-pane {
+	display: none;
+}
+
+.nav-pane {
+	display: none;
+}
+
+.content {
+	position: relative;
+	left:10%;
+	margin-left:2em;
+	width: 80%;
+	widows:4;
+  orphans:4;
+}
+
+.key_list {
+	position: relative;
+	page-break-before:avoid;
+}
+
+.noprint {
+	display: none;
+}
+
+a:link, a:visited {
+	text-decoration: none;
+	font-style: italic;
+}
+	
+/* http://www.alistapart.com/stories/goingtoprint/ */
+a:link:after, a:visited:after {
+   text-decoration: none;
+   content: " (" attr(href) ") ";
+   font-size: 70%;
+}
