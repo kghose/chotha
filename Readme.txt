@@ -71,13 +71,6 @@ and not have annoying duplicate entries in the table
 
 Todo:
 
-* Change paging system to a date from latest hit + some time frame + offset
-  This will require two fetches, one for id and date, another for fetching the
-  complete subset of entries based on date then using the date, time frame and
-  offset to select from the subset of entries. The second fetch will not require
-  reuse of the query and so will not tax the db so much.
-  Needs a rewrite of fetch_notes_by_criterion
-  
 * add an export page that will export to different formats (currently just exports to word)
 * Break up index.tpl into sub templates - pass data using dicts
 * (not doing) Add a 'window' parameter to date selector, and have fwd,bkwd buttons? 
@@ -99,7 +92,7 @@ Todo:
 * (done) Rewrite for new database format
 * (done) Test new database format using dummy database
 * (done) Convert rriki db to chotha format
-* (done) Implement sensible paging, based on date/year for eg
+* Implement sensible paging, based on date/year for eg
 * (done) make the jumping between note and citation data cleaner
 * (done) On sources edit page make a "refetch" button where you can put a query in and
   refetch the citation data
