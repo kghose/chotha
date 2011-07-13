@@ -111,6 +111,7 @@ h2 {
 	font-weight: bold;
 	width:auto;
 	background-color: aqua;
+	z-index:+1; /*If there are no notes, the hl at the end goes above us*/
 }
 
 .itemid-box div span {display: none;}
