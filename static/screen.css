@@ -55,7 +55,8 @@ h2 {
 .paging-pane p {
 	padding: 5px;
 	background-color: white;
-	border-radius: 5px;	
+	border-radius: 5px;
+	text-align: center;	
 }
 .paging-pane b {
 	padding: 2px;
