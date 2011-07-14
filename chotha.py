@@ -292,7 +292,7 @@ def fetch_single_source_by_citekey(citekey):
 
 # Search ops -------------------------------------------------------------------
 def fetch_notes_by_criteria(keywords = [], search_text = '',
-                            start_date = None, end_date = None):
+                            limit=10, offset=0):
   """Returns note summary via keyword intersection and search. If either is None,
   they are ignored. If both are None all notes are returned
   
@@ -322,21 +322,19 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
     GROUP BY notes.id;
     
     
-  """
-  #Some date manipulations
-  one_day = datetime.timedelta(days=1) #We want it to include everything upto the end of the day  
-  end_date += one_day
-  
-  query = 'SELECT * FROM notes WHERE (notes.date >= DATE(?) and notes.date <= DATE(?)) '
-  arg_list = [start_date.isoformat(), end_date.isoformat()]
-  #search_text = search_text.strip()
+  """  
+  query = 'SELECT id FROM notes '
+  arg_list = []
   if search_text != '':
-    query += ' AND (notes.title LIKE ? OR notes.body LIKE ?) '
+    query += ' WHERE (notes.title LIKE ? OR notes.body LIKE ?) '
     arg_list += ["%%%s%%" %search_text]
     arg_list += ["%%%s%%" %search_text]
      
   if len(keywords) > 0:
-    query += ' AND '
+    if search_text != '':
+      query += ' AND '
+    else:
+      query += ' WHERE '
     key_query = ' k.name=? '
     arg_list += [keywords[0]]
     for n in range(1,len(keywords)):
@@ -348,9 +346,19 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
     WHERE kn.keyword_id IN 
     (SELECT k.id FROM keywords k WHERE %s) 
     GROUP BY kn.note_id HAVING COUNT(*) = %d)""" %(key_query,len(keywords))
-  query += ' GROUP BY notes.id ORDER BY date DESC' #LIMIT ? OFFSET ?'
-  #arg_list += [limit,offset]
-  return parse_notes(dbq(query, arg_list))
+  query += ' GROUP BY notes.id ORDER BY notes.date DESC'
+  rows = dbq(query, arg_list)
+  lrows = len(rows)
+  
+  query_id_list = ''
+  n = offset
+  while n < lrows and n < offset+limit:
+    query_id_list += str(rows[n]['id']) + ','
+    n += 1
+  query_id_list = query_id_list.rstrip(',')
+  query = 'SELECT * FROM notes WHERE id IN (' + query_id_list + ') ORDER BY date DESC'
+  return parse_notes(dbq(query)), lrows
+  
 
 def populate_new_source_from_pubmed_query(query):
   """Given a query fetch the first matching citation from pubmed."""
@@ -444,19 +452,16 @@ def index_page():
   and papers in reverse time order, showing the  ."""
   search_text = request.GET.get('search_text', '')
   cskeyword_list = request.GET.get('cskeyword_list', '')
-  end_date_str = request.GET.get('end_date')
-  start_date_str = request.GET.get('start_date')
-  if end_date_str != None and start_date_str != None:
-    end_date = datetime.datetime.strptime(end_date_str,'%Y-%m-%d').date()
-    start_date = datetime.datetime.strptime(start_date_str,'%Y-%m-%d').date()
-  else:
-    end_date = datetime.date.today()
-    start_date = end_date - datetime.timedelta(days=7)  
+  offset = int(request.GET.get('offset',0))
+  limit = int(request.GET.get('limit',10))
+
   current_keywords = cskeystring_to_list(cskeyword_list)
-  rows = fetch_notes_by_criteria(keywords = current_keywords, 
+  rows, Nrows = fetch_notes_by_criteria(keywords = current_keywords, 
                                  search_text = search_text, 
-                                 start_date=start_date, end_date=end_date)
+                                 offset=offset, limit=limit)
+  #Nrows is the total number of results
   candidate_keywords = fetch_conjunction_candidates(current_keywords)
+  
   title = ''
   if search_text != '':
     title += '"' + search_text + '"'
@@ -466,11 +471,12 @@ def index_page():
     title += cskeyword_list
   if title == '':
     title = 'Home'
-  output = wtemplate('index', rows=rows, candidate_keywords=candidate_keywords, 
+  output = wtemplate('index', rows=rows, candidate_keywords=candidate_keywords,
+                    total_found = Nrows, 
                     cskeyword_list = cskeyword_list,
                     search_text = search_text,
-                    start_date = start_date,
-                    end_date = end_date,
+                    limit = limit,
+                    offset = offset,
                     title = title,
                     view='list')
   return output

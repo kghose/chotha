@@ -24,6 +24,17 @@ opening page) will populate the keywords with the current conjunction
 7. Creating a new note/source will present it on a search page having the
 same conjunction of keywords as it has
 
+Some notes on design choices
+----------------------------
+* Quantity limits instead of date limits 
+	- the display slowdown depends on the # of entries, not date range
+	- if we do a search, and there are no results in the date range set up it can
+	  get annoying and misleading to then click through different date ranges to
+	  find if there are any hits at all
+
+* html (from markdown) is not cached (currently) - want to keep code and db as
+  simple as possible. Also, don't want to bloat db size.
+
 
 Changes from RRiki database structure
 -------------------------------------
@@ -71,6 +82,13 @@ and not have annoying duplicate entries in the table
 
 Todo:
 
+* Change paging system to a date from latest hit + some time frame + offset
+  This will require two fetches, one for id and date, another for fetching the
+  complete subset of entries based on date then using the date, time frame and
+  offset to select from the subset of entries. The second fetch will not require
+  reuse of the query and so will not tax the db so much.
+  Needs a rewrite of fetch_notes_by_criterion
+  
 * add an export page that will export to different formats (currently just exports to word)
 * Break up index.tpl into sub templates - pass data using dicts
 * (not doing) Add a 'window' parameter to date selector, and have fwd,bkwd buttons? 
@@ -92,7 +110,7 @@ Todo:
 * (done) Rewrite for new database format
 * (done) Test new database format using dummy database
 * (done) Convert rriki db to chotha format
-* Implement sensible paging, based on date/year for eg
+* (done) Implement sensible paging, based on date/year for eg
 * (done) make the jumping between note and citation data cleaner
 * (done) On sources edit page make a "refetch" button where you can put a query in and
   refetch the citation data

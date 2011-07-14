@@ -19,40 +19,17 @@
 
 %if view=='list': #In the traditional list view we see the search box and keyword list
 
-%query = [('cskeyword_list', cskeyword_list), \
-%         ('start_date',start_date), ('end_date',end_date)]
-<form action="/?{{urllib.urlencode(query)}}" method="GET">
-<input class="entry" type="text" size=20 name="search_text" title="Search" value="{{search_text}}">
-<!-- These need to be passed too, secretly -->
-<input type="hidden" name="cskeyword_list" value="{{cskeyword_list}}">
-<input type="hidden" name="start_date" value="{{start_date}}">
-<input type="hidden" name="end_date" value="{{end_date}}">
-</form>
-%if cskeyword_list != '':
-{{'+' + cskeyword_list}}
-%query = [('cskeyword_list',cskeyword_list)]
-(<a href="/options/setdesktop/?{{urllib.urlencode(query)}}" title="Set this keyword combination as desktop">Set as desktop</a>)
-<hr/>
-%end
-
-%pre = cskeyword_list + ',' if cskeyword_list != '' else ''
-%for keyword in candidate_keywords:
-%query = [('cskeyword_list',pre.encode('utf-8') + keyword['name'].encode('utf-8')), \
-%         ('search_text', search_text.encode('utf-8')), \
-%         ('start_date',start_date), ('end_date',end_date)]
-<a href="/?{{urllib.urlencode(query)}}">{{keyword['name']}}</a> 
-%end
+%filter_data = {'total_found': total_found, 'total_shown': len(rows), 'candidate_keywords': candidate_keywords, 'cskeyword_list': cskeyword_list, 'search_text': search_text, 'limit': limit, 'offset': offset}
+%include templates/filter_controls filter_data=filter_data 
 
 %end #If view=='list'
 </div> <!-- keywords pane -->
 
 <div class='pane nav-pane'> 
 %if view=='list':
-<p>
-{{start_date}} to {{end_date}}<br/>
-<b>{{len(rows)}} notes and sources</b></p>
 
-%include templates/date_range_selector daterangedata=daterangedata,start_date=start_date,end_date=end_date,cskeyword_list=cskeyword_list,search_text=search_text
+%filter_data = {'total_found': total_found,'cskeyword_list': cskeyword_list, 'search_text': search_text, 'limit': limit, 'offset': offset}
+%include templates/page_controls filter_data=filter_data 
 %end
 </div> <!-- 'nav-pane' -->
 
