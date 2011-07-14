@@ -36,7 +36,7 @@
 <input type="checkbox" name="ispaper" value='yes' />This is a paper</p>
 <p><textarea rows="10" wrap="virtual" name="body" class="filldiv" title="Text of note"></textarea></p>
 <p><input type="text" name="key_list" class="filldiv" title="Keyword list" value="{{cskeyword_list}}"></p>
-<input type="submit" name="save" value="save">
+<input type="submit" name="create" value="create">
 </form>
 </div> <!-- For the hover -->
 </div>
