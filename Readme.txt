@@ -24,6 +24,17 @@ opening page) will populate the keywords with the current conjunction
 7. Creating a new note/source will present it on a search page having the
 same conjunction of keywords as it has
 
+Some notes on design choices
+----------------------------
+* Quantity limits instead of date limits 
+	- the display slowdown depends on the # of entries, not date range
+	- if we do a search, and there are no results in the date range set up it can
+	  get annoying and misleading to then click through different date ranges to
+	  find if there are any hits at all
+
+* html (from markdown) is not cached (currently) - want to keep code and db as
+  simple as possible. Also, don't want to bloat db size.
+
 
 Changes from RRiki database structure
 -------------------------------------
