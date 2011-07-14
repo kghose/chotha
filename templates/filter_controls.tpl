@@ -7,7 +7,7 @@
 %total_found = filter_data['total_found']
 %total_shown = filter_data['total_shown']
 %limit = filter_data['limit']
-
+%offset = filter_data['offset']
 
 %query = [('cskeyword_list', cskeyword_list), \
 %         ('limit',limit), ('offset',0)]
@@ -23,7 +23,7 @@
 %query = [('cskeyword_list',cskeyword_list)]
 (<a href="/options/setdesktop/?{{urllib.urlencode(query)}}" title="Set this keyword combination as desktop">Set as desktop</a>)
 %end
-<p><b>{{total_shown}}/{{total_found}} notes and sources</b></p>
+<p><b>{{total_found}} found</b></p>
 
 %pre = cskeyword_list + ',' if cskeyword_list != '' else ''
 %for keyword in candidate_keywords:
