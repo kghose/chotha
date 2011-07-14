@@ -546,6 +546,7 @@ def create_note_action():
     #We get a chance to see and edit the citation component
     return edit_source(id=source['id'])
   else:
+    request.GET.append('cskeyword_list',key_list)
     return index_page()
 
 @route('/edit/:id')

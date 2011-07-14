@@ -81,6 +81,9 @@ and not have annoying duplicate entries in the table
 
 
 Todo:
+* (done) when we add a note and we are returned to the list view, we should be returned
+  to a list view with the keyword combination used.
+* work out proper candidate keywords for search terms too
 
 * Change paging system to a date from latest hit + some time frame + offset
   This will require two fetches, one for id and date, another for fetching the
