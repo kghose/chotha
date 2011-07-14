@@ -81,11 +81,19 @@ and not have annoying duplicate entries in the table
 
 
 Todo:
+* Add a word cloud page that will display words in the db 
+  (especially low frequency ones) that will allow me to dive into notes and
+  find little odds and ends I have squirreled away. Needs a new table that will
+  store words and their frequency (number of notes the occur in)). To avoid too
+  extreme a computation, we will update this table for each note save, adding new
+  words and incrementing/decrementing the count on existing words.
+
 * (done) when we add a note and we are returned to the list view, we should be returned
   to a list view with the keyword combination used.
+
 * work out proper candidate keywords for search terms too
 
-* Change paging system to a date from latest hit + some time frame + offset
+* (done) Change paging system to a date from latest hit + some time frame + offset
   This will require two fetches, one for id and date, another for fetching the
   complete subset of entries based on date then using the date, time frame and
   offset to select from the subset of entries. The second fetch will not require
@@ -93,7 +101,7 @@ Todo:
   Needs a rewrite of fetch_notes_by_criterion
   
 * add an export page that will export to different formats (currently just exports to word)
-* Break up index.tpl into sub templates - pass data using dicts
+* (done) Break up index.tpl into sub templates - pass data using dicts
 * (not doing) Add a 'window' parameter to date selector, and have fwd,bkwd buttons? 
 * (done) Restrict returned notes by date (have two columns, start and end date)
 * About should show some db stats and db location etc.

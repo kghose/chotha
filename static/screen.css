@@ -20,12 +20,12 @@ h2 {
 	font-size: 10pt;
 	border-radius: 15px;
 	border-color:gray;
-	background-color: lightgray;
 }		
 
 .control-pane {
 	float:left;
 	width:8cm;
+	background-color: yellowgreen;
 }
 .control-pane a:link {text-decoration: none; color: black;}
 .control-pane a:visited {text-decoration: none; color: black;}
@@ -41,7 +41,6 @@ h2 {
 	float:left;
 	width:12cm;
 	padding-top: 0px;
-	background-color: white;
 }
 
 .paging-pane {
@@ -49,6 +48,7 @@ h2 {
 	right:10px;
 	width:4cm;	
 	padding-top:5px;
+	background-color: springgreen;
 }
 .paging-pane a {text-decoration: none; color: black;}
 .paging-pane a:hover {background-color: red; border-radius: 5px;}
@@ -80,6 +80,18 @@ h2 {
 }
 .content input {border-radius: 5px;}
 .content textarea {border-radius: 5px;}
+
+.newentry {
+	text-align: center;
+	padding: 5px;
+	margin-bottom: 10px;
+	border-radius: 15px;
+	background-color: lightblue;
+}
+.newentry div form {display: none}
+.newentry div:hover form {display: block;}
+.newentry input{background-color: aliceblue;}
+.newentry textarea{background-color: aliceblue;}
 
 .itemid-box {
 	position: absolute;

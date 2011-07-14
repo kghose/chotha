@@ -29,6 +29,8 @@
 
 %if view=='list': #In the traditional list view we get the new item box 
 <div class='content newentry'>
+<div> <!-- for the hover -->
++Entry
 <form action="/new" method="POST">
 <p><input type="text" name="title" class="filldiv" title="Note title or pubmed query">
 <input type="checkbox" name="ispaper" value='yes' />This is a paper</p>
@@ -36,6 +38,7 @@
 <p><input type="text" name="key_list" class="filldiv" title="Keyword list" value="{{cskeyword_list}}"></p>
 <input type="submit" name="save" value="save">
 </form>
+</div> <!-- For the hover -->
 </div>
 %end #If view=='list'
 
