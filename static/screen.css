@@ -15,7 +15,6 @@ h2 {
 }
 
 .pane {
-	position: absolute;
 	padding:20px;
 	text-align: left;
 	font-size: 10pt;
@@ -27,47 +26,35 @@ h2 {
 .pane a:visited {text-decoration: none; color: black;}
 .pane a:hover {text-decoration: none; color: black; background-color: white;}
 
-.keywords-pane {
+.control-pane {
 	float:left;
-	left:10px;
-	width:20%;
+	width:8cm;
 }
-.keywords-pane input {margin-top:10px;border-radius: 5px;}
-
-.nav-pane {
-	float:right;
-	right:10px;
-	width:20%;	
-	padding-top:5px;
-}
-.nav-pane p {
+.control-pane input {border-radius: 5px;}
+.control-pane p {
 	padding: 5px;
 	background-color: white;
 	border-radius: 5px;	
 }
-.date-column {
-	float: left;
-	text-align:center;
-	margin-left: 10px;
-	padding-left:5px;
-}
-.date-column b {
-	color: white;
-	background-color: red;
-	border-radius: 5px;
-	/*margin-left:-5px;*/
-	padding-left:5px;
-	padding-right:5px;
-}
-.date-column span {
-	color: black;
+
+.content-pane {
+	float:left;
+	width:12cm;
+	padding-top: 0px;
 	background-color: white;
-	border-radius: 5px;
-	margin-left:-5px;
-	padding-left:5px;
-	padding-right:5px;
 }
 
+.paging-pane {
+	float:left;
+	right:10px;
+	width:4cm;	
+	padding-top:5px;
+}
+.paging-pane p {
+	padding: 5px;
+	background-color: white;
+	border-radius: 5px;	
+}
 	
 .entry {
   width: 100%; /*dynamic with div size*/
@@ -75,28 +62,16 @@ h2 {
 
 .content {
 	position: relative;
-	left:50%;
-
-	width: 12cm;
-
-	margin-top: 20px;
-	margin-left:-6cm;
-	margin-right:2em;
-
-	padding-bottom: 20px;
-
+	padding-top: 0px;
+	padding-bottom: 40px;
+	
 	font-family:"Century Gothic";	
 	font-size: 11pt;
   text-align: left;
 }
-
 .content input {border-radius: 5px;}
 .content textarea {border-radius: 5px;}
 
-.newentry {
-	padding-top:0px;
-}
-	
 .itemid-box {
 	position: absolute;
 	right:0px;
@@ -113,30 +88,11 @@ h2 {
 	background-color: aqua;
 	z-index:+1; /*If there are no notes, the hl at the end goes above us*/
 }
-
 .itemid-box div span {display: none;}
 .itemid-box div:hover span {display: inline;}
-
 .itemid-box a:link {text-decoration: none; color: black;}
 .itemid-box a:visited {text-decoration: none; color: black;}
 .itemid-box a:hover {text-decoration: none; background-color: yellow;}
-
-.itemid {
-	border:solid;
-	border-width:thin;
-	padding-left:.2em;
-	padding-right:.2em;
-	font-size:7pt;
-	font-weight: bold;
-	width:auto;
-	background-color: aqua;
-}
-
-.itemid a:link {text-decoration: none; color: black;}
-.itemid a:visited {text-decoration: none; color: black;}
-.itemid a:hover {text-decoration: none; background-color: yellow;}
-
-   
 
 .title {
 	width: 100%;
@@ -144,7 +100,6 @@ h2 {
 	font-weight: bold;
 	border-bottom: 1px dotted #ba0000;
 }
-
 .title a:link {text-decoration: none; color: black;}
 .title a:visited {text-decoration: none; color: black;}
 .title hover {text-decoration: none; background-color: yellow;}
@@ -152,17 +107,11 @@ h2 {
 .sourcetitle {
 	font-size:10pt;
 	font-weight: bold;
-	/*border-left: 1px dotted #ba0000;
-	border-bottom: 1px dotted #ba0000;*/
 	border-radius: 10px;
 	color: black;
 	background-color: lemonchiffon;
 	padding: 5px;
 }
-
-.sourcetitle a:link {text-decoration: none; color: black;}
-.sourcetitle a:visited {text-decoration: none; color: black;}
-.sourcetitle hover {text-decoration: none; background-color: yellow;}
 
 .sourcejournal {
 	font-size:10pt;

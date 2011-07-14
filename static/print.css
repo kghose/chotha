@@ -1,27 +1,29 @@
-.keywords-pane {
+.control-pane {
 	display: none;
 }
 
-.nav-pane {
+.paging-pane {
 	display: none;
 }
 
-.content {
+.newentry {
+	display: none;
+}
+
+.content-pane {
 	position: relative;
 	left:10%;
 	margin-left:2em;
 	width: 80%;
-	widows:4;
-  orphans:4;
 }
+
+.content {
+	page-break-before:auto;	
+}	
 
 .key_list {
 	position: relative;
 	page-break-before:avoid;
-}
-
-.noprint {
-	display: none;
 }
 
 a:link, a:visited {

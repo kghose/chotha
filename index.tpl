@@ -11,7 +11,7 @@
 <body>
 %import urllib, datetime
 
-<div class='pane keywords-pane'>
+<div class='pane control-pane'>
 %query = [('cskeyword_list',desktop_cskeyword_list)]
 <a href="/?{{urllib.urlencode(query)}}" title="Go to the desktop">Desktop</a> 
 <br/><a href="/">Home</a> 
@@ -23,19 +23,12 @@
 %include templates/filter_controls filter_data=filter_data 
 
 %end #If view=='list'
-</div> <!-- keywords pane -->
+</div> <!-- control pane -->
 
-<div class='pane nav-pane'> 
-%if view=='list':
-
-%filter_data = {'total_found': total_found,'cskeyword_list': cskeyword_list, 'search_text': search_text, 'limit': limit, 'offset': offset}
-%include templates/page_controls filter_data=filter_data 
-%end
-</div> <!-- 'nav-pane' -->
-
+<div class='pane content-pane'>
 
 %if view=='list': #In the traditional list view we get the new item box 
-<div class='content newentry noprint'>
+<div class='content newentry'>
 <form action="/new" method="POST">
 <p><input type="text" name="title" class="entry" title="Note title or pubmed query">
 <input type="checkbox" name="ispaper" value='yes' />This is a paper</p>
@@ -47,7 +40,6 @@
 %end #If view=='list'
 
 %if view=='list': #Show us the traditional list view
-
 %for row in rows:
 <div class="content">
   <div class='date'>{{row['nicedate']}}</div>
@@ -102,6 +94,15 @@
 <div class="content">
 %include templates/show_source source=source  
 </div>
+
+%end
+</div> <!-- content-pane -->
+
+%if view=='list':
+<div class='pane paging-pane'> 
+%filter_data = {'total_found': total_found,'cskeyword_list': cskeyword_list, 'search_text': search_text, 'limit': limit, 'offset': offset}
+%include templates/page_controls filter_data=filter_data 
+</div> <!-- paging-pane -->
 %end
 
 </body>
