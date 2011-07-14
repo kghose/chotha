@@ -27,9 +27,9 @@
 %					('search_text', search_text), \
 %         ('limit',current_limit), ('offset',offset)]
 %if current_offset >= offset and current_offset < offset+1:
-<a href="/?{{urllib.urlencode(query)}}" title="{{page}}"><b>-</b></a><br/>
+<a href="/?{{urllib.urlencode(query)}}" title="{{page}}"><b>&loz;</b></a>
 %else:
-<a href="/?{{urllib.urlencode(query)}}" title="{{page}}">-</a><br/>
+<a href="/?{{urllib.urlencode(query)}}" title="{{page}}">&loz;</a>
 %end
 %offset += current_limit
 %page +=1

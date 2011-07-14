@@ -7,10 +7,10 @@ Refetch source <input type="text" name="query" size='20' title="Enter pubmed que
 
 <form action="/savesource" method="POST">
 <input type="hidden" name="id" value={{source['id']}}>
-citekey <input type="text" name="citekey" class="source_edit" title="citekey" value="{{source['citekey']}}"><br/> 
-Title <input type="text" name="title" class="entry" title="title" value="{{source['title']}}"><br/>
+citekey <input type="text" name="citekey" title="citekey" value="{{source['citekey']}}"><br/> 
+Title <input type="text" name="title" class="filldiv" title="title" value="{{source['title']}}"><br/>
 Abstract
-<textarea rows="10" wrap="virtual" name="abstract" class="entry" title="abstract">{{source['abstract']}}</textarea><br/>
+<textarea rows="10" wrap="virtual" name="abstract" class="filldiv" title="abstract">{{source['abstract']}}</textarea><br/>
 Type <input type="text" name="source_type" class="entry" title="source type" value="{{source['source_type']}}"><br/>
 Journal <input type="text" name="journal" class="entry" title="journal" value="{{source['journal']}}"><br/>
 <br/>
@@ -20,7 +20,7 @@ Journal <input type="text" name="journal" class="entry" title="journal" value="{
     Month <input type="text" size=4 name="month" class="entry" title="month" value="{{source['month']}}">
 		Pages <input type="text" size=8 name="pages" class="entry" title="pages" value="{{source['pages']}}">
 <br/>
-<br/>Authors<br/>
+<br/>Authors
 <textarea size="40x5" wrap="virtual" name="author" class="entry" title="Enter authors on separate lines. Last Name, First Name M.I">{{source['author']}}</textarea><br/>
 		
 <div id='book-source'>

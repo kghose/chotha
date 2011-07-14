@@ -22,14 +22,14 @@ h2 {
 	border-color:gray;
 	background-color: lightgray;
 }		
-.pane a:link {text-decoration: none; color: black;}
-.pane a:visited {text-decoration: none; color: black;}
-.pane a:hover {text-decoration: none; color: black; background-color: white;}
 
 .control-pane {
 	float:left;
 	width:8cm;
 }
+.control-pane a:link {text-decoration: none; color: black;}
+.control-pane a:visited {text-decoration: none; color: black;}
+.control-pane a:hover {text-decoration: none; color: black; background-color: white;}
 .control-pane input {border-radius: 5px;}
 .control-pane p {
 	padding: 5px;
@@ -50,13 +50,21 @@ h2 {
 	width:4cm;	
 	padding-top:5px;
 }
+.paging-pane a {text-decoration: none; color: black;}
+.paging-pane a:hover {background-color: red; border-radius: 5px;}
 .paging-pane p {
 	padding: 5px;
 	background-color: white;
 	border-radius: 5px;	
 }
-	
-.entry {
+.paging-pane b {
+	padding: 2px;
+	color: white;
+	background-color: black;
+	border-radius: 5px;	
+}
+
+.filldiv {
   width: 100%; /*dynamic with div size*/
 }
 

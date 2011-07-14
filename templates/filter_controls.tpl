@@ -12,7 +12,7 @@
 %query = [('cskeyword_list', cskeyword_list), \
 %         ('limit',limit), ('offset',0)]
 <form action="/?{{urllib.urlencode(query)}}" method="GET">
-<input class="entry" type="text" size=20 name="search_text" title="Search" value="{{search_text}}">
+<input class="filldiv" type="text" size=20 name="search_text" title="Search" value="{{search_text}}">
 <!-- These need to be passed too, secretly -->
 <input type="hidden" name="cskeyword_list" value="{{cskeyword_list}}">
 <input type="hidden" name="limit" value="{{limit}}">

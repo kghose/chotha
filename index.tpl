@@ -30,10 +30,10 @@
 %if view=='list': #In the traditional list view we get the new item box 
 <div class='content newentry'>
 <form action="/new" method="POST">
-<p><input type="text" name="title" class="entry" title="Note title or pubmed query">
+<p><input type="text" name="title" class="filldiv" title="Note title or pubmed query">
 <input type="checkbox" name="ispaper" value='yes' />This is a paper</p>
-<p><textarea rows="10" wrap="virtual" name="body" class="entry" title="Text of note"></textarea></p>
-<p><input type="text" name="key_list" class="entry" title="Keyword list" value="{{cskeyword_list}}"></p>
+<p><textarea rows="10" wrap="virtual" name="body" class="filldiv" title="Text of note"></textarea></p>
+<p><input type="text" name="key_list" class="filldiv" title="Keyword list" value="{{cskeyword_list}}"></p>
 <input type="submit" name="save" value="save">
 </form>
 </div>
