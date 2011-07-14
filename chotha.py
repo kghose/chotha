@@ -292,7 +292,6 @@ def fetch_single_source_by_citekey(citekey):
 
 # Search ops -------------------------------------------------------------------
 def fetch_notes_by_criteria(keywords = [], search_text = '',
-                            start_date = None, end_date = None,
                             limit=10, offset=0):
   """Returns note summary via keyword intersection and search. If either is None,
   they are ignored. If both are None all notes are returned
@@ -463,7 +462,6 @@ def index_page():
   #Nrows is the total number of results
   candidate_keywords = fetch_conjunction_candidates(current_keywords)
   
-  
   title = ''
   if search_text != '':
     title += '"' + search_text + '"'
@@ -473,11 +471,12 @@ def index_page():
     title += cskeyword_list
   if title == '':
     title = 'Home'
-  output = wtemplate('index', rows=rows, candidate_keywords=candidate_keywords, 
+  output = wtemplate('index', rows=rows, candidate_keywords=candidate_keywords,
+                    total_found = Nrows, 
                     cskeyword_list = cskeyword_list,
                     search_text = search_text,
-                    start_date = datetime.date(2011,01,01),
-                    end_date = datetime.date(2011,12,31),
+                    limit = limit,
+                    offset = offset,
                     title = title,
                     view='list')
   return output
