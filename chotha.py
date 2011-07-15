@@ -284,7 +284,7 @@ def fetch_single_source(id):
     return None
 
 def fetch_single_source_by_citekey(citekey):
-  rows = dbq('SELECT sources.*,notes.id AS nid FROM sources,notes WHERE sources.citekey LIKE ? AND notes.source_id = sources.id', (citekey,))
+  rows = dbq('SELECT sources.*,notes.id AS nid FROM sources,notes WHERE sources.citekey LIKE ? AND notes.source_id = sources.id', (unicode(citekey,'utf-8'),))
   if len(rows) > 0: 
     return rows[0]
   else:
