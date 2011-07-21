@@ -440,19 +440,11 @@ def save_source(source):
     bindings.append(source[fields[n]])
   bindings.append(source['id'])
   dbq(query, bindings)
-# Utility functions ------------------------------------------------------------
-def daterangedata():
-  """This function returns us a dictionary that the daterange gadget can use."""
-  ret = dbq('SELECT MIN(date) AS start,MAX(date) AS end FROM notes')[0]
-  drd = {}
-  drd['start year'] = int(ret['start'][:4])
-  drd['end year'] = int(ret['end'][:4])#datetime.date.today().year
-  return drd
 
+# Utility functions ------------------------------------------------------------
 def wtemplate(tmplt,**kwargs):
   """Needed a wrapper to the template call to include common options etc."""
   kwargs['desktop_cskeyword_list'] = config.get('User','desktop')
-  kwargs['daterangedata'] = daterangedata()
   return template(tmplt,**kwargs)
 
 # Common use pages -------------------------------------------------------------
