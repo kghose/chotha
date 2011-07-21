@@ -325,28 +325,40 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
   """  
   query = 'SELECT id FROM notes '
   arg_list = []
-  if search_text != '':
-    query += ' WHERE (notes.title LIKE ? OR notes.body LIKE ?) '
-    arg_list += ["%%%s%%" %search_text]
-    arg_list += ["%%%s%%" %search_text]
-     
-  if len(keywords) > 0:
+  
+  if search_text.startswith(':sources '):
+    """This lets us perform arbitrary SQL queries on our db for sources.
+    Activate it by typing ":source <where clause>" in the search box. The
+    where clause should omit the WHERE keyword. This is designed as a desktop
+    app used by the owner, so we trust him not to sabotage himself by doing
+    strange things."""
+    where_clause = search_text[8:]
+    query = "SELECT id FROM notes WHERE source_id IN (SELECT id FROM sources WHERE %s)" %where_clause
+  else:
+    #Do a regular search
     if search_text != '':
-      query += ' AND '
-    else:
-      query += ' WHERE '
-    key_query = ' k.name=? '
-    arg_list += [keywords[0]]
-    for n in range(1,len(keywords)):
-      key_query += ' OR k.name=? '
-      arg_list += [keywords[n]]
-    query += \
-    """ notes.id IN
-    (SELECT kn.note_id FROM keywords_notes AS kn 
-    WHERE kn.keyword_id IN 
-    (SELECT k.id FROM keywords k WHERE %s) 
-    GROUP BY kn.note_id HAVING COUNT(*) = %d)""" %(key_query,len(keywords))
-  query += ' GROUP BY notes.id ORDER BY notes.date DESC'
+      query += ' WHERE (notes.title LIKE ? OR notes.body LIKE ?) '
+      arg_list += ["%%%s%%" %search_text]
+      arg_list += ["%%%s%%" %search_text]
+       
+    if len(keywords) > 0:
+      if search_text != '':
+        query += ' AND '
+      else:
+        query += ' WHERE '
+      key_query = ' k.name=? '
+      arg_list += [keywords[0]]
+      for n in range(1,len(keywords)):
+        key_query += ' OR k.name=? '
+        arg_list += [keywords[n]]
+      query += \
+      """ notes.id IN
+      (SELECT kn.note_id FROM keywords_notes AS kn 
+      WHERE kn.keyword_id IN 
+      (SELECT k.id FROM keywords k WHERE %s) 
+      GROUP BY kn.note_id HAVING COUNT(*) = %d)""" %(key_query,len(keywords))
+    query += ' GROUP BY notes.id ORDER BY notes.date DESC'
+
   rows = dbq(query, arg_list)
   lrows = len(rows)
   
@@ -358,7 +370,6 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
   query_id_list = query_id_list.rstrip(',')
   query = 'SELECT * FROM notes WHERE id IN (' + query_id_list + ') ORDER BY date DESC'
   return parse_notes(dbq(query)), lrows
-  
 
 def populate_new_source_from_pubmed_query(query):
   """Given a query fetch the first matching citation from pubmed."""
