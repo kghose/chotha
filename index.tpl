@@ -99,7 +99,6 @@
 </div>
 
 %end
-</div> <!-- content-pane -->
 
 %if view=='list':
 <div class='pane paging-pane'> 
@@ -107,6 +106,9 @@
 %include templates/page_controls filter_data=filter_data 
 </div> <!-- paging-pane -->
 %end
+
+</div> <!-- content-pane -->
+
 
 </body>
 </html>

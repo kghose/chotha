@@ -44,9 +44,7 @@ h2 {
 }
 
 .paging-pane {
-	float:left;
-	right:10px;
-	width:4cm;	
+	width:auto;	
 	padding-top:5px;
 	background-color: springgreen;
 }
