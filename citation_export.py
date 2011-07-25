@@ -20,7 +20,7 @@ def parse_name_field(text):
       name_list.append(name)
   return name_list    
 
-def export_MSWord_XML(sources=None):
+def export_MSWord_XML(fname='/Users/kghose/Documents/Microsoft User Data/Sources.xml', sources=None):
   """Add citations in the sources list to the MS Word Sources.xml file. Skip
   adding citations whose citekey already exists in the file. New citations are
   appended to the existing file."""
@@ -169,16 +169,19 @@ def export_MSWord_XML(sources=None):
     """If max_refo is NOT none then we assume we are messing with the document 
     ref file and we need to put in the reforder tag"""
     refo = max_refo
+    ref_count = 0
     for source in sources:
       if source['citekey'] not in citekey_list:
         if refo!= None:
           refo += 1
         doc = add_source_to_XML(doc, source,refo)
-    return doc
+        ref_count += 1
+    return doc, ref_count
   
-  doc, citekey_list = read_and_parse_MSWord_master_source_XML()
-  doc = add_sources_to_XML(doc, sources, citekey_list)
-  save_MSWord_master_source_XML(doc)
-
+  doc, citekey_list = read_and_parse_MSWord_master_source_XML(fname)
+  doc, refcount = add_sources_to_XML(doc, sources, citekey_list)
+  save_MSWord_master_source_XML(doc,fname)
+  return refcount
+  
 if __name__ == "__main__":
   export_MSWord_XML(sources=None)
