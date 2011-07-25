@@ -667,7 +667,7 @@ def show_config_page():
   dbinfo['note count'] = dbq("SELECT COUNT(id) FROM NOTES WHERE source_id IS NULL")[0]["COUNT(id)"]
   dbinfo['source count'] = dbq("SELECT COUNT(id) FROM NOTES WHERE source_id IS NOT NULL")[0]["COUNT(id)"]
   dbinfo['sqlite version'] = apsw.sqlitelibversion()
-  return template('config', dbinfo=dbinfo, config=config)
+  return template('templates/config', dbinfo=dbinfo, config=config)
   
 # File stuff -------------------------------------------------------------------
 @bottle.route('/static/:filename#.*#')
