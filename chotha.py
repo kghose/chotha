@@ -495,12 +495,12 @@ def show_note_page(id):
 
 @route('/notesourceexport/:id')
 def export_sources_from_note(id):
+  fname = config.get('User','msword_source_fname')
   note = fetch_single_note(id)
   sources = extract_sources_from_note(note)
   import citation_export as ce
-  ce.export_MSWord_XML(sources)
-  
-  msg = '<center><h2>Exported %d sources present in this note.</h1></center>' %(len(sources))
+  refcount = ce.export_MSWord_XML(fname, sources)
+  msg = '<center><h2>Exported %d (of %d) sources present in this note to %s.</h1></center>' %(refcount,len(sources),fname)
   return msg
 
 @route('/source/:id')
@@ -620,6 +620,7 @@ def create_default_config_file():
   
   config.add_section('User')
   config.set('User','desktop','')
+  config.set('User','msword_source_fname','')
   
   with open('chotha.cfg', 'wb') as configfile:
     config.write(configfile)  
