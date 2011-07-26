@@ -26,6 +26,11 @@ same conjunction of keywords as it has
 
 Some notes on design choices
 ----------------------------
+* For config page, did not use html file widget
+  - only returns base filename, really meant for uploading file contents
+  - user might want to use only file name or full path depending on whether he
+    is placing the db file relative to the program or not
+    
 * Quantity limits instead of date limits 
 	- the display slowdown depends on the # of entries, not date range
 	- if we do a search, and there are no results in the date range set up it can
