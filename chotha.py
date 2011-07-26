@@ -636,21 +636,29 @@ def save_config():
   
 
 # Configuration pages ---------------------------------------------------------  
-@route('/selectdb')
-def select_database(newdbname='pylogdb.sqlite3'):
-  newdbname = request.GET.get('newdbname', '').strip()
-  globals()['dbname']=newdbname
-  config.set('Basic', 'dbname', newdbname)
-  save_config()
-  return index_page()
+@route('/selectdb', method='POST')
+def select_database():
+  newdbname = request.POST.get('newdbname', '').strip()
+  import os
+  if os.path.exists(newdbname):
+    logger.info('Found db %s. Switching' %newdbname)    
+    globals()['dbname']=newdbname
+    config.set('Basic', 'dbname', newdbname)
+    save_config()
+    return index_page()
+  else:
+    logger.info('Did not find db %s. Creating new' %newdbname)        
+    return new_database()
 
-@route('/createdb/:newdbname')
-def new_database(newdbname='pylogdb.sqlite3'):
+@route('/createdb', method='POST')
+def new_database():
+  newdbname = request.POST.get('newdbname', '').strip()
+  logger.info('Creating %s' %newdbname)  
   globals()['dbname']=newdbname
   create_database()
   config.set('Basic', 'dbname', newdbname)
   save_config()
-  return index()
+  return index_page()
 
 @route('/options/setdesktop/')
 def set_desktop():
@@ -667,7 +675,9 @@ def show_config_page():
   dbinfo['note count'] = dbq("SELECT COUNT(id) FROM NOTES WHERE source_id IS NULL")[0]["COUNT(id)"]
   dbinfo['source count'] = dbq("SELECT COUNT(id) FROM NOTES WHERE source_id IS NOT NULL")[0]["COUNT(id)"]
   dbinfo['sqlite version'] = apsw.sqlitelibversion()
-  return template('templates/config', dbinfo=dbinfo, config=config)
+  cfg = {'dbinfo': dbinfo,
+         'cfg file': config}
+  return template('templates/config', cfg=cfg)
   
 # File stuff -------------------------------------------------------------------
 @bottle.route('/static/:filename#.*#')
