@@ -675,6 +675,9 @@ def show_config_page():
   dbinfo['note count'] = dbq("SELECT COUNT(id) FROM NOTES WHERE source_id IS NULL")[0]["COUNT(id)"]
   dbinfo['source count'] = dbq("SELECT COUNT(id) FROM NOTES WHERE source_id IS NOT NULL")[0]["COUNT(id)"]
   dbinfo['sqlite version'] = apsw.sqlitelibversion()
+  from sys import version
+  dbinfo['python version'] = version
+  
   cfg = {'dbinfo': dbinfo,
          'cfg file': config}
   return template('templates/config', cfg=cfg)
