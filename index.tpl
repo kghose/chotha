@@ -15,7 +15,6 @@
 %query = [('cskeyword_list',desktop_cskeyword_list)]
 <a href="/?{{urllib.urlencode(query)}}" title="Go to the desktop">Desktop</a> 
 <br/><a href="/">Home</a> 
-<br/><a href="/static/abouthelp.html">Help/About</a>
 
 %if view=='list': #In the traditional list view we see the search box and keyword list
 
@@ -109,6 +108,10 @@
 
 </div> <!-- content-pane -->
 
+<div class='pane control-pane'><!-- other navigation -->
+<a href="/static/abouthelp.html">Help/About</a>
+<br/><a href="/config">Config</a>
+</div>
 
 </body>
 </html>
