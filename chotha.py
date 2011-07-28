@@ -266,7 +266,7 @@ def extract_sources_from_note(note):
   psource = re.compile(r'\[source:(.+?)\]')
   scks = psource.findall(note['body'])
   scks_string = ', '.join('?' for dummy in scks)
-  rows = dbq('SELECT * FROM sources WHERE citekey IN (%s)' %scks_string, scks)
+  rows = dbq('SELECT * FROM sources WHERE citekey IN (%s) ORDER BY citekey' %scks_string, scks)
   return rows
 
 def fetch_single_note(id):
@@ -495,12 +495,24 @@ def show_note_page(id):
 
 @route('/notesourceexport/:id')
 def export_sources_from_note(id):
-  fname = config.get('User','msword_source_fname')
+  """We're trying out something fancy. In the note itself we set the file name
+  and the mode in the first and second line."""  
+  def get_filename_and_mode(note):
+    lines = note['body'].split('\n')
+    return lines[0].strip(), lines[1].strip()
+    
+  #fname = config.get('User','msword_source_fname')
   note = fetch_single_note(id)
+  fname, mode = get_filename_and_mode(note)
+  #fname = '/Users/kghose/Research/2011/Papers/SpatialIntegration/v01/Supplementary/supp.bib'
+  #mode = 'bibtex'
   sources = extract_sources_from_note(note)
   import citation_export as ce
-  refcount = ce.export_MSWord_XML(fname, sources)
-  msg = '<center><h2>Exported %d (of %d) sources present in this note to %s.</h1></center>' %(refcount,len(sources),fname)
+  if mode =='word':
+    refcount = ce.export_MSWord_XML(fname, sources)
+  elif mode =='bibtex':
+    refcount = ce.export_BibTeX(fname, sources)    
+  msg = '<center><h2>Exported %d (of %d) sources present in this note to<br/> %s<br/> as %s</h1></center>' %(refcount,len(sources),fname,mode)
   return msg
 
 @route('/source/:id')
