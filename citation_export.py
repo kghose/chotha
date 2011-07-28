@@ -182,6 +182,34 @@ def export_MSWord_XML(fname='/Users/kghose/Documents/Microsoft User Data/Sources
   doc, refcount = add_sources_to_XML(doc, sources, citekey_list)
   save_MSWord_master_source_XML(doc,fname)
   return refcount
+
+def export_BibTeX(fname='sources.bib', sources=None):
+  """Export all the sources to the named bib file."""
+  def add_authors(source):
+    name_text = ''
+    nl = parse_name_field(source['author'])
+    for n,fn in enumerate(nl):
+      name_text += fn['first'] + " " + fn['last']
+      if n < len(nl) - 1:
+        name_text += " and "
+    return name_text
+  
+  bibtex = "#This file is automatically created by Chotha.\n\n\n"
+  for source in sources:
+    bibtex += "@%s{%s,\n" %(source['source_type'], source['citekey'])
+    for key in source.keys():
+      if key not in ['source_type', 'author', 'citekey', 'abstract']:
+        if source[key] != '':
+          bibtex += "%s = {%s},\n" %(key, source[key])
+      elif key == 'author':
+        bibtex += "author = {%s},\n" %add_authors(source)
+    bibtex += "}\n\n"
+  bibtex += "\n\n"
+
+  import codecs
+  codecs.open(fname,'wb','utf-8').write(bibtex)
+  return len(sources)
+  
   
 if __name__ == "__main__":
   export_MSWord_XML(sources=None)
