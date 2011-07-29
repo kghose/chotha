@@ -209,7 +209,85 @@ def export_BibTeX(fname='sources.bib', sources=None):
   import codecs
   codecs.open(fname,'wb','utf-8').write(bibtex)
   return len(sources)
+
+def export_RIS(fname, sources):
+  """This exports to the nice and flat RIS format which endnote can import
+    Documentation was obtained from
+    http://en.wikipedia.org/wiki/RIS_%28file_format%29"""
+  def ris_authors(source):
+    ris = ''
+    aul = parse_name_field(source['author'])
+    for au in aul:
+      ris += "AU  - %s, %s\n" %(au['last'], au['first'])
+    return ris
   
+  #Field tags that are exported as is
+  Field2RISTag = {
+    #"abstract" text, 
+    "address" : 'AD', 
+    #"author" varchar(255), 
+    "booktitle" : 'TI', 
+    #"chapter" varchar(255), 
+    #"citekey" varchar(255), 
+    #"edition" varchar(255), 
+    "editor" : 'ED', 
+    #"filing_index" varchar(255), 
+    #"howpublished" varchar(255), 
+    #"institution" varchar(255), 
+    "journal" : 'JF', 
+    #"month" varchar(255), #Handled through Y1
+    "number" : 'IS', 
+    #"organization" varchar(255), 
+    #"pages" varchar(255), #Handled by SP,EP
+    "publisher" : 'PB', 
+    #"school" varchar(255), 
+    #"series" varchar(255), 
+    "title" : 'T1', 
+    #"source_type" varchar(255), 
+    #"url" varchar(255), 
+    "volume" : 'VL', 
+    #"year" integer,#Handled through Y1 
+    #"body" text, "created_at" datetime, "updated_at" datetime
+    }    
+  # How to convert our types to RIS TY codes
+  SourceType2RIS = {
+    "article" : 'JOUR', 
+    "book" : 'BOOK', 
+    #"booklet" => 'BOOK', 
+    #"collection", 
+    "conference" : 'CONF',
+    "inbook" : 'CHAP', 
+    "incollection" : 'CONF', 
+    "inproceedings" : 'CONF', 
+    #"manual" => 'GEN', 
+    "mastersthesis" : 'THES',
+    "misc" : 'GEN', 
+    "patent" : 'PAT', 
+    "phdthesis" : 'THES', 
+    "proceedings" : 'CONF', 
+    "techreport" : 'RPRT', 
+    "unpublished" : 'UNPB'
+  }
+
+  ris = ""
+  for source in sources:
+    ris += "TY  - %s\n" %SourceType2RIS[source['source_type']]
+    for key in source.keys():
+      if Field2RISTag.has_key(key):
+        if source[key] != '':
+          ris += "%s  - %s\n" %(Field2RISTag[key], source[key])
+      
+    ris += ris_authors(source)
+    ris += "PY  - %04d///\n" %source['year']
+    pages = source['pages'].rsplit('-')
+    ris += "SP  - %s\n" %pages[0]
+    ris += "EP  - %s\n" %pages[-1]    
+    ris += "ER  -\n\n"
+  ris += "\n\n"
+
+  import codecs
+  codecs.open(fname,'wb','utf-8').write(ris)
+  return len(sources)
   
 if __name__ == "__main__":
   export_MSWord_XML(sources=None)
