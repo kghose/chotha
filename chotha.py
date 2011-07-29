@@ -498,8 +498,24 @@ def export_sources_from_note(id):
   """We're trying out something fancy. In the note itself we set the file name
   and the mode in the first and second line."""  
   def get_filename_and_mode(note):
-    lines = note['body'].split('\n')
-    return lines[0].strip(), lines[1].strip()
+    lines = note['body'].splitlines()
+    fname = mode = None
+    for line in lines:
+      if line.startswith('File:'):
+        fname = line[5:]
+        if mode != None:
+          break
+      if line.startswith('Mode:'):
+        mode = line[5:]
+        if fname != None:
+          break
+      
+    if fname == None:
+      fname = 'chotha.ris'
+    if mode == None:
+      mode = 'ris'
+    
+    return fname, mode
     
   #fname = config.get('User','msword_source_fname')
   note = fetch_single_note(id)
@@ -511,7 +527,9 @@ def export_sources_from_note(id):
   if mode =='word':
     refcount = ce.export_MSWord_XML(fname, sources)
   elif mode =='bibtex':
-    refcount = ce.export_BibTeX(fname, sources)    
+    refcount = ce.export_BibTeX(fname, sources)
+  elif mode =='ris':
+    refcount = ce.export_RIS(fname, sources)    
   msg = '<center><h2>Exported %d (of %d) sources present in this note to<br/> %s<br/> as %s</h1></center>' %(refcount,len(sources),fname,mode)
   return msg
 
