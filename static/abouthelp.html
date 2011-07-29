@@ -50,6 +50,38 @@ only the first.</p>
 <p>Chotha is not meant for doing searches on pubmed - only for 
 retrieving targeted individual papers at a time.</p>
 
+<h3>Exporting sources</h3>
+<p>In the show note page there is a link that says 'export sources'. If you have
+added any sources to the note (by typing in <code>[source:citekey]</code>, see
+below) then clicking this link will let you export the sources to a file of
+your choice in a format of your choice.</p>
+
+<p>Somewhere in the note, on a new line type
+<blockquote><code>File:</code></blockquote>
+followed by the name of the file you want the sources 
+exported to, followed by a newline.</p>
+
+<p>In another newline type
+<blockquote><code>Mode:</code></blockquote>
+followed by one of the words <code>word, bibtex, ris</code></p>
+
+<p><code>word</code> will export the sources to MS Word's XML format which you can
+then add to your document through MS Word's own bibliography system.</p>
+
+<p><code>bibtex</code> will export to a BibTeX file which you can use with LaTeX + BibTeX</p>
+
+<p><code>ris</code> will export to the ris format which can be imported by EndNote
+and other reference manager programs.</br></p>
+
+<h3>Advanced source search</h3>
+If you know SQL you can type in a <code>WHERE</code> clause in the search box instead of a
+word query to find sources. Begin the query with <code>:sources</code> followed by a space and
+then the SQL <code>WHERE</code> clause. For example the following search
+
+<code>:sources journal LIKE 'Journal of Neuroscience'</code> 
+
+will return all sources whose journal name is "Journal of Neuroscience"
+
 <h3>Formatting notes</h3> 
 Chotha uses 'markdown' to allow you to format notes. 
 <a href="markdownhelp.html">Formatting cheat sheet</a>
@@ -57,7 +89,7 @@ Chotha uses 'markdown' to allow you to format notes.
 <h3>Links between items</h3>
 You can make links to another note or source. To make a link to another note, 
 in the text field type <code>[text to link][note:XXX]</code> where XXX is the 
-note id. To make a link to a source type in <code>[source:citeykey]</code> 
+note id. To make a link to a source type in <code>[source:citekey]</code> 
 where citekey is the citekey of the source (e.g. savitzky1964)
 
 <h3>Math text</h3>
