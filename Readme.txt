@@ -1,4 +1,25 @@
-Chotha is a rewrite of RRiki using Python and Bottle. 
+Chotha is a desktop program to store research notes and citations
+Copyright (C) 2011 Kaushik Ghose 
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+What
+----
+Chotha is a python program that uses the bottlepy framework. It runs a simple
+webserver locally on your computer, allowing you to view, create and edit notes
+and citations using your webbrowser. All data is stored locally.
 
 Usage
 -----
@@ -23,6 +44,12 @@ keyword conjunction as that item
 opening page) will populate the keywords with the current conjunction
 7. Creating a new note/source will present it on a search page having the
 same conjunction of keywords as it has
+
+History
+-------
+Chotha is a rewrite of RRiki using Python and Bottle. RRiki was a Ruby-On-Rails
+application that evolved out of R-A which itself was based on a Handspring 
+database application.
 
 Some notes on design choices
 ----------------------------
