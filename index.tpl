@@ -90,6 +90,8 @@
 %include templates/show_source source=source  
 </div>
 
+%elif view=='wordcloud':
+%include templates/wordcloud wordcloud=wordcloud 
 %end
 
 %if view=='list':
@@ -102,7 +104,8 @@
 </div> <!-- content-pane -->
 
 <div class='pane control-pane'><!-- other navigation -->
-<a href="/static/abouthelp.html">Help/About</a>
+<a href="/wordcloud">Word cloud</a>
+<br/><a href="/static/abouthelp.html">Help/About</a>
 <br/><a href="/config">Config</a>
 </div>
 

@@ -113,6 +113,7 @@ def create_database():
     UPDATE notes SET title = new.title || ' (' || new.citekey || ')' WHERE source_id = new.id;
   END"""
   dbq(trigger)
+  dbq('CREATE TABLE "wordcloud" ("word" TEXT PRIMARY KEY, "count" INTEGER)')
 
 #Keyword ops -------------------------------------------------------------------
 def cskeystring_to_list(cskeystring):
@@ -204,6 +205,12 @@ def fetch_conjunction_candidates(keywords = []):
     query = 'SELECT k.name FROM keywords k ORDER BY k.name ASC'
   return dbq(query, arg_list)
 
+def update_word_cloud(oldtext, newtext):
+  """Pass in a list of notes. This will either create new entries or increment
+  existing ones by 1 depending on whether the entry exists."""
+  import wordcloud
+  wordcloud.update_word_cloud(oldtext, newtext, dbname)
+
 # Note ops ---------------------------------------------------------------------
 def create_new_note(note):
   note['date'] = datetime.datetime.now().isoformat()
@@ -221,13 +228,17 @@ def create_new_note(note):
     bindings.append(note[fields[n]])
   note['id'] = dbq(query, bindings)  
   save_note_keywords(note)
+  update_word_cloud('', note['body'])
   return note
 
 def save_note(note):
-  """We then refetch the saved note so we can display it."""
+  """We fetch the old note before saving the new note so we can update the
+  wordcloud."""
+  old_note = fetch_single_note(note['id'])
   dbq("UPDATE notes SET date = ?, title = ?, body = ?, key_list = ? WHERE id LIKE ?", 
       (note['date'], note['title'], note['body'], note['key_list'], note['id']))
   save_note_keywords(note)
+  update_word_cloud(old_note['body'], note['body'])
 
 #TODO handle flag for sources
 def parse_notes(rows_in):
@@ -650,6 +661,22 @@ def refetch_source_action():
   output = wtemplate('index', source=source,
                     title='Editing %s' %source['citekey'], view='editsource')
   return output
+
+@route('/wordcloud')
+def wordcloud_page():
+  wordcloud = dbq('SELECT word, count FROM wordcloud ORDER BY word ASC')
+  output = wtemplate('index', wordcloud=wordcloud,
+                    title='wordcloud', view='wordcloud')
+  return output
+
+@route('/rebuildwordcloud')
+def rebuild_wordcloud_page():
+  """May take a VERY long time."""
+  import wordcloud
+  notes = dbq('SELECT body FROM notes')
+  wordcloud.rebuild_wordcloud(notes, dbname)
+  return wordcloud_page()
+  
 
 # Configuration helpers --------------------------------------------------------
 def create_default_config_file():
