@@ -444,6 +444,20 @@ def save_source(source):
 # Utility functions ------------------------------------------------------------
 def wtemplate(tmplt,**kwargs):
   """Needed a wrapper to the template call to include common options etc."""
+  #Some defaults to make life easier
+  defaults = {
+  'total_found': 1, 
+  'cskeyword_list': '',
+  'candidate_keywords': [],
+  'search_text': '',
+  'limit': 10,
+  'offset': 0,
+  'title': 'Chotha',
+  'rows': [None] #Dummy, causes display to say one thing is found
+  }
+  for key in defaults.keys():
+    if not kwargs.has_key(key):
+      kwargs[key] = defaults[key]   
   kwargs['desktop_cskeyword_list'] = config.get('User','desktop')
   return template(tmplt,**kwargs)
 

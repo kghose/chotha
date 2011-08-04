@@ -15,18 +15,12 @@
 %query = [('cskeyword_list',desktop_cskeyword_list)]
 <a href="/?{{urllib.urlencode(query)}}" title="Go to the desktop">Desktop</a> 
 <br/><a href="/">Home</a> 
-
-%if view=='list': #In the traditional list view we see the search box and keyword list
-
 %filter_data = {'total_found': total_found, 'total_shown': len(rows), 'candidate_keywords': candidate_keywords, 'cskeyword_list': cskeyword_list, 'search_text': search_text, 'limit': limit, 'offset': offset}
 %include templates/filter_controls filter_data=filter_data 
-
-%end #If view=='list'
 </div> <!-- control pane -->
 
 <div class='pane content-pane'>
 
-%if view=='list': #In the traditional list view we get the new item box 
 <div class='content newentry'>
 <div> <!-- for the hover -->
 +Entry
@@ -39,7 +33,6 @@
 </form>
 </div> <!-- For the hover -->
 </div>
-%end #If view=='list'
 
 %if view=='list': #Show us the traditional list view
 %for row in rows:
