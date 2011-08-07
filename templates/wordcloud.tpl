@@ -8,7 +8,7 @@
 <body>
 <div class="wordcloud">
 %for word in wordcloud:
-<a href="/?search_text={{word['word']}}"><font size={{word['count']}}>{{word['word']}}</font></a>
+<a href="/?search_text=+{{word['word']}}+"><font size={{word['count']}}>{{word['word']}}</font></a>
 %end
 </div>
 
