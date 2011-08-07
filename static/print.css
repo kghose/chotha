@@ -37,3 +37,5 @@ a:link:after, a:visited:after {
    content: " (" attr(href) ") ";
    font-size: 70%;
 }
+
+.wordcloud a:link:after, a:visited:after {display: none;}
