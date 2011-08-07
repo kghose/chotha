@@ -90,8 +90,6 @@
 %include templates/show_source source=source  
 </div>
 
-%elif view=='wordcloud':
-%include templates/wordcloud wordcloud=wordcloud 
 %end
 
 %if view=='list':

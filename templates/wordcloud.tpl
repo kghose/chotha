@@ -1,7 +1,20 @@
-<ul>
+<html>
+<head>
+<title>{{title}} - চোথা</title>
+<link rel="shortcut icon" href="/static/shortcut_icon.png" />
+<link rel="stylesheet" href="/static/screen.css" type="text/css" />
+<link rel="stylesheet" href="/static/print.css" type="text/css" media="print" />
+</head>
+<body>
+<div class="wordcloud">
 %for word in wordcloud:
-<li>{{word['word']}} : {{word['count']}} </li>
+<a href="/?search_text={{word['word']}}"><font size={{word['count']}}>{{word['word']}}</font></a>
 %end
-</ul>
+</div>
+
+<hr/>
 
 <a href="/rebuildwordcloud">Rebuild cloud (May take a LONG time)</a>
+
+</body>
+</html>

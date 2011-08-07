@@ -665,7 +665,7 @@ def refetch_source_action():
 @route('/wordcloud')
 def wordcloud_page():
   wordcloud = dbq('SELECT word, count FROM wordcloud ORDER BY word ASC')
-  output = wtemplate('index', wordcloud=wordcloud,
+  output = wtemplate('templates/wordcloud', wordcloud=wordcloud,
                     title='wordcloud', view='wordcloud')
   return output
 
