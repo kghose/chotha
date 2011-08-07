@@ -3,7 +3,7 @@ import apsw, re
 
 def get_real_words(orig_text):
   words = re.findall(r'\b[a-z]+\b', orig_text, re.I)
-  return set(words)
+  return set([w for w in words if len(w) > 1])
 
 def update_word_cloud(oldtext, newtext, dbname):
   """Passed two blocks of text, corresponding to the old and new version of the
