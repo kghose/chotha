@@ -7,8 +7,9 @@
 </head>
 <body>
 
+<div style="background-color: limegreen;">
 {{len(wordcloud)}} words
-<hr/>
+</div>
 
 <div class="wordcloud">
 %for n,word in enumerate(wordcloud):
@@ -19,9 +20,9 @@
 %end
 </div>
 
-<hr/>
-
+<div style="background-color: limegreen;">
 <a href="/rebuildwordcloud">Rebuild cloud (May take a LONG time)</a>
+</div>
 
 </body>
 </html>
