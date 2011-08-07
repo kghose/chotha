@@ -1,23 +1,9 @@
 """Handles the creation and maintenance of the wordcloud."""
-import apsw
-
-ascii_letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-punct = \
-set(['!','#','"','%','$',"'",'&',')','(','+','*','-',',','/','.',';',':','=',
-     '<','?','>','@','[',']','\\','_','^','`','{','}','|','~'])
+import apsw, re
 
 def get_real_words(orig_text):
-#  html = markdown(orig_text)
-#  text = ''.join(BeautifulSoup(html).findAll(text=True))
-  words = set(orig_text.split())
-  clean_words = []
-  for word in words:
-    if word[-1] in punct:
-      word = word[:-1]
-    if len(word) > 0:
-      if word[0] in ascii_letters:
-        clean_words.append(word)
-  return set(clean_words)
+  words = re.findall(r'\b[a-z]+\b', orig_text, re.I)
+  return set(words)
 
 def update_word_cloud(oldtext, newtext, dbname):
   """Passed two blocks of text, corresponding to the old and new version of the
