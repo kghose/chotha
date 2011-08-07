@@ -59,7 +59,7 @@ your choice in a format of your choice.</p>
 <p>Somewhere in the note, on a new line type
 <blockquote><code>File:</code></blockquote>
 followed by the name of the file you want the sources 
-exported to, followed by a newline.</p>
+exported to, followed by a newline.
 
 <p>In another newline type
 <blockquote><code>Mode:</code></blockquote>
@@ -73,6 +73,12 @@ then add to your document through MS Word's own bibliography system.</p>
 <p><code>ris</code> will export to the ris format which can be imported by EndNote
 and other reference manager programs.</br></p>
 
+So:
+<blockquote><code>File:/Users/kghose/Research/references.bib</br>
+Mode:bibtex</code></blockquote>
+will save all the citations in the note to references.bib in bibtex format
+</p>
+
 <h3>Advanced source search</h3>
 If you know SQL you can type in a <code>WHERE</code> clause in the search box instead of a
 word query to find sources. Begin the query with <code>:sources</code> followed by a space and
@@ -80,7 +86,10 @@ then the SQL <code>WHERE</code> clause. For example the following search
 
 <code>:sources journal LIKE 'Journal of Neuroscience'</code> 
 
-will return all sources whose journal name is "Journal of Neuroscience"
+will return all sources whose journal name is "Journal of Neuroscience".
+
+<b>Note that this will execute the SQL you type directly on your database, so
+becareful what you type.</b>
 
 <h3>Formatting notes</h3> 
 Chotha uses 'markdown' to allow you to format notes. 
