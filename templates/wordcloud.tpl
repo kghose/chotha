@@ -11,7 +11,10 @@
 <hr/>
 
 <div class="wordcloud">
-%for word in wordcloud:
+%for n,word in enumerate(wordcloud):
+%if n%10 == 0:
+</br>
+%end
 <a href="/?search_text=+{{word['word']}}+"><font size={{word['count']}}>{{word['word']}}</font></a>
 %end
 </div>
