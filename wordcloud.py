@@ -16,6 +16,7 @@ def update_word_cloud(oldtext, newtext, dbname):
   
   conn = apsw.Connection(dbname)
   c = conn.cursor()
+  c.execute('BEGIN')
   for word in words_removed:
     c.execute('UPDATE wordcloud SET count=count-1 WHERE word=?', (word,)) 
 
@@ -26,6 +27,8 @@ def update_word_cloud(oldtext, newtext, dbname):
     c.execute('UPDATE wordcloud SET count=count+1 WHERE word=?', (word,)) 
     if conn.changes() == 0:
       c.execute('INSERT INTO wordcloud (word,count) VALUES (?,1)', (word,))
+  c.execute('END')
+
  
 def update_note(old_note, new_note, dbname): 
   update_word_cloud(old_note['body'], new_note['body'], dbname)
@@ -36,7 +39,21 @@ def rebuild_wordcloud(notes, dbname):
   c = conn.cursor()
   c.execute('DELETE FROM wordcloud')
   total = len(notes)
+  unique_words = {}
   for n,note in enumerate(notes):
-    update_word_cloud('', note['body'], dbname)
+    words = get_real_words(note['body'])
+    for word in words:
+      if unique_words.has_key(word):
+        unique_words[word] += 1
+      else:
+        unique_words[word] = 1  
+    #update_word_cloud('', note['body'], dbname)
     if n % 10:
       print '%0.0f%% done' %(100.*n/total)
+  
+  bindings = [(word,unique_words[word]) for word in unique_words]
+  #Doing a transaction is soooo much faster
+  c.execute('BEGIN')
+  c.executemany('INSERT INTO wordcloud (word,count) VALUES (?,?)', bindings)
+  c.execute('END')
+    
