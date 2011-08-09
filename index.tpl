@@ -21,6 +21,7 @@
 
 <div class='pane content-pane'>
 
+%if view != 'edit' and view != 'editsource':
 <div class='content newentry'>
 <div> <!-- for the hover -->
 +Entry
@@ -33,6 +34,8 @@
 </form>
 </div> <!-- For the hover -->
 </div>
+%end
+
 
 %if view=='list': #Show us the traditional list view
 %for row in rows:
