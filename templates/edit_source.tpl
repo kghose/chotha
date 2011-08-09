@@ -1,8 +1,10 @@
 <!-- Allows us to edit a source -->
 
 <form action="/refetchsource" method="POST">
-Refetch source <input type="text" name="query" size='20' title="Enter pubmed query and hit enter to refetch the bibliographic data">
+<div class='content newentry'>
+Refetch source <input type="text" name="query" size='30' title="Enter pubmed query and hit enter to refetch the bibliographic data">
 <input type="hidden" name="id" value={{source['id']}}>
+</div>
 </form>
 
 <form action="/savesource" method="POST">
@@ -38,8 +40,8 @@ series<input type="text" size=50 name="series" title="series" value="{{source['s
 institution <input type="text" size=20 name="institution" title="institution" value="{{source['institution']}}"><br/>
 organization <input type="text" size=20 name="organization" title="organization" value="{{source['organization']}}">
 school <input type="text" size=20 name="school" title="School" value="{{source['school']}}"><br/>
-doi <input type="text" size=20 name="doi" title="doi" value="{{source['doi']}}"
-</div>	
+doi <input type="text" size=20 name="doi" title="doi" value="{{source['doi']}}">
+</div>
 
 <input type="submit" name="save" value="save">
 </form>
