@@ -113,7 +113,9 @@ and not have annoying duplicate entries in the table
 
 
 Todo:
-* Add a word cloud page that will display words in the db 
+* Use the word "cite" instead of "source" to save typing?
+
+* (done) Add a word cloud page that will display words in the db 
   (especially low frequency ones) that will allow me to dive into notes and
   find little odds and ends I have squirreled away. Needs a new table that will
   store words and their frequency (number of notes the occur in)). To avoid too
