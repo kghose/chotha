@@ -92,6 +92,20 @@ h2 {
 .newentry input{background-color: aliceblue;}
 .newentry textarea{background-color: aliceblue;}
 
+.message {
+	border-radius: 15px;
+	border: 1px solid;
+	padding: 10px;
+	margin: 10px;	
+}
+
+.message div {
+	border-radius: 15px;
+	background-color: yellow; 
+	color: red;
+	padding: 10px;
+}
+
 .itemid-box {
 	position: absolute;
 	right:0px;

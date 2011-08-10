@@ -274,11 +274,17 @@ def parse_notes(rows_in):
   return rows
 
 def extract_sources_from_note(note):
+  def sources_not_found(req_scks, rows):
+    fnd_scks = [row['citekey'] for row in rows]
+    miss_scks = set(req_scks) - set(fnd_scks)
+    return miss_scks
+    
   psource = re.compile(r'\[source:(.+?)\]')
   scks = psource.findall(note['body'])
   scks_string = ', '.join('?' for dummy in scks)
   rows = dbq('SELECT * FROM sources WHERE citekey IN (%s) ORDER BY citekey' %scks_string, scks)
-  return rows
+  miss_scks = sources_not_found(scks, rows)
+  return rows, miss_scks
 
 def fetch_single_note(id):
   rows = dbq('SELECT * FROM notes WHERE id LIKE ?', (id,))
@@ -547,7 +553,7 @@ def export_sources_from_note(id):
   fname, mode = get_filename_and_mode(note)
   #fname = '/Users/kghose/Research/2011/Papers/SpatialIntegration/v01/Supplementary/supp.bib'
   #mode = 'bibtex'
-  sources = extract_sources_from_note(note)
+  sources, missing_citekeys = extract_sources_from_note(note)
   import citation_export as ce
   if mode =='word':
     refcount = ce.export_MSWord_XML(fname, sources)
@@ -555,8 +561,23 @@ def export_sources_from_note(id):
     refcount = ce.export_BibTeX(fname, sources)
   elif mode =='ris':
     refcount = ce.export_RIS(fname, sources)    
-  msg = '<center><h2>Exported %d (of %d) sources present in this note to<br/> %s<br/> as %s</h1></center>' %(refcount,len(sources),fname,mode)
-  return msg
+
+  msg = {
+    'written': refcount,
+    'total': len(sources),
+    'missing': missing_citekeys,
+    'file name': fname,
+    'mode': mode
+  }
+  
+  #'<center><h2>Exported %d (of %d) sources present in this note to<br/> %s<br/> as %s</h1></center>' %(refcount,len(sources),fname,mode)
+  
+  output = wtemplate('index', note=note, 
+                    title='Exported sources from note',
+                    msg = msg,
+                    view='note:sourceexport')
+  
+  return output
 
 @route('/source/:id')
 def show_source_page(id):

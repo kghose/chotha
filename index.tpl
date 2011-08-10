@@ -78,7 +78,21 @@
 %include templates/edit_note note=note
 </div>
 
-%elif view=='note': #Show us the edited note only
+%elif view=='note' or view=='note:sourceexport': #Show us the edited note only
+<div class="content, message">
+%if view=='note:sourceexport':
+<p>Wrote <b>{{msg['written']}}</b> of <b>{{msg['total']}}</b> valid sources 
+present in this note to <b>{{msg['file name']}}</b> as <b>{{msg['mode']}}</b>.</p>
+%if len(msg['missing']) > 0:
+<div>The following sources were requested but not found in the database:
+%for ck in msg['missing']:
+<b>{{ck}}</b>,
+%end #for
+</div>
+%end #if len
+%end #if view=='note:sourceexport'
+</div>
+
 <div class="content">
 %include templates/show_note note=note
 </div>
