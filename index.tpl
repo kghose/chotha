@@ -79,8 +79,8 @@
 </div>
 
 %elif view=='note' or view=='note:sourceexport': #Show us the edited note only
-<div class="content, message">
 %if view=='note:sourceexport':
+<div class="content, message">
 <p>Wrote <b>{{msg['written']}}</b> of <b>{{msg['total']}}</b> valid sources 
 present in this note to <b>{{msg['file name']}}</b> as <b>{{msg['mode']}}</b>.</p>
 %if len(msg['missing']) > 0:
@@ -90,8 +90,9 @@ present in this note to <b>{{msg['file name']}}</b> as <b>{{msg['mode']}}</b>.</
 %end #for
 </div>
 %end #if len
-%end #if view=='note:sourceexport'
 </div>
+%end #if view=='note:sourceexport'
+
 
 <div class="content">
 %include templates/show_note note=note
