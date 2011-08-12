@@ -1,3 +1,8 @@
+%if source is None:
+	<p>Source not in database</p>
+
+%else:
+
 	<br/> <!-- Need this for proper spacing -->
   <div class='itemid-box'>
   <div>{{source['citekey']}} 
@@ -56,3 +61,5 @@
   <h2>Abstract</h2>
   <p>{{source['abstract']}}</p>
 %end
+
+%end #If source is None

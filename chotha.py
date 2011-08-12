@@ -592,8 +592,13 @@ def show_source_page(id):
 def show_source_page_citekey(citekey):
 
   source = fetch_single_source_by_citekey(citekey)
+  if source is not None:
+    title = '%s' %source['citekey']
+  else:
+    title = '%s not found' %citekey
+    
   output = wtemplate('index', source=source,
-                    title='%s' %source['citekey'], view='source')
+                    title=title, view='source')
   return output
 
 
