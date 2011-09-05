@@ -515,6 +515,15 @@ def index_page():
                     view='list')
   return output
 
+@route('/new')
+def new_page():
+  """Returns page with slot for new entry."""
+  cskeyword_list = request.GET.get('cskeyword_list', '')
+  output = wtemplate('index', cskeyword_list = cskeyword_list,
+                    title = "New entry",
+                    view='new')
+  return output
+  
 @route('/note/:id')
 def show_note_page(id):
   note = fetch_single_note(id)

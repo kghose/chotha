@@ -21,10 +21,8 @@
 
 <div class='pane content-pane'>
 
-%if view != 'edit' and view != 'editsource':
-<div class='content newentry'>
-<div> <!-- for the hover -->
-+Entry
+%if view == 'new':
+<div class="content">
 <form action="/new" method="POST">
 <p><input type="text" name="title" class="filldiv" title="Note title or pubmed query">
 <input type="checkbox" name="ispaper" value='yes' />This is a paper</p>
@@ -32,7 +30,11 @@
 <p><input type="text" name="key_list" class="filldiv" title="Keyword list" value="{{cskeyword_list}}"></p>
 <input type="submit" name="create" value="create">
 </form>
-</div> <!-- For the hover -->
+</div>
+%else:
+%query = [('cskeyword_list',cskeyword_list)]
+<div class="content newentry">
+<a href="/new?{{urllib.urlencode(query)}}">New</a>
 </div>
 %end
 

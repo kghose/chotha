@@ -80,17 +80,16 @@ h2 {
 .content textarea {border-radius: 5px;}
 
 .newentry {
-	display: inline-block;
 	text-align: center;
+	font-size: 8pt;
 	padding: 5px;
 	margin-bottom: 10px;
 	border-radius: 15px;
 	background-color: lightblue;
 }
-.newentry div form {display: none}
-.newentry div:hover form {display: block; width: 12cm;}
-.newentry input{background-color: aliceblue;}
-.newentry textarea{background-color: aliceblue;}
+.newentry a:link {text-decoration: none; color: black;}
+.newentry a:visited {text-decoration: none; color: black;}
+.newentry a:hover {text-decoration: none; color: black; background-color: white;}
 
 .message {
 	border-radius: 15px;
