@@ -1,10 +1,13 @@
 """Handles the creation and maintenance of the wordcloud."""
 import apsw, re
 
+fname = 'common-english-words-with-contractions.txt'
+common_words = open(fname).read().split(',')
+
 def get_real_words(orig_text):
   words = re.findall(r'\b[a-z]+\b', orig_text, re.I)
   words = set(words)
-  return set([w.lower() for w in words if len(w) > 1])
+  return set([w.lower() for w in words if w.lower() not in common_words])
 
 def update_word_cloud(oldtext, newtext, dbname):
   """Passed two blocks of text, corresponding to the old and new version of the
