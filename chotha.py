@@ -603,11 +603,18 @@ def show_source_page_citekey(citekey):
   source = fetch_single_source_by_citekey(citekey)
   if source is not None:
     title = '%s' %source['citekey']
+    output = wtemplate('index', source=source,
+                      title=title, view='source')
+
   else:
-    title = '%s not found' %citekey
+    ntitle = citekey[:-4] + ' ' + citekey[-4:]
+    output = wtemplate('index',
+                  title = "New entry",
+                  ntitle = ntitle,  #sets up a title for the note
+                  ispaper = 'CHECKED', #Checks the "this is a paper" checkbox
+                  view='new',
+                  message='No such source in database. Create?')
     
-  output = wtemplate('index', source=source,
-                    title=title, view='source')
   return output
 
 

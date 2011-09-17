@@ -21,11 +21,25 @@
 
 <div class='pane content-pane'>
 
+%if 'message' in locals():
+<div class="content, message">
+{{message}}
+</div>
+%end
+
 %if view == 'new':
 <div class="content">
 <form action="/new" method="POST">
-<p><input type="text" name="title" class="filldiv" title="Note title or pubmed query">
-<input type="checkbox" name="ispaper" value='yes' />This is a paper</p>
+
+%if 'ntitle' not in locals():
+% ntitle = ''
+%end
+%if 'ispaper' not in locals():
+% ispaper = ''
+%end
+
+<p><input type="text" name="title" class="filldiv" title="Note title or pubmed query" value="{{ntitle}}">
+<input type="checkbox" name="ispaper" {{ispaper}} />This is a paper</p>
 <p><textarea rows="10" wrap="virtual" name="body" class="filldiv" title="Text of note"></textarea></p>
 <p><input type="text" name="key_list" class="filldiv" title="Keyword list" value="{{cskeyword_list}}"></p>
 <input type="submit" name="create" value="create">
