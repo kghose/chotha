@@ -542,11 +542,11 @@ def export_sources_from_note(id):
     fname = mode = None
     for line in lines:
       if line.startswith('File:'):
-        fname = line[5:]
+        fname = line[5:].strip()
         if mode != None:
           break
       if line.startswith('Mode:'):
-        mode = line[5:]
+        mode = line[5:].strip()
         if fname != None:
           break
       
@@ -571,20 +571,18 @@ def export_sources_from_note(id):
   elif mode =='ris':
     refcount = ce.export_RIS(fname, sources)    
 
-  msg = {
-    'written': refcount,
-    'total': len(sources),
-    'missing': missing_citekeys,
-    'file name': fname,
-    'mode': mode
-  }
-  
-  #'<center><h2>Exported %d (of %d) sources present in this note to<br/> %s<br/> as %s</h1></center>' %(refcount,len(sources),fname,mode)
-  
+  message = """<p>Wrote <b>%d</b> of <b>%d</b> valid sources present in this 
+  note to <b>%s</b> as <b>%s</b>.</p>""" %(refcount, len(sources), fname, mode)
+  if len(missing_citekeys) > 0:
+    message += """<p>The following sources were requested but not found in the 
+    database:"""
+    for ck in missing_citekeys:
+      message += "<b>%s</b>" %(ck)
+
   output = wtemplate('index', note=note, 
                     title='Exported sources from note',
-                    msg = msg,
-                    view='note:sourceexport')
+                    message = message,
+                    view='note')
   
   return output
 

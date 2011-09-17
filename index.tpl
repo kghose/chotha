@@ -21,12 +21,6 @@
 
 <div class='pane content-pane'>
 
-%if 'message' in locals():
-<div class="content, message">
-{{message}}
-</div>
-%end
-
 %if view == 'new':
 <div class="content">
 <form action="/new" method="POST">
@@ -52,6 +46,11 @@
 </div>
 %end
 
+%if 'message' in locals():
+<div class="content, message">
+{{!message}}
+</div>
+%end
 
 %if view=='list': #Show us the traditional list view
 %for row in rows:
@@ -94,22 +93,7 @@
 %include templates/edit_note note=note
 </div>
 
-%elif view=='note' or view=='note:sourceexport': #Show us the edited note only
-%if view=='note:sourceexport':
-<div class="content, message">
-<p>Wrote <b>{{msg['written']}}</b> of <b>{{msg['total']}}</b> valid sources 
-present in this note to <b>{{msg['file name']}}</b> as <b>{{msg['mode']}}</b>.</p>
-%if len(msg['missing']) > 0:
-<div>The following sources were requested but not found in the database:
-%for ck in msg['missing']:
-<b>{{ck}}</b>,
-%end #for
-</div>
-%end #if len
-</div>
-%end #if view=='note:sourceexport'
-
-
+%elif view=='note': #Show us the note only
 <div class="content">
 %include templates/show_note note=note
 </div>
