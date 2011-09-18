@@ -1,7 +1,7 @@
 """Handles the creation and maintenance of the wordcloud."""
 import apsw, re
 
-fname = 'common-english-words-with-contractions.txt'
+fname = 'static/common-english-words-with-contractions.txt'
 common_words = open(fname).read().split(',')
 
 def get_real_words(orig_text):
