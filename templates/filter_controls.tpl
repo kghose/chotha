@@ -30,5 +30,5 @@
 %query = [('cskeyword_list',pre.encode('utf-8') + keyword['name'].encode('utf-8')), \
 %         ('search_text', search_text.encode('utf-8')), \
 %         ('limit',current_limit), ('offset',0)]
-<a href="/?{{urllib.urlencode(query)}}">{{keyword['name']}}</a> 
+<a href="/?{{urllib.urlencode(query)}}">{{keyword['name']}}</a><br/>
 %end
