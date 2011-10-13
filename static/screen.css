@@ -1,8 +1,8 @@
 body {
 	font-family:"Century Gothic";
 	font-size: 12pt;
-  background-color: #fff; 
-	color: #333;
+  background-color: gray; 
+	color: black;
 	text-align:center;
 	}
 
@@ -25,7 +25,7 @@ h2 {
 .control-pane {
 	float:left;
 	width:8cm;
-	background-color: yellowgreen;
+	background-color: darkgray;
 }
 .control-pane a:link {text-decoration: none; color: black;}
 .control-pane a:visited {text-decoration: none; color: black;}
@@ -69,12 +69,15 @@ h2 {
 
 .content {
 	position: relative;
-	padding-top: 0px;
-	padding-bottom: 40px;
+	padding: 7px;
+	margin-bottom: 40px;
+	border-radius: 10px;
 	
 	font-family:"Century Gothic";	
 	font-size: 11pt;
   text-align: left;
+  
+  background-color: white;
 }
 .content input {border-radius: 5px;}
 .content textarea {border-radius: 5px;}
@@ -142,7 +145,7 @@ h2 {
 	font-weight: bold;
 	border-radius: 10px;
 	color: black;
-	background-color: lemonchiffon;
+	background-color: darkgray;
 	padding: 5px;
 }
 
