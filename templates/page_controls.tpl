@@ -6,18 +6,18 @@
 %current_offset = filter_data['offset']
 %total_found = filter_data['total_found']
 
-<p>
 %for limit in [10,100,1000]:
 %query = [('cskeyword_list', cskeyword_list), \
 %					('search_text', search_text), \
 %         ('limit',limit), ('offset',0)]
 %if current_limit >= limit and current_limit < limit+1:
-<a href="/?{{urllib.urlencode(query)}}"><b>{{limit}}</b></a>
+%str="<b>%d</b>" %(limit)
 %else:
-<a href="/?{{urllib.urlencode(query)}}">{{limit}}</a>
+%str="%d" %(limit)
 %end
+<a href="/?{{urllib.urlencode(query)}}">{{!str}}</a></br>
+
 %end
-</p>
 
 <p>
 %offset = 0
@@ -27,10 +27,11 @@
 %					('search_text', search_text), \
 %         ('limit',current_limit), ('offset',offset)]
 %if current_offset >= offset and current_offset < offset+1:
-<a href="/?{{urllib.urlencode(query)}}"><b>{{page}}</b></a>
+%str="<b>%d</b>" %(page)
 %else:
-<a href="/?{{urllib.urlencode(query)}}">{{page}}</a>
+%str="%d" %(page)
 %end
+<a href="/?{{urllib.urlencode(query)}}">{{!str}}</a></br>
 %offset += current_limit
 %page +=1
 %end

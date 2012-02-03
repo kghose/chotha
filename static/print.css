@@ -1,9 +1,13 @@
-.control-pane {
+.filter-pane {
 	display: none;
 }
 
 .paging-pane {
 	display: none;
+}
+
+.misc-pane {
+    display: none;
 }
 
 .newentry {
@@ -12,9 +16,8 @@
 
 .content-pane {
 	position: relative;
-	left:10%;
 	margin-left:2em;
-	width: 80%;
+	width: 14cm;
 }
 
 .content {

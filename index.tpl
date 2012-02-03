@@ -11,13 +11,13 @@
 <body>
 %import urllib, datetime
 
-<div class='pane control-pane'>
+<div class='pane filter-pane'>
 %query = [('cskeyword_list',desktop_cskeyword_list)]
 <a href="/?{{urllib.urlencode(query)}}" title="Go to the desktop">Desktop</a> 
 <br/><a href="/">Home</a> 
 %filter_data = {'total_found': total_found, 'total_shown': len(rows), 'candidate_keywords': candidate_keywords, 'cskeyword_list': cskeyword_list, 'search_text': search_text, 'limit': limit, 'offset': offset}
 %include templates/filter_controls filter_data=filter_data 
-</div> <!-- control pane -->
+</div> <!-- filter pane -->
 
 <div class='pane content-pane'>
 
@@ -112,16 +112,17 @@
 
 %end
 
+</div> <!-- content-pane -->
+
+
 %if view=='list':
-<div class='pane paging-pane'> 
+<div class='paging-pane'>
 %filter_data = {'total_found': total_found,'cskeyword_list': cskeyword_list, 'search_text': search_text, 'limit': limit, 'offset': offset}
-%include templates/page_controls filter_data=filter_data 
+%include templates/page_controls filter_data=filter_data
 </div> <!-- paging-pane -->
 %end
 
-</div> <!-- content-pane -->
-
-<div class='pane control-pane'><!-- other navigation -->
+<div class='pane misc-pane'><!-- other navigation -->
 <a href="/wordcloud">Word cloud</a>
 <br/><a href="/static/abouthelp.html">Help/About</a>
 <br/><a href="/config">Config</a>
