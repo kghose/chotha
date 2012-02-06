@@ -409,8 +409,9 @@ def generate_citekey(source):
       name_frags = au_line[0].split(',')
       if name_frags[0] != '':
         last_name = name_frags[0]
+        last_name = last_name.replace("'","_") #Apostrophe is an illegal citekey character.
 
-  citekey = 'source' + source['id']
+  citekey = 'source' + source['id'] #cite key for sources with no authors
   if last_name != '':
     base = last_name.lower() + source['year']
     succ = 1
@@ -419,7 +420,7 @@ def generate_citekey(source):
     query = "SELECT COUNT(*) FROM sources WHERE citekey=? AND id <> ?"
     row = dbq(query, (citekey,id))
     while row[0]['COUNT(*)'] != 0:
-      citekey = base + '(%d)' %succ
+      citekey = base + '_%d' %succ
       succ += 1
       print citekey,row[0].keys()
       row = dbq(query, (citekey,id))
