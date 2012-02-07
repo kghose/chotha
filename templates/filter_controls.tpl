@@ -17,13 +17,12 @@
 <input type="hidden" name="cskeyword_list" value="{{cskeyword_list}}">
 <input type="hidden" name="limit" value="{{limit}}">
 <input type="hidden" name="offset" value=0>
-</form>
 %if cskeyword_list != '':
 {{'+' + cskeyword_list}}
 %query = [('cskeyword_list',cskeyword_list)]
 (<a href="/options/setdesktop/?{{urllib.urlencode(query)}}" title="Set this keyword combination as desktop">Set as desktop</a>)
 %end
-<p><b>{{total_found}} found</b></p>
+</form>
 
 %pre = cskeyword_list + ',' if cskeyword_list != '' else ''
 %for keyword in candidate_keywords:
