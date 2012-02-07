@@ -1,10 +1,9 @@
 body {
-	font-family:"Century Gothic";
-	font-size: 12pt;
-  background-color: gray; 
-	color: black;
-	text-align:center;
-	}
+    font-family:"Century Gothic";
+    font-size: 12pt;
+    background-color: white;
+    color: black;
+}
 
 h1 {
 	font-size: 13pt;	
@@ -20,28 +19,40 @@ h2 {
 	font-size: 10pt;
 	border-radius: 15px;
 	border-color:gray;
-}		
+}
+.pane a:link {text-decoration: none; color: black; }
+.pane a:visited {text-decoration: none; color: black;}
+.pane a:hover {text-decoration: none; color: black; font-weight: bold;}
 
 .filter-pane {
 	float:left;
 	width:8cm;
-	background-color: darkgray;
+    border-left: 2px solid lightgray;
+    border-bottom: 2px solid lightgray;	
+	//background-color: darkgray;
 }
-.filter-pane a:link {text-decoration: none; color: black;}
-.filter-pane a:visited {text-decoration: none; color: black;}
-.filter-pane a:hover {text-decoration: none; color: black; background-color: white;}
 .filter-pane input {border-radius: 5px;}
 .filter-pane p {
 	padding: 5px;
 	background-color: white;
 	border-radius: 5px;	
 }
+.filter-pane form {
+    background-color: lightgreen;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 5px;
+}
+
 
 .content-pane {
 	float:left;
 	width:12cm;
 	padding-top: 0px;
 }
+.content-pane a:link {text-decoration: none; color: blue; font-weight: bold;}
+.content-pane a:visited {text-decoration: none; color: blue;font-weight: bold;}
+.content-pane a:hover {text-decoration: none; color: black; font-weight: bold;}
 
 .paging-pane {
     float:left;
@@ -60,6 +71,12 @@ h2 {
 	background-color: black;
     padding-left: 5px;
 }
+.paging-pane hr {
+    border: none;
+    border-top: 1px solid #AAA;
+    border-bottom: 1px solid #FFF;
+    line-height: 0;
+}
 
 .misc-pane {
     float:left;
@@ -69,36 +86,42 @@ h2 {
     border-radius: 5px;
     padding: 5px;
     border-color:gray;
-    background-color: #d3d3d3;
+    //background-color: #d3d3d3;
     margin-left: 10px;
 }
 
 .filldiv {
-  width: 100%; /*dynamic with div size*/
+    width: 100%; /*dynamic with div size*/
 }
 
 .content {
 	position: relative;
-	padding: 7px;
-	margin-bottom: 40px;
+	margin-bottom: 5px;
+	padding: 20px;
 	border-radius: 10px;
 	
 	font-family:"Century Gothic";	
 	font-size: 11pt;
-  text-align: left;
+    text-align: left;
   
-  background-color: white;
+    background-color: white;
+
+    border-left: 2px solid lightgray;
+    border-bottom: 2px solid lightgray;
 }
+
 .content input {border-radius: 5px;}
 .content textarea {border-radius: 5px;}
 
 .newentry {
 	text-align: center;
 	font-size: 8pt;
-	padding: 5px;
+	font-weight: bold;
+	padding: 0px;
 	margin-bottom: 10px;
 	border-radius: 15px;
-	background-color: lightblue;
+	background-color: lightgreen;
+    border: thick solid lightgreen;
 }
 .newentry a:link {text-decoration: none; color: black;}
 .newentry a:visited {text-decoration: none; color: black;}
@@ -122,16 +145,17 @@ h2 {
 	position: absolute;
 	right:0px;
 	top:0px;
-	border:solid;
-	border-width:thin;
+	//border:solid;
+	//border-width:thin;
 	border-radius: 5px;
-	padding-left:.2em;
-	padding-right:.2em;
+	padding: 5px;
+    //padding-left:.2em;
+	//padding-right:.2em;
 	text-align:right;
 	font-size:7pt;
-	font-weight: bold;
+	//font-weight: bold;
 	width:auto;
-	background-color: aqua;
+	background-color: whitesmoke;
 	z-index:+1; /*If there are no notes, the hl at the end goes above us*/
 }
 .itemid-box div span {display: none;}
@@ -144,7 +168,7 @@ h2 {
 	width: 100%;
 	font-size:large;
 	font-weight: bold;
-	border-bottom: 1px dotted #ba0000;
+	//border-bottom: 1px dotted #ba0000;
 }
 .title a:link {text-decoration: none; color: black;}
 .title a:visited {text-decoration: none; color: black;}
@@ -153,10 +177,10 @@ h2 {
 .sourcetitle {
 	font-size:10pt;
 	font-weight: bold;
-	border-radius: 10px;
+	border-bottom: solid thin;
 	color: black;
-	background-color: darkgray;
-	padding: 5px;
+	background-color: lightgray;
+	padding: 2px;
 }
 
 .sourcejournal {
@@ -177,7 +201,7 @@ h2 {
 
 .lastupdated {
 	text-align:right;
-  font-weight: bold;
+    font-weight: bold;
 	font-size: .6em;
 }
 .lastupdated a:link {color: black;}
@@ -185,7 +209,6 @@ h2 {
 
 .key_list {
 	position: relative;
-	border-bottom: thin dotted;	
 	left: 0px;
 	bottom: 10px;
 	font-weight: bold;
