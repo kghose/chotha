@@ -7,6 +7,7 @@
   <div>note:{{note['id']}}
   <span>
   <br/><a href="/edit/{{note['id']}}" title="Go to citation">Edit note</a>
+  <br/><a href="/notesourceexport/{{note['id']}}" title="Export citations in this note">Export sources</a>
   </span>
 	</div>
   </div>
@@ -26,9 +27,6 @@
   
   <p>{{!note['html']}}</p>
   <p><div class='key_list'>{{note['key_list']}}</div></p>  
-  <div align="right"><a href="/edit/{{note['id']}}">edit</a></div>
-  <div align="right"><a href="/notesourceexport/{{note['id']}}">
-  export sources</a></div>
 %else:
 No such note
 %end
