@@ -14,7 +14,7 @@
 <div class='pane filter-pane'>
 %query = [('cskeyword_list',desktop_cskeyword_list)]
 <a href="/?{{urllib.urlencode(query)}}" title="Go to the desktop">Desktop</a> 
-<br/><a href="/">Home</a> 
+<br/><a href="/" title="Show all items">Home</a>
 %filter_data = {'total_found': total_found, 'total_shown': len(rows), 'candidate_keywords': candidate_keywords, 'cskeyword_list': cskeyword_list, 'search_text': search_text, 'limit': limit, 'offset': offset}
 %include templates/filter_controls filter_data=filter_data 
 </div> <!-- filter pane -->
