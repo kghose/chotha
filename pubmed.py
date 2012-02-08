@@ -6,27 +6,58 @@ from xml.dom import minidom
 module_logger = logging.getLogger('chotha.pubmed')
 
 def pubmed_id_from_query(query, email='kaushik.ghose@gmail.com', tool='Chotha', database='pubmed'):
-  """From a general query (such as a Doi or a title or anything really) return 
-  us the first pmid we get."""
+  """This is not designed as a search tool. This is designed to take in a unique query and return a single result.
+  The query can be a title, a pubmed id or a doi.
+
+  pubmed's esearch can be forced to do a title search by setting 'field' to be 'titl'
+
+  Pubmed's search will automatically detect doi and uids
+
+  Now, pubmed uid's are numbers and the doi prefix is numeric (http://www.doi.org/handbook_2000/appendix_1.html#A1-A).
+  (In fact All DOI names start with "10." (http://www.doi.org/handbook_2000/enumeration.html#2.2))
+
+  Therefore we interpret any query that does not begin with a number as a title query. This will not really fail for
+  queries for titles that begin with numbers, for example if we search for
+
+  7/10 Problems treated in collaboration and nursing diagnostics
+
+  Our code here will not flag it as a [Title] search, BUT clever entrez will do a title search for us. The fear then is
+  that the results won't be unique - in principle - but in practice titles starting with numbers are rare enough that
+  the results will highly likely be unique.
+  """
+
+  #Clean up query string
+  query = query.strip()
+
+  #Setup basic parameters
   params = {
-  'db':database,
-  'tool':tool,
-  'email':email,
-  'term':query,
-  'usehistory':'y',
-  'retmax':1
+    'db':database,
+    'tool':tool,
+    'email':email,
+    'term':query,
+    'retmax':1
   }
-  # try to resolve the PubMed ID of the DOI
+
+  if len(query) == 0:
+    module_logger.warning('Empty query')
+  else:
+    if query[0].isalpha(): #For a title search we explicitly set the search field to be title
+      params['field'] =  'titl'
+
+  #Construct the query string and retrieve the results
   url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?' + urllib.urlencode(params)
   module_logger.debug(url)
   data = urllib.urlopen(url).read()
   xmldoc = minidom.parseString(data)
+
+  # Extract the PubMed ID from the result
   ids = xmldoc.getElementsByTagName('Id')
   if len(ids) == 0:
     pmid = None
     module_logger.warning('No record found')
   else:
     pmid = ids[0].childNodes[0].data
+
   return pmid
 
 
