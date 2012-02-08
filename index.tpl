@@ -61,7 +61,7 @@
 
 %if row['source_id'] != None:  
   <div class='itemid-box'>
-  <div>Source 
+  <div>source
   <span>
   <br/><a href="/note/{{row['id']}}" title="Go to note">Show note</a>
   <br/><a href="/source/{{row['source_id']}}" title="Go to citation">Show source</a>
