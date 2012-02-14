@@ -76,7 +76,8 @@
   <div>{{'note:%d' %row['id']}}
   <span>
   <br/><a href="/note/{{row['id']}}" title="Go to note">show</a>
-  <br/><a href="/edit/{{row['id']}}" title="Go to note">edit</a>
+  <br/><a href="/edit/{{row['id']}}" title="Edit note">edit</a>
+  <br/><a href="/notesourceexport/{{row['id']}}" title="Export citations in this note">Export sources</a>
   </span>
   </div>
   </div>
