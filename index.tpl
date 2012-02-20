@@ -125,6 +125,7 @@
 
 <div class='pane misc-pane'><!-- other navigation -->
 <a href="/wordcloud">Word cloud</a>
+<br/><a href="/keyword_frequency">Keyword frequency</a>
 <br/><a href="/static/abouthelp.html">Help/About</a>
 <br/><a href="/config">Config</a>
 </div>

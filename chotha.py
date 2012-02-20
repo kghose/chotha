@@ -710,6 +710,15 @@ def wordcloud_page():
                     title='wordcloud', view='wordcloud')
   return output
 
+@route('/keyword_frequency')
+def keyword_frequency_page():
+  keyword_freq = dbq('SELECT k.name, count(kn.rowid),  kn.keyword_id FROM keywords as k, keywords_notes as kn WHERE k.id = kn.keyword_id GROUP BY kn.keyword_id ORDER BY count(kn.rowid) DESC')
+  #keyword_freq = dbq('SELECT k.name, count(kn.rowid),  kn.keyword_id FROM keywords as k, keywords_notes as kn WHERE k.id = kn.keyword_id GROUP BY kn.keyword_id ORDER BY k.name')
+  output = wtemplate('templates/keyword_frequency', keyf=keyword_freq,
+    title='Keyword frequency', view='')
+  return output
+
+
 @route('/rebuildwordcloud')
 def rebuild_wordcloud_page():
   """May take a VERY long time."""
