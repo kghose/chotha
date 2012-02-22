@@ -23,7 +23,7 @@
 
 %if view != 'new':
 %query = [('cskeyword_list',cskeyword_list)]
-<div class="content newentry">
+<div class="newentry">
 <a href="/new?{{urllib.urlencode(query)}}">New</a>
 </div>
 %end

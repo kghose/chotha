@@ -3,6 +3,7 @@ body {
     font-size: 12pt;
     background-color: white;
     color: black;
+    margin: 0px;
 }
 
 h1 {
@@ -14,11 +15,8 @@ h2 {
 }
 
 .pane {
-	padding:20px;
 	text-align: left;
 	font-size: 10pt;
-	border-radius: 15px;
-	border-color:gray;
 }
 .pane a:link {text-decoration: none; color: black; }
 .pane a:visited {text-decoration: none; color: black;}
@@ -26,29 +24,29 @@ h2 {
 
 .filter-pane {
 	float:left;
-	width:8cm;
-    border-left: 2px solid lightgray;
-    border-bottom: 2px solid lightgray;	
-	//background-color: darkgray;
+	width:5cm;
+    padding:20px;
+	background-color: #00ffff;
+    text-align: right;
 }
-.filter-pane input {border-radius: 5px;}
+.filter-pane input {
+    border-radius: 10px;
+    border: 1px solid gray;
+}
 .filter-pane p {
 	padding: 5px;
 	background-color: white;
 	border-radius: 5px;	
 }
 .filter-pane form {
-    background-color: lightgreen;
     padding: 5px;
     margin-top: 5px;
     border-radius: 5px;
 }
 
-
 .content-pane {
 	float:left;
 	width:12cm;
-	padding-top: 0px;
 }
 .content-pane a:link {text-decoration: none; color: blue; font-weight: bold;}
 .content-pane a:visited {text-decoration: none; color: blue;font-weight: bold;}
@@ -59,9 +57,7 @@ h2 {
 	width:auto;
     text-align: right;
     font-size: 8pt;
-    border-radius: 5px;
     padding: 5px;
-    border-color:gray;
 	background-color: #d3d3d3;
 }
 .paging-pane a {text-decoration: none; color: black;}
@@ -83,10 +79,8 @@ h2 {
     width:auto;
     text-align: right;
     font-size: 8pt;
-    border-radius: 5px;
     padding: 5px;
-    border-color:gray;
-    //background-color: #d3d3d3;
+    background-color: #fffacd;
     margin-left: 10px;
 }
 
@@ -96,32 +90,31 @@ h2 {
 
 .content {
 	position: relative;
-	margin-bottom: 5px;
+	padding-bottom: 5px;
 	padding: 20px;
-	border-radius: 10px;
-	
 	font-family:"Century Gothic";	
 	font-size: 11pt;
     text-align: left;
-  
-    background-color: white;
-
-    border-left: 2px solid lightgray;
-    border-bottom: 2px solid lightgray;
+    background-color: #fff0f5;
+    border-bottom: 1px solid lightgray;
 }
 
-.content input {border-radius: 5px;}
-.content textarea {border-radius: 5px;}
+.content input {
+    border-radius: 10px;
+    border: 1px solid gray;
+}
+.content textarea {
+    border-radius: 10px;
+    border: 1px solid gray;
+}
 
 .newentry {
+    width: 100%;
 	text-align: center;
-	font-size: 8pt;
+	font-size: 10pt;
 	font-weight: bold;
 	padding: 0px;
-	margin-bottom: 10px;
-	border-radius: 15px;
-	background-color: lightgreen;
-    border: thick solid lightgreen;
+	background-color: #b0c4de;
 }
 .newentry a:link {text-decoration: none; color: black;}
 .newentry a:visited {text-decoration: none; color: black;}
@@ -145,15 +138,10 @@ h2 {
 	position: absolute;
 	right:0px;
 	top:0px;
-	//border:solid;
-	//border-width:thin;
 	border-radius: 5px;
 	padding: 5px;
-    //padding-left:.2em;
-	//padding-right:.2em;
 	text-align:right;
 	font-size:7pt;
-	//font-weight: bold;
 	width:auto;
 	background-color: whitesmoke;
 	z-index:+1; /*If there are no notes, the hl at the end goes above us*/
@@ -168,7 +156,6 @@ h2 {
 	width: 100%;
 	font-size:large;
 	font-weight: bold;
-	//border-bottom: 1px dotted #ba0000;
 }
 .title a:link {text-decoration: none; color: black;}
 .title a:visited {text-decoration: none; color: black;}
@@ -179,7 +166,6 @@ h2 {
 	font-weight: bold;
 	border-bottom: solid thin;
 	color: black;
-	background-color: lightgray;
 	padding: 2px;
 }
 
@@ -216,4 +202,3 @@ h2 {
 }
 
 .wordcloud a {text-decoration: none; color: black;}
-	
