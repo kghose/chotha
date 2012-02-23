@@ -39,9 +39,11 @@ h2 {
 	border-radius: 5px;	
 }
 .filter-pane form {
-    padding: 5px;
+    padding: 20px;
+    margin-left: -20px;
+    margin-right: -20px;
     margin-top: 5px;
-    border-radius: 5px;
+    background: #fafaff;
 }
 
 .content-pane {
@@ -58,9 +60,10 @@ h2 {
     text-align: right;
     font-size: 8pt;
     padding: 5px;
-	background-color: #d3d3d3;
+	background-color: #add8e6;
+    color: black;
 }
-.paging-pane a {text-decoration: none; color: black;}
+.paging-pane a {text-decoration: none; color: yellow;}
 .paging-pane a:hover {background-color: red; border-radius: 2px;}
 .paging-pane b {
 	color: white;
@@ -95,7 +98,7 @@ h2 {
 	font-family:"Century Gothic";	
 	font-size: 11pt;
     text-align: left;
-    background-color: #fff0f5;
+    background-color: #fafaff;
     border-bottom: 1px solid lightgray;
 }
 

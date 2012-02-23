@@ -19,6 +19,7 @@
 <input type="hidden" name="offset" value=0>
 %if cskeyword_list != '':
 {{'+' + cskeyword_list}}
+<br/>
 %query = [('cskeyword_list',cskeyword_list)]
 (<a href="/options/setdesktop/?{{urllib.urlencode(query)}}" title="Set this keyword combination as desktop">Set as desktop</a>)
 %end
