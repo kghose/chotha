@@ -343,13 +343,13 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
   query = 'SELECT id FROM notes '
   arg_list = []
   
-  if search_text.startswith(':sources '):
+  if search_text.startswith(':s '):
     """This lets us perform arbitrary SQL queries on our db for sources.
-    Activate it by typing ":source <where clause>" in the search box. The
+    Activate it by typing ":s <where clause>" in the search box. The
     where clause should omit the WHERE keyword. This is designed as a desktop
     app used by the owner, so we trust him not to sabotage himself by doing
     strange things."""
-    where_clause = search_text[8:]
+    where_clause = search_text[2:]
     query = "SELECT id FROM notes WHERE source_id IN (SELECT id FROM sources WHERE %s)" %where_clause
   else:
     #Do a regular search
@@ -374,7 +374,9 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
       WHERE kn.keyword_id IN 
       (SELECT k.id FROM keywords k WHERE %s) 
       GROUP BY kn.note_id HAVING COUNT(*) = %d)""" %(key_query,len(keywords))
-    query += ' GROUP BY notes.id ORDER BY notes.date DESC'
+    query += ' GROUP BY notes.id'
+
+  query += ' ORDER BY notes.date DESC'
 
   rows = dbq(query, arg_list)
   lrows = len(rows)
