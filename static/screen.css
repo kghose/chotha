@@ -17,13 +17,14 @@ h2 {
 .pane {
 	text-align: left;
 	font-size: 10pt;
+    width: auto;
+    float: left;
 }
 .pane a:link {text-decoration: none; color: black; }
 .pane a:visited {text-decoration: none; color: black;}
 .pane a:hover {text-decoration: none; color: black; font-weight: bold;}
 
 .filter-pane {
-	float:left;
 	width:5cm;
     padding:20px;
 	background-color: #00ffff;
@@ -46,8 +47,8 @@ h2 {
     background: #fafaff;
 }
 
+
 .content-pane {
-	float:left;
 	width:12cm;
 }
 .content-pane a:link {text-decoration: none; color: blue; font-weight: bold;}
@@ -55,31 +56,32 @@ h2 {
 .content-pane a:hover {text-decoration: none; color: black; font-weight: bold;}
 
 .paging-pane {
-    float:left;
-	width:auto;
     text-align: right;
     font-size: 8pt;
     padding: 5px;
 	background-color: #add8e6;
     color: black;
 }
-.paging-pane a {text-decoration: none; color: yellow;}
-.paging-pane a:hover {background-color: red; border-radius: 2px;}
-.paging-pane b {
-	color: white;
-	background-color: black;
-    padding-left: 5px;
-}
 .paging-pane hr {
+    margin-left: -5px;
+    margin-right: -5px;
     border: none;
-    border-top: 1px solid #AAA;
-    border-bottom: 1px solid #FFF;
+    border-top: 1px solid #fff;
     line-height: 0;
 }
 
+.current-page {
+    color: white;
+    background-color: black;
+    margin-left: -5px;
+    margin-right: -5px;
+    padding-right: 5px;
+}
+.current-page a:link {text-decoration: none; color: white;}
+.current-page a:visited {text-decoration: none; color: white;}
+
+
 .misc-pane {
-    float:left;
-    width:auto;
     text-align: right;
     font-size: 8pt;
     padding: 5px;
@@ -116,12 +118,9 @@ h2 {
 	text-align: center;
 	font-size: 10pt;
 	font-weight: bold;
-	padding: 0px;
-	background-color: #b0c4de;
+	padding: 5px;
+	background-color: #ffffe0;
 }
-.newentry a:link {text-decoration: none; color: black;}
-.newentry a:visited {text-decoration: none; color: black;}
-.newentry a:hover {text-decoration: none; color: black; background-color: white;}
 
 .message {
 	border-radius: 15px;

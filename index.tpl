@@ -117,7 +117,7 @@
 
 
 %if view=='list':
-<div class='paging-pane'>
+<div class='pane paging-pane'>
 %filter_data = {'total_found': total_found,'cskeyword_list': cskeyword_list, 'search_text': search_text, 'limit': limit, 'offset': offset}
 %include templates/page_controls filter_data=filter_data
 </div> <!-- paging-pane -->

@@ -15,12 +15,13 @@
 %					('search_text', search_text), \
 %         ('limit',limit), ('offset',0)]
 %if current_limit >= limit and current_limit < limit+1:
-%str="<b>%d</b>" %(limit)
+%cls="current-page"
 %else:
-%str="%d" %(limit)
+%cls=""
 %end
-<a href="/?{{urllib.urlencode(query)}}">{{!str}}</a></br>
-
+<div class="{{cls}}">
+<a href="/?{{urllib.urlencode(query)}}">{{limit}}</a>
+</div>
 %end
 <hr/>
 
@@ -31,11 +32,13 @@
 %					('search_text', search_text), \
 %         ('limit',current_limit), ('offset',offset)]
 %if current_offset >= offset and current_offset < offset+1:
-%str="<b>%d</b>" %(page)
+%cls="current-page"
 %else:
-%str="%d" %(page)
+%cls=""
 %end
-<a href="/?{{urllib.urlencode(query)}}">{{!str}}</a></br>
+<div class="{{cls}}">
+<a href="/?{{urllib.urlencode(query)}}">{{page}}</a>
+</div>
 %offset += current_limit
 %page +=1
 %end
