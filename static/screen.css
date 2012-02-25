@@ -143,7 +143,7 @@ h2 {
 	border-radius: 5px;
 	padding: 5px;
 	text-align:right;
-	font-size:7pt;
+	font-size:10pt;
 	width:auto;
 	background-color: whitesmoke;
 	z-index:+1; /*If there are no notes, the hl at the end goes above us*/
