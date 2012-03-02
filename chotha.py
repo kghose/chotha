@@ -578,9 +578,9 @@ def export_sources_from_note(id):
   note to <b>%s</b> as <b>%s</b>.</p>""" %(refcount, len(sources), fname, mode)
   if len(missing_citekeys) > 0:
     message += """<p>The following sources were requested but not found in the 
-    database:"""
+    database: """
     for ck in missing_citekeys:
-      message += "<b>%s</b>" %(ck)
+      message += "<b>%s</b> " %(ck)
 
   output = wtemplate('index', note=note, 
                     title='Exported sources from note',
