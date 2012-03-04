@@ -198,7 +198,7 @@ def export_BibTeX(fname='sources.bib', sources=None):
   for source in sources:
     bibtex += "@%s{%s,\n" %(source['source_type'], source['citekey'])
     for key in source.keys():
-      if key not in ['source_type', 'author', 'citekey', 'abstract']:
+      if key not in ['source_type', 'author', 'citekey', 'abstract', 'id']: #id screws up jabref, for one, and is not a standard bibtex field
         if source[key] != '':
           bibtex += "%s = {%s},\n" %(key, source[key])
       elif key == 'author':
