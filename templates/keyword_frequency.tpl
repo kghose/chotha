@@ -12,7 +12,8 @@ body {
     width: 50%;
     margin-left: auto;
     margin-right: auto;
-    background: limegreen;
+    color: white;
+    background: black;
     text-align: center;
     margin-top: 5px;
     padding: 5px;
@@ -48,7 +49,7 @@ body {
     width: 50%;
 }
 #bar {
-    background: yellow;
+    background: gray;
     border-right: thin solid black;
     border-bottom: thin solid black;
     margin-left: 5px;
