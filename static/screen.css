@@ -85,8 +85,8 @@ h2 {
     text-align: right;
     font-size: 8pt;
     padding: 5px;
-    background-color: #fffacd;
-    margin-left: 10px;
+    background-color: #d3d3d3;
+    padding-left: 20px;
 }
 
 .filldiv {
@@ -119,8 +119,12 @@ h2 {
 	font-size: 10pt;
 	font-weight: bold;
 	padding: 5px;
-	background-color: #ffffe0;
+    color: white;
+	background-color: gray;
 }
+.newentry a:link {text-decoration: none; color: white;}
+.newentry a:visited {text-decoration: none; color: white;}
+.newentry a:hover {text-decoration: none; color: black;}
 
 .message {
 	border-radius: 15px;
