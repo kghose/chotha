@@ -193,7 +193,16 @@ def export_BibTeX(fname='sources.bib', sources=None):
       if n < len(nl) - 1:
         name_text += " and "
     return name_text
-  
+
+  def bibtexescape(text):
+    """This method escapes characters from the field that cause problems for latex."""
+    if text is not None:
+      chars = ['%', '&']
+      for c in chars:
+        esc = re.compile(c + r'+?')
+        text = esc.sub('\\'+c,text)
+    return text
+
   bibtex = "#This file is automatically created by Chotha.\n\n\n"
   for source in sources:
     bibtex += "@%s{%s,\n" %(source['source_type'], source['citekey'])
@@ -205,6 +214,7 @@ def export_BibTeX(fname='sources.bib', sources=None):
         bibtex += "author = {%s},\n" %add_authors(source)
     bibtex += "}\n\n"
   bibtex += "\n\n"
+  bibtex = bibtexescape(bibtex)
 
   import codecs
   codecs.open(fname,'wb','utf-8').write(bibtex)
