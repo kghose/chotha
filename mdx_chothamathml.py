@@ -24,9 +24,9 @@ class escapeLaTeXExtension(markdown.Extension):
     pass
   
   def extendMarkdown(self, md, md_globals):
-    self.md = md
     """The name of this extension is escapeLaTeX and it is inserted at the
     head of all the markdown operations (_begin)."""
+    self.md = md
     md.inlinePatterns.add('escapeLaTeX', escapeLaTeXPattern(md), '_begin')
       
   def reset(self):

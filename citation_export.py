@@ -123,7 +123,7 @@ def export_MSWord_XML(fname='/Users/kghose/Documents/Microsoft User Data/Sources
     def add_element(tag, value, doc, child):
       tag = doc.createElement(tag)
       child.appendChild(tag)
-      if value != None and value != '':
+      if value is not None and value != '':
         tagtext = doc.createTextNode(value)
         tag.appendChild(tagtext)
       return doc, tag
@@ -160,7 +160,7 @@ def export_MSWord_XML(fname='/Users/kghose/Documents/Microsoft User Data/Sources
     doc,tag = add_element('b:Title', source['title'], doc, cite)
     doc,tag = add_element('b:Volume', source['volume'], doc, cite)
     doc,tag = add_element('b:Year', str(source['year']), doc, cite)
-    if refo != None:
+    if refo is not None:
       doc,tag = add_element('b:RefOrder', str(refo), doc, cite)
 
     return doc
@@ -172,7 +172,7 @@ def export_MSWord_XML(fname='/Users/kghose/Documents/Microsoft User Data/Sources
     ref_count = 0
     for source in sources:
       if source['citekey'] not in citekey_list:
-        if refo!= None:
+        if refo is not None:
           refo += 1
         doc = add_source_to_XML(doc, source,refo)
         ref_count += 1
@@ -300,4 +300,4 @@ def export_RIS(fname, sources):
   return len(sources)
   
 if __name__ == "__main__":
-  export_MSWord_XML(sources=None)
+  export_MSWord_XML()

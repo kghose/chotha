@@ -38,7 +38,7 @@ def pubmed_id_from_query(query, email='kaushik.ghose@gmail.com', tool='Chotha', 
     'retmax':1
   }
 
-  if len(query) == 0:
+  if not len(query):
     module_logger.warning('Empty query')
   else:
     if query[0].isalpha(): #For a title search we explicitly set the search field to be title
@@ -52,7 +52,7 @@ def pubmed_id_from_query(query, email='kaushik.ghose@gmail.com', tool='Chotha', 
 
   # Extract the PubMed ID from the result
   ids = xmldoc.getElementsByTagName('Id')
-  if len(ids) == 0:
+  if not len(ids):
     pmid = None
     module_logger.warning('No record found')
   else:
@@ -77,7 +77,7 @@ def citation_from_pmid(pmid, email='kaushik.ghose@gmail.com', tool='Chotha', dat
 
 def citation_from_query(query, email='kaushik.ghose@gmail.com', tool='Chotha', database='pubmed'):
   pmid = pubmed_id_from_query(query, email, tool, database)
-  if pmid == None:
+  if pmid is None:
     return None
   else:
     return citation_from_pmid(pmid, email, tool, database)
@@ -88,10 +88,11 @@ def gebtn(doc,name):
   except:
     return ''
   
-def parse_pubmed_xml_to_source(xml, source = {}):
+def parse_pubmed_xml_to_source(xml, source=None):
   """Parses XML returned from efetch into a source dictionary that we can
   save into the database"""
-  
+  if not source: source = {}
+
   xmldoc = minidom.parseString(xml)
   
   source['title'] = gebtn(xmldoc,'ArticleTitle') 

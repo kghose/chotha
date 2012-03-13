@@ -14,14 +14,15 @@ ch = logging.StreamHandler()
 logger.addHandler(ch)
 
 # Database operations ---------------------------------------------------------
-def dbq(query, bindings = [], many = False, conn = None):
+def dbq(query, bindings=None, many=False, conn=None):
   """Utility function to handle db queries. Based on query type, the function
   returns last rowid or rows (which is a list of dictionaries)"""
-  
+  if not bindings: bindings = []
+
   #Get the first word of the query to figure out what we should return
   cmd = query.split(' ',1)[0].upper()
   
-  if conn == None:
+  if conn is None:
     conn = apsw.Connection(dbname)
   c = conn.cursor()
   if many:
@@ -132,7 +133,7 @@ def find_or_create_keywords(keywords):
   for keyword in keywords:
     name = keyword.strip()
     row = dbq('SELECT id FROM keywords WHERE name LIKE ?', (name,))
-    if len(row) == 0:
+    if not len(row):
       id = dbq('INSERT INTO keywords (name) VALUES (?)', (name,))
     else:
       id = row[0]['id']
@@ -159,7 +160,7 @@ def save_note_keywords(note):
   
 
 #TODO fix to remove references to sources
-def fetch_conjunction_candidates(keywords = []):
+def fetch_conjunction_candidates(keywords=None):
   """Given the keyword, fetch a list of keywords that appear in conjunction
   with it in the database in notes and sources.
   
@@ -187,6 +188,7 @@ def fetch_conjunction_candidates(keywords = []):
   AND k.id NOT IN (SELECT k.id FROM keywords k WHERE ?) <-put in the keyword clause here
       
   """
+  if not keywords: keywords = []
   arg_list = []
   if len(keywords) > 0:
     kq = ' k.name=? ' 
@@ -308,8 +310,7 @@ def fetch_single_source_by_citekey(citekey):
     return None
 
 # Search ops -------------------------------------------------------------------
-def fetch_notes_by_criteria(keywords = [], search_text = '',
-                            limit=10, offset=0):
+def fetch_notes_by_criteria(keywords=None, search_text='', limit=10, offset=0):
   """Returns note summary via keyword intersection and search. If either is None,
   they are ignored. If both are None all notes are returned
   
@@ -339,7 +340,8 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
     GROUP BY notes.id;
     
     
-  """  
+  """
+  if not keywords: keywords = []
   query = 'SELECT id FROM notes '
   arg_list = []
   
@@ -383,7 +385,7 @@ def fetch_notes_by_criteria(keywords = [], search_text = '',
   
   query_id_list = ''
   n = offset
-  while n < lrows and n < offset+limit:
+  while lrows > n < offset+limit:
     query_id_list += str(rows[n]['id']) + ','
     n += 1
   query_id_list = query_id_list.rstrip(',')
@@ -395,7 +397,7 @@ def populate_new_source_from_pubmed_query(query):
   source = get_empty_source()
   if query != '':
     xml = pubmed.citation_from_query(query)
-    if xml != None:
+    if xml is not None:
       source = pubmed.parse_pubmed_xml_to_source(xml, source = source)
     else:
       source['title'] = query
@@ -421,7 +423,7 @@ def generate_citekey(source):
     id = source['id']
     query = "SELECT COUNT(*) FROM sources WHERE citekey=? AND id <> ?"
     row = dbq(query, (citekey,id))
-    while row[0]['COUNT(*)'] != 0:
+    while row[0]['COUNT(*)']:
       citekey = base + '_%d' %succ
       succ += 1
       print citekey,row[0].keys()
@@ -546,16 +548,16 @@ def export_sources_from_note(id):
     for line in lines:
       if line.startswith('File:'):
         fname = line[5:].strip()
-        if mode != None:
+        if mode is not None:
           break
       if line.startswith('Mode:'):
         mode = line[5:].strip()
-        if fname != None:
+        if fname is not None:
           break
       
-    if fname == None:
+    if fname is None:
       fname = 'chotha.ris'
-    if mode == None:
+    if mode is None:
       mode = 'ris'
     
     return fname, mode
@@ -580,7 +582,7 @@ def export_sources_from_note(id):
     message += """<p>The following sources were requested but not found in the 
     database: """
     for ck in missing_citekeys:
-      message += "<b>%s</b> " %(ck)
+      message += "<b>%s</b> " % ck
 
   output = wtemplate('index', note=note, 
                     title='Exported sources from note',
@@ -686,7 +688,7 @@ def save_source_action():
   source = get_empty_source()
   for f in fields:
     val = request.POST.get(f, None)
-    if val != None:
+    if val is not None:
       source[f] = unicode(val.strip(),'utf_8')
   save_source(source)
   source = fetch_single_source(source['id']) #We need the note id
@@ -750,7 +752,7 @@ def create_default_config_file():
 
 def load_config():
   result = config.read('chotha.cfg')
-  if len(result) == 0:
+  if not len(result):
     create_default_config_file()
 
 def save_config():
@@ -794,10 +796,11 @@ def set_desktop():
 @route('/config')
 def show_config_page():
   """Show a page with some configuration data and some simple stats."""
-  dbinfo = {}
-  dbinfo['note count'] = dbq("SELECT COUNT(id) FROM NOTES WHERE source_id IS NULL")[0]["COUNT(id)"]
-  dbinfo['source count'] = dbq("SELECT COUNT(id) FROM NOTES WHERE source_id IS NOT NULL")[0]["COUNT(id)"]
-  dbinfo['sqlite version'] = apsw.sqlitelibversion()
+  dbinfo = {
+    'note count': dbq("SELECT COUNT(id) FROM NOTES WHERE source_id IS NULL")[0][
+                  "COUNT(id)"], 'source count':
+      dbq("SELECT COUNT(id) FROM NOTES WHERE source_id IS NOT NULL")[0][
+      "COUNT(id)"], 'sqlite version': apsw.sqlitelibversion()}
   from sys import version
   dbinfo['python version'] = version
   

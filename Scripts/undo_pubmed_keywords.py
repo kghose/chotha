@@ -17,13 +17,13 @@ def remove_pubmed_keyword_block(text):
       if lines[n+1] == '-------' and n + 2 < len(lines):
         if lines[n+2].startswith('* '):
           new_lines.pop()
-          n = n + 2
+          n += 2
           while lines[n].startswith('* '):
-            n = n + 1
+            n += 1
             if n == len(lines):
               break
-          n = n - 1
-    n = n + 1
+          n -= 1
+    n += 1
     
   return "\n".join(new_lines)
 
@@ -37,13 +37,13 @@ def remove_pubmed_keyword_block_v2(text):
     if lines[n] == '#Keywords#' and n + 1 < len(lines):
         if lines[n+1].startswith('* '):
           new_lines.pop()
-          n = n + 1
+          n += 1
           while lines[n].startswith('* '):
-            n = n + 1
+            n += 1
             if n == len(lines):
               break
-          n = n - 1
-    n = n + 1
+          n -= 1
+    n += 1
     
   return "\n".join(new_lines)
   

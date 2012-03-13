@@ -24,7 +24,7 @@ import os, sys, apsw
 def dbq(query, bindings = [], many = False, conn = None):
   """Utility function to handle db queries. Based on query type, the function
   returns last rowid or rows (which is a list of dictionaries)"""
-  
+
   #Get the first word of the query to figure out what we should return
   cmd = query.split(' ',1)[0].upper()
   
@@ -51,9 +51,8 @@ def dbq(query, bindings = [], many = False, conn = None):
   if cmd == 'INSERT':
     return conn.last_insert_rowid()
 
-"""
-* Create a new chotha database
-"""
+
+# Create a new chotha database
 def get_source_fields(include_column_type = False):
   """Need an ordered list that starts with id. INSERT and UPDATE operations
   require us to treat the id differently compared to regular fields."""
@@ -115,10 +114,9 @@ def create_database(dbname):
   
   c.execute(query)
   
-"""
-* Copy over all the notes as is, dropping the created_at and updated_at columns
-"""
+
 def copy_over_notes(rriki_db, chotha_db):
+  """Copy over all the notes as is, dropping the created_at and updated_at columns."""
   conn = apsw.Connection(chotha_db)
   c = conn.cursor()
   query = 'ATTACH DATABASE ? AS rriki'
@@ -126,10 +124,9 @@ def copy_over_notes(rriki_db, chotha_db):
   query = "INSERT INTO notes (id,date,title,body) SELECT id,date,title,body FROM rriki.notes"
   c.execute(query)
 
-"""
-* Copy over all the sources as is, dropping the created_at, updated_at and url columns
-"""
 def copy_over_sources(rriki_db, chotha_db):
+  """Copy over all the sources as is, dropping the created_at, updated_at and url columns"""
+
   conn = apsw.Connection(chotha_db)
   c = conn.cursor()
   query = 'ATTACH DATABASE ? AS rriki'
@@ -144,13 +141,12 @@ def copy_over_sources(rriki_db, chotha_db):
   FROM rriki.sources"""
   c.execute(query)
 
-"""
-* For each source, create a new note and fill in the source_id appropriately
-set the note date as the source created_at date and the note title as the paper
-title + citekey
-=> note and source ids remain the same, but now we have a bunch of extra notes at the end
-"""
 def create_source_notes(rriki_db, chotha_db):
+  """For each source, create a new note and fill in the source_id appropriately
+  set the note date as the source created_at date and the note title as the paper
+  title + citekey
+  => note and source ids remain the same, but now we have a bunch of extra notes at the end"""
+
   conn = apsw.Connection(chotha_db)
   c = conn.cursor()
   query = 'ATTACH DATABASE ? AS rriki'
@@ -160,12 +156,13 @@ def create_source_notes(rriki_db, chotha_db):
   FROM rriki.sources"""
   c.execute(query)
 
-"""
-* Go through all rriki keywords, break them up by path separator and comma to 
-  build a list of component keywords matched to the original keyword
-* At the same time insert the component keywords into chotha
-"""
 def transfer_keywords(rriki_db, chotha_db):
+  """
+  * Go through all rriki keywords, break them up by path separator and comma to
+    build a list of component keywords matched to the original keyword
+  * At the same time insert the component keywords into chotha
+  """
+
   conn = apsw.Connection(chotha_db)
   c = conn.cursor()
   query = 'ATTACH DATABASE ? AS rriki'
@@ -196,11 +193,12 @@ def transfer_keywords(rriki_db, chotha_db):
   
   return component_keywords
 
-"""
-* Read in the list of rriki keyword ids for each note, find the relevant component 
-  keywords and insert the pairs into chotha's keywords_notes
-"""
 def note_keywords(rriki_db, chotha_db, component_keywords):
+  """
+  * Read in the list of rriki keyword ids for each note, find the relevant component
+    keywords and insert the pairs into chotha's keywords_notes
+  """
+
   conn = apsw.Connection(chotha_db)
   c = conn.cursor()
   query = 'ATTACH DATABASE ? AS rriki'
@@ -241,11 +239,12 @@ def note_keywords(rriki_db, chotha_db, component_keywords):
   """ #bindings -> key_list, note_id
   c.executemany(query, bindings2)
 
-"""
-* Read in the list of rriki keyword ids for each source, find the relevant component 
-  keywords and insert the pairs into chotha's keywords_notes
-"""
 def source_keywords(rriki_db, chotha_db, component_keywords):
+  """
+  * Read in the list of rriki keyword ids for each source, find the relevant component
+    keywords and insert the pairs into chotha's keywords_notes
+  """
+
   conn = apsw.Connection(chotha_db)
   c = conn.cursor()
   query = 'ATTACH DATABASE ? AS rriki'

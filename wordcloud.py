@@ -29,7 +29,7 @@ def update_word_cloud(oldtext, newtext, dbname):
     
   for word in words_added:
     c.execute('UPDATE wordcloud SET count=count+1 WHERE word=?', (word,)) 
-    if conn.changes() == 0:
+    if not conn.changes():
       c.execute('INSERT INTO wordcloud (word,count) VALUES (?,1)', (word,))
   c.execute('END')
 
