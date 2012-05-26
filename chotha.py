@@ -1,5 +1,5 @@
 import datetime, apsw, markdown, bottle, re, logging, pubmed, ConfigParser
-from bottle import route, debug, template, request, validate, send_file, error
+from bottle import route, debug, template, request
 
 #Config file
 config = ConfigParser.RawConfigParser()
