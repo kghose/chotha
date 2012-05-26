@@ -45,6 +45,72 @@ opening page) will populate the keywords with the current conjunction
 7. Creating a new note/source will present it on a search page having the
 same conjunction of keywords as it has
 
+Setting up as a service on Mac OS X
+-----------------------------------
+Create a directory `Chotha` under `/Library/StartupItems/`
+
+Create two files under `/Library/StartupItems/Chotha/` named `Chotha` and
+`StartupParameters.plist`
+
+File `Chotha`
+
+    #!/bin/sh
+
+    ##
+    # Chotha service startup script
+    ##
+
+    . /etc/rc.common
+
+    StartService ()
+    {
+        ConsoleMessage "Starting Chotha"
+        cd /Users/kghose/Source/Chotha/
+        /Library/Frameworks/Python.framework/Versions/2.7/bin/python chotha.py &
+        echo $! > chotha.pid
+    }
+
+    StopService ()
+    {
+        cd /Users/kghose/Source/Chotha/
+        if pid=`cat chotha.pid`; then
+        ConsoleMessage "Stopping Chotha"
+        kill -TERM "${pid}"
+        rm chotha.pid
+        else
+        ConsoleMessage "Chotha not running"
+        fi
+    }
+
+    RestartService ()
+    {
+        ConsoleMessage "Restarting Chotha"
+        StopService
+        StartService
+    }
+
+    RunService "$1"
+
+
+File `StartupParameters.plist`
+
+    {
+     Description = "Chotha server";
+     Provides    = ("Chotha");
+     Uses        = ("python");
+     OrderPreference = "Last";
+     Messages =
+     {
+      start = "Starting Chotha server";
+      stop = "Stopping Chotha server";
+      restart = "Restarting Chotha server";
+     };
+    }
+
+From terminal type
+    sudo SystemStarter restart Chotha
+
+
 History
 -------
 Chotha is a rewrite of RRiki using Python and Bottle. RRiki was a Ruby-On-Rails
