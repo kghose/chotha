@@ -108,6 +108,7 @@ File `StartupParameters.plist`
     }
 
 From terminal type
+
     sudo SystemStarter restart Chotha
 
 
