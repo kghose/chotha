@@ -12,6 +12,8 @@ A bit more sophisticated than the regexp search and hide technique I used in RRi
 """
 
 import re, markdown
+Element = markdown.util.etree.Element
+AtomicString = markdown.util.AtomicString
 
 regexp = r"""
 ^(.*) #Markdown regex needs to start with this
@@ -41,8 +43,9 @@ class escapeLaTeXPattern(markdown.inlinepatterns.Pattern):
   def handleMatch(self, m):
     """Markdown regexp processes the whole block, and so our regexp match is
     group(2) with group(1) and group(3) being the leading and trailing."""
-    el = markdown.etree.Element('span')
-    el.text = markdown.AtomicString("`" + m.group(2) + "`")
+    #el = markdown.etree.Element('span')
+    el = Element('span')
+    el.text = AtomicString("`" + m.group(2) + "`")
     return el
 
 def makeExtension(configs=None):
