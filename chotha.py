@@ -250,8 +250,9 @@ def parse_notes(rows_in):
 #  md = markdown.markdown #To save time
   md = markdown.Markdown(extensions=['chothamathml']).convert
   pnote = re.compile(r'\[(.+?)\]\[note:(\d+?)\]')#For the wiki links substitution.
-  psource = re.compile(r'\[source:(.+?)\]')#For the wiki links substitution.
-  
+  psourceold = re.compile(r'\[source:(.+?)\]')#For the wiki links substitution.
+  psource = re.compile(r'\[:(.+?)\]')#shortened source link code
+
   def nice_date(date):
     nd = datetime.date(int(date[0:4]),int(date[5:7]),int(date[8:10]))
     return nd.strftime('%a %b %d, %Y')
@@ -265,6 +266,8 @@ def parse_notes(rows_in):
           
     text = pnote.sub(nlinx, body)
     text = psource.sub(slinx, text)
+    text = psourceold.sub(slinx, text)
+    
     return md(text)
   
   rows = []
