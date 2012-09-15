@@ -46,7 +46,44 @@ opening page) will populate the keywords with the current conjunction
 same conjunction of keywords as it has
 
 Setting up as a service on Mac OS X
------------------------------------
+===================================
+
+Current method using launchd
+----------------------------
+
+Under `~/Library/LaunchAgents` create a file called, say,
+`org.bengalbionics.chotha.plist` with the following plist:
+
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+    <dict>
+            <key>Label</key>
+            <string>Chotha</string>
+            <key>ProgramArguments</key>
+            <array>
+                    <string>/Library/Frameworks/Python.framework/Versions/current/bin/python</string>
+                    <string>/path/to/Chotha/chotha.py</string>
+            </array>
+            <key>RunAtLoad</key>
+            <true/>
+            <key>WorkingDirectory</key>
+            <string>/path/to/Chotha/</string>
+    </dict>
+    </plist>
+
+Now register the plist with `launchd` by doing
+`launchctl load org.bengalbionics.chotha.plist`
+
+and start it by doing
+`launchctl start Chotha`
+
+
+
+Older method using SystemStarter
+--------------------------------
+
 Create a directory `Chotha` under `/Library/StartupItems/`
 
 Create two files under `/Library/StartupItems/Chotha/` named `Chotha` and
