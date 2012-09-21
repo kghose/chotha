@@ -1,11 +1,16 @@
 <!-- Allows us to edit a source -->
 
-<form action="/refetchsource" method="POST">
 <div class='content newentry'>
+<form action="/refetchsource" method="POST">
 Refetch source <input type="text" name="query" size='30' title="Enter pubmed query and hit enter to refetch the bibliographic data">
 <input type="hidden" name="id" value={{source['id']}}>
-</div>
 </form>
+<form action="/refetchsourcebibtex" method="POST">
+Parse from BibTeX
+<textarea class="filldiv" name="query" rows="5" title="Enter bibtex and hit enter to populate the bibliographic data"></textarea>
+<input type="hidden" name="id" value={{source['id']}}>
+</form>
+</div>
 
 <form action="/savesource" method="POST">
 <input type="hidden" name="id" value={{source['id']}}>

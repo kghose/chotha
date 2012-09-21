@@ -713,6 +713,22 @@ def refetch_source_action():
                     title='Editing %s' %source['citekey'], view='editsource')
   return output
 
+@route('/refetchsourcebibtex', method='POST')
+def refetch_source_bibtex_action():
+  """Paste bibtex into this text area and call this to parse it into a source."""
+  import bibtexparse
+  #query = unicode(request.POST.get('query', '').strip(),'utf_8')
+  source = get_empty_source()
+  bibtex_text = unicode(request.POST.get('query', '').strip(),'utf_8')
+  id = request.POST.get('id','').strip()
+  source = bibtexparse.parse_bibtex_to_source(bibtex_text, source)
+  source['id'] = id #Need if before we can generate citekey
+  source['citekey'] = generate_citekey(source)
+  output = wtemplate('index', source=source,
+    title='Editing %s' %source['citekey'], view='editsource')
+  return output
+
+
 @route('/wordcloud')
 def wordcloud_page():
   wordcloud = dbq('SELECT word, count FROM wordcloud ORDER BY word ASC')
