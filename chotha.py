@@ -285,7 +285,10 @@ def extract_sources_from_note(note):
     return miss_scks
     
   psource = re.compile(r'\[source:(.+?)\]')
+  psource2 = re.compile(r'\[:(.+?)\]')
   scks = psource.findall(note['body'])
+  scks2 = psource2.findall(note['body'])
+  scks += scks2
   scks_string = ', '.join('?' for dummy in scks)
   rows = dbq('SELECT * FROM sources WHERE citekey IN (%s) ORDER BY citekey' %scks_string, scks)
   miss_scks = sources_not_found(scks, rows)
