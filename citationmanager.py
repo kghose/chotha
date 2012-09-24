@@ -85,15 +85,13 @@ def source_to_bibtex(sources):
 
 def export_BibTeX(fname='sources.bib', sources=None):
   """Export all the sources to the named bib file."""
-  import codecs, bibtexparse
+  import codecs
 
   bibtex = "#This file is automatically created by Chotha.\n\n\n"
-  bibtex += bibtexparse.source_to_bibtex(sources)
+  bibtex += source_to_bibtex(sources)
   bibtex += "\n\n"
   codecs.open(fname,'wb','utf-8').write(bibtex)
   return len(sources)
-
-
 
 
 def export_MSWord_XML(fname='/Users/kghose/Documents/Microsoft User Data/Sources.xml', sources=None):
