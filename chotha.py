@@ -1,4 +1,4 @@
-import datetime, apsw, markdown, bottle, re, logging, pubmed, ConfigParser
+import datetime, apsw, markdown, bottle, re, logging, pubmed, ConfigParser, citationmanager as cm
 from bottle import route, debug, template, request
 
 #Config file
@@ -574,7 +574,7 @@ def export_sources_from_note(id):
   #fname = '/Users/kghose/Research/2011/Papers/SpatialIntegration/v01/Supplementary/supp.bib'
   #mode = 'bibtex'
   sources, missing_citekeys = extract_sources_from_note(note)
-  import citation_export as ce
+  import citationmanager as ce
   if mode =='word':
     refcount = ce.export_MSWord_XML(fname, sources)
   elif mode =='bibtex':
@@ -660,7 +660,6 @@ def create_note_action():
 
 @route('/edit/:id')
 def edit_note(id=None):
-  
   note = fetch_single_note(id)
   output = wtemplate('index', note=note, 
                     title='Editing %s' %note['title'], view='edit')
@@ -668,10 +667,10 @@ def edit_note(id=None):
 
 @route('/editsource/:id')
 def edit_source(id=None):
-  
   source = dbq('SELECT sources.*,notes.id AS nid FROM sources,notes WHERE sources.id LIKE ? AND notes.source_id = sources.id', (id,))[0]
   output = wtemplate('index', source=source,
-                    title='Editing %s' %source['citekey'], view='editsource')
+            source_bibtex=cm.source_to_bibtex([source]),
+            title='Editing %s' %source['citekey'], view='editsource')
   return output
   
 @route('/save/:id', method='POST')
@@ -690,31 +689,46 @@ def save_note_action(id=None):
 
 @route('/savesource', method='POST')
 def save_source_action():
-  fields = get_source_fields()
   source = get_empty_source()
-  for f in fields:
-    val = request.POST.get(f, None)
-    if val is not None:
-      source[f] = unicode(val.strip(),'utf_8')
+  source_bibtex = request.POST.get('bibtex', None)
+  source = cm.parse_bibtex_to_source(source_bibtex, source=source)
+  source['id'] = request.POST.get('id', None)
   save_source(source)
-  source = fetch_single_source(source['id']) #We need the note id
+
+  #source = fetch_single_source(source['id']) #We need the note id
+  source['nid'] = request.POST.get('nid', None)#We need the note id
   output = wtemplate('index', source=source,
-                    title='Saved %s' %source['citekey'], view='source')  
+                    title='Saved %s' %source['citekey'], view='source')
   return output
+
+
+#  fields = get_source_fields()
+#  source = get_empty_source()
+#  for f in fields:
+#    val = request.POST.get(f, None)
+#    if val is not None:
+#      source[f] = unicode(val.strip(),'utf_8')
+#  save_source(source)
+#  source = fetch_single_source(source['id']) #We need the note id
+#  output = wtemplate('index', source=source,
+#                    title='Saved %s' %source['citekey'], view='source')
+#  return output
 
 @route('/refetchsource', method='POST')
 def refetch_source_action():
   query = unicode(request.POST.get('query', '').strip(),'utf_8')
   id = request.POST.get('id','').strip()
   source = populate_new_source_from_pubmed_query(query)
-  source['id'] = id #Need if before we can generate citekey  
+  source['id'] = id #Need if before we can generate citekey
   source['citekey'] = generate_citekey(source)
-  output = wtemplate('index', source=source,
+
+  source['nid'] = request.POST.get('nid', None)#We need the note id
+  output = wtemplate('index', source=source, source_bibtex=cm.source_to_bibtex([source]),
                     title='Editing %s' %source['citekey'], view='editsource')
   return output
 
 @route('/refetchsourcebibtex', method='POST')
-def refetch_source_bibtex_action():
+def save_source_bibtex_action():
   """Paste bibtex into this text area and call this to parse it into a source."""
   import bibtexparse
   #query = unicode(request.POST.get('query', '').strip(),'utf_8')

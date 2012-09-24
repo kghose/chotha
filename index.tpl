@@ -103,7 +103,7 @@
 
 %elif view=='editsource': #Allow us to edit a single source
 <div class="content">
-%include templates/edit_source source=source
+%include templates/edit_source source=source, source_bibtex=source_bibtex
 </div>
 
 %elif view=='source': #Show us the edited source only

@@ -11,14 +11,90 @@ def parse_name_field(text):
       au_line = au_line.strip()
       if au_line == '': 
         continue #Ignore empty lines
+      name = {'first': 'none', 'last': 'none'}
       name_fragments = au_line.split(',')
-      name = {}
-      frag = name_fragments[0].strip()
-      name['last'] = frag if frag != '' else 'none'
-      frag = name_fragments[1].strip()
-      name['first'] = frag if frag != '' else 'none'
+      name['last'] = name_fragments[0].strip()
+      if len(name_fragments) > 1:
+        name['first'] = name_fragments[1].strip()
       name_list.append(name)
   return name_list    
+
+# Bibtex -----------------------------------------------------------------------
+def parse_bibtex_to_source(text, source={}):
+  def parse_bibtex_authors(autext):
+    """Take the bibtex author list and convert it to line separated list."""
+    ausep = re.compile(r'(.*?)(?: and |$)')
+    au_list = ausep.findall(autext)
+    s_au_text = ""
+    for au in au_list:
+      if au is not "":
+        s_au_text += au + '\n'
+    return s_au_text
+
+  typeparse = re.compile(r'@(.+?)\{(.*?),')
+  kvparse = re.compile(r',[\s]*(.+?)[\s]*=[\s]*\{(.+?)\}')
+
+  typ = typeparse.findall(text)
+  if len(typ):
+    source['source_type'] = typ[0][0].strip()
+    source['citekey'] = typ[0][1].strip()
+
+  for kv in kvparse.findall(text):
+    source[kv[0]] = kv[1]
+
+  source['author'] = parse_bibtex_authors(source['author'])
+
+  return source
+
+def source_to_bibtex(sources):
+  """Given a list of sources convert it to bibtex."""
+  def add_authors(source):
+    name_text = ''
+    nl = parse_name_field(source['author'])
+    for n,fn in enumerate(nl):
+      name_text += fn['last'] + "," + fn['first']
+      if n < len(nl) - 1:
+        name_text += " and "
+    return name_text
+
+  def bibtexescape(text):
+    """This method escapes characters from the field that cause problems for latex."""
+    if text is not None:
+      chars = ['%', '&']
+      for c in chars:
+        esc = re.compile(c + r'+?')
+        text = esc.sub('\\'+c,text)
+    return text
+
+  bibtex = ""
+  for source in sources:
+    bibtex += "@%s{%s,\n" %(source['source_type'], source['citekey'])
+    for key in source.keys():
+      if key not in ['source_type', 'author', 'citekey', 'abstract', 'id']: #id screws up jabref, for one, and is not a standard bibtex field
+        if source[key] != '':
+          bibtex += "%s = {%s},\n" %(key, source[key])
+      elif key == 'author':
+        bibtex += "author = {%s},\n" %add_authors(source)
+    bibtex += "}\n\n"
+  bibtex = bibtexescape(bibtex)
+
+  return bibtex
+
+
+# Citation exports -------------------------------------------------------------
+
+def export_BibTeX(fname='sources.bib', sources=None):
+  """Export all the sources to the named bib file."""
+  import codecs, bibtexparse
+
+  bibtex = "#This file is automatically created by Chotha.\n\n\n"
+  bibtex += bibtexparse.source_to_bibtex(sources)
+  bibtex += "\n\n"
+  codecs.open(fname,'wb','utf-8').write(bibtex)
+  return len(sources)
+
+
+
 
 def export_MSWord_XML(fname='/Users/kghose/Documents/Microsoft User Data/Sources.xml', sources=None):
   """Add citations in the sources list to the MS Word Sources.xml file. Skip
@@ -183,42 +259,6 @@ def export_MSWord_XML(fname='/Users/kghose/Documents/Microsoft User Data/Sources
   save_MSWord_master_source_XML(doc,fname)
   return refcount
 
-def export_BibTeX(fname='sources.bib', sources=None):
-  """Export all the sources to the named bib file."""
-  def add_authors(source):
-    name_text = ''
-    nl = parse_name_field(source['author'])
-    for n,fn in enumerate(nl):
-      name_text += fn['first'] + " " + fn['last']
-      if n < len(nl) - 1:
-        name_text += " and "
-    return name_text
-
-  def bibtexescape(text):
-    """This method escapes characters from the field that cause problems for latex."""
-    if text is not None:
-      chars = ['%', '&']
-      for c in chars:
-        esc = re.compile(c + r'+?')
-        text = esc.sub('\\'+c,text)
-    return text
-
-  bibtex = "#This file is automatically created by Chotha.\n\n\n"
-  for source in sources:
-    bibtex += "@%s{%s,\n" %(source['source_type'], source['citekey'])
-    for key in source.keys():
-      if key not in ['source_type', 'author', 'citekey', 'abstract', 'id']: #id screws up jabref, for one, and is not a standard bibtex field
-        if source[key] != '':
-          bibtex += "%s = {%s},\n" %(key, source[key])
-      elif key == 'author':
-        bibtex += "author = {%s},\n" %add_authors(source)
-    bibtex += "}\n\n"
-  bibtex += "\n\n"
-  bibtex = bibtexescape(bibtex)
-
-  import codecs
-  codecs.open(fname,'wb','utf-8').write(bibtex)
-  return len(sources)
 
 def export_RIS(fname, sources):
   """This exports to the nice and flat RIS format which endnote can import
