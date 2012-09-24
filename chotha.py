@@ -690,7 +690,7 @@ def save_note_action(id=None):
 @route('/savesource', method='POST')
 def save_source_action():
   source = get_empty_source()
-  source_bibtex = request.POST.get('bibtex', None)
+  source_bibtex = request.POST.get('bibtex', None).decode("UTF-8")
   source = cm.parse_bibtex_to_source(source_bibtex, source=source)
   source['id'] = request.POST.get('id', None)
   save_source(source)
