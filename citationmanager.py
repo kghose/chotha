@@ -46,7 +46,7 @@ def parse_bibtex_to_source(text, source={}):
 
   return source
 
-def source_to_bibtex(sources):
+def source_to_bibtex(sources, include_abstract=True):
   """Given a list of sources convert it to bibtex."""
   def add_authors(source):
     name_text = ''
@@ -66,11 +66,14 @@ def source_to_bibtex(sources):
         text = esc.sub('\\'+c,text)
     return text
 
+  excluded_keys = ['source_type', 'author', 'citekey', 'id']
+  if not include_abstract:
+    excluded_keys += ['abstract']
   bibtex = ""
   for source in sources:
     bibtex += "@%s{%s,\n" %(source['source_type'], source['citekey'])
     for key in source.keys():
-      if key not in ['source_type', 'author', 'citekey', 'abstract', 'id']: #id screws up jabref, for one, and is not a standard bibtex field
+      if key not in excluded_keys: #id screws up jabref, for one, and is not a standard bibtex field
         if source[key] != '':
           bibtex += "%s = {%s},\n" %(key, source[key])
       elif key == 'author':
@@ -88,7 +91,7 @@ def export_BibTeX(fname='sources.bib', sources=None):
   import codecs
 
   bibtex = "#This file is automatically created by Chotha.\n\n\n"
-  bibtex += source_to_bibtex(sources)
+  bibtex += source_to_bibtex(sources, include_abstract=False)
   bibtex += "\n\n"
   codecs.open(fname,'wb','utf-8').write(bibtex)
   return len(sources)
