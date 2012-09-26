@@ -118,6 +118,8 @@ def create_database():
 
 #Keyword ops -------------------------------------------------------------------
 def cskeystring_to_list(cskeystring):
+  """Converts a comma separated list of keywords (which is how we store them
+  in the keywords field in a note) to a list of keywords."""
   keyword_strings = cskeystring.split(',')
   keywords = []
   for name in keyword_strings:
@@ -141,13 +143,12 @@ def find_or_create_keywords(keywords):
   return kids
 
 def save_note_keywords(note):
-  """Keywords are a comma separated list, we first extract that."""
-
+  """Extract list of keywords from keywords field in notes. Find or create
+  keywords in db. Associate keywords with note in link table. Delete keywords no longer present in link table. This last operation becomes very
+  expensive if we have a large number of keywords"""
   note_id = note['id']    
-  #Delete original list
-  dbq('DELETE FROM keywords_notes WHERE note_id=?', (note_id,))
-  #Create new list
-  keywords = cskeystring_to_list(note['key_list'])
+  dbq('DELETE FROM keywords_notes WHERE note_id=?', (note_id,))#Delete original list
+  keywords = cskeystring_to_list(note['key_list'])  #Create new list
   new_kids = find_or_create_keywords(keywords)
   if len(new_kids) > 0:
     bindings = []
@@ -155,8 +156,7 @@ def save_note_keywords(note):
       bindings.append([kid, note_id])
     dbq('INSERT INTO keywords_notes (keyword_id,note_id) VALUES (?,?)', 
         bindings, many=True)
-  #Clean up unused keywords
-  dbq('DELETE FROM keywords WHERE id NOT IN (SELECT keyword_id FROM keywords_notes)')
+  dbq('DELETE FROM keywords WHERE id NOT IN (SELECT keyword_id FROM keywords_notes)')  #Clean up unused keywords
   
 
 #TODO fix to remove references to sources
@@ -243,8 +243,11 @@ def save_note(note):
   update_word_cloud(old_note['body'], note['body'])
 
 #TODO handle flag for sources
-def parse_notes(rows_in):
-  """Given a list of row objects returned by a fetch, copy the data into a new
+def format_notes(rows_in):
+  """Formats notes by converting markdown, creating source and note links and
+  making a nice format for the dates.
+
+  Given a list of row objects returned by a fetch, copy the data into a new
   dictionary after running each entry through the markdown parser."""
 
 #  md = markdown.markdown #To save time
@@ -279,6 +282,8 @@ def parse_notes(rows_in):
   return rows
 
 def extract_sources_from_note(note):
+  """Does the magic for source export. Finds all source links in the note,
+  retrieves them from the database. Tells us which ones are not found."""
   def sources_not_found(req_scks, rows):
     fnd_scks = [row['citekey'] for row in rows]
     miss_scks = set(req_scks) - set(fnd_scks)
@@ -295,13 +300,15 @@ def extract_sources_from_note(note):
   return rows, miss_scks
 
 def fetch_single_note(id):
+  """Grab single note from database given its id."""
   rows = dbq('SELECT * FROM notes WHERE id LIKE ?', (id,))
   if len(rows) > 0: 
-    return parse_notes(rows)[0]
+    return format_notes(rows)[0]
   else:
     return None
 
 def fetch_single_source(id):
+  """Grab source data and its linked note id given source id."""
   rows = dbq('SELECT sources.*,notes.id AS nid FROM sources,notes WHERE sources.id LIKE ? AND notes.source_id = sources.id', (id,))
   if len(rows) > 0: 
     return rows[0]
@@ -309,6 +316,8 @@ def fetch_single_source(id):
     return None
 
 def fetch_single_source_by_citekey(citekey):
+  """Grab source data and its linked note id given source citekey. This is used
+  when we click a source link in a note or collate sources in a note for export"""
   rows = dbq('SELECT sources.*,notes.id AS nid FROM sources,notes WHERE sources.citekey LIKE ? AND notes.source_id = sources.id', (unicode(citekey,'utf-8'),))
   if len(rows) > 0: 
     return rows[0]
@@ -396,7 +405,7 @@ def fetch_notes_by_criteria(keywords=None, search_text='', limit=10, offset=0):
     n += 1
   query_id_list = query_id_list.rstrip(',')
   query = 'SELECT * FROM notes WHERE id IN (' + query_id_list + ') ORDER BY date DESC'
-  return parse_notes(dbq(query)), lrows
+  return format_notes(dbq(query)), lrows
 
 def populate_new_source_from_pubmed_query(query):
   """Given a query fetch the first matching citation from pubmed."""
@@ -568,11 +577,8 @@ def export_sources_from_note(id):
     
     return fname, mode
     
-  #fname = config.get('User','msword_source_fname')
   note = fetch_single_note(id)
   fname, mode = get_filename_and_mode(note)
-  #fname = '/Users/kghose/Research/2011/Papers/SpatialIntegration/v01/Supplementary/supp.bib'
-  #mode = 'bibtex'
   sources, missing_citekeys = extract_sources_from_note(note)
   import citationmanager as ce
   if mode =='word':
@@ -599,7 +605,6 @@ def export_sources_from_note(id):
 
 @route('/source/:id')
 def show_source_page(id):
-
   source = fetch_single_source(id)
   output = wtemplate('index', source=source,
                     title='%s' %source['citekey'], 
@@ -608,7 +613,6 @@ def show_source_page(id):
 
 @route('/sourcecitekey/:citekey')
 def show_source_page_citekey(citekey):
-
   source = fetch_single_source_by_citekey(citekey)
   if source is not None:
     title = '%s' %source['citekey']
@@ -632,7 +636,6 @@ def show_source_page_citekey(citekey):
 #
 @route('/new', method='POST')
 def create_note_action():
-
   title = unicode(request.POST.get('title', '').strip(),'utf_8')
   body = unicode(request.POST.get('body', '').strip(),'utf_8')
   key_list = unicode(request.POST.get('key_list', '').strip(),'utf_8')
@@ -675,7 +678,6 @@ def edit_source(id=None):
   
 @route('/save/:id', method='POST')
 def save_note_action(id=None):
-
   date = request.POST.get('date', '').strip()
   title = unicode(request.POST.get('title', '').strip(),'utf_8')
   body = unicode(request.POST.get('body', '').strip(),'utf_8')
@@ -700,19 +702,6 @@ def save_source_action():
   output = wtemplate('index', source=source,
                     title='Saved %s' %source['citekey'], view='source')
   return output
-
-
-#  fields = get_source_fields()
-#  source = get_empty_source()
-#  for f in fields:
-#    val = request.POST.get(f, None)
-#    if val is not None:
-#      source[f] = unicode(val.strip(),'utf_8')
-#  save_source(source)
-#  source = fetch_single_source(source['id']) #We need the note id
-#  output = wtemplate('index', source=source,
-#                    title='Saved %s' %source['citekey'], view='source')
-#  return output
 
 @route('/refetchsource', method='POST')
 def refetch_source_action():
