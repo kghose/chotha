@@ -31,6 +31,17 @@ def parse_bibtex_to_source(text, source={}):
         s_au_text += au + '\n'
     return s_au_text
 
+  def reverse_bibtexescape(text):
+    """Unescape characters that have been escaped in BibTeX to prevent the
+    backslash explosion."""
+    unescape = lambda match: match.group(1).strip('\\')
+    esc = re.compile(r'(\\[&|%]+?)')
+    if text is not None:
+      text = esc.sub(unescape,text)
+    return text
+
+  text = reverse_bibtexescape(text)
+
   typeparse = re.compile(r'@(.+?)\{(.*?),')
   kvparse = re.compile(r',[\s]*(.+?)[\s]*=[\s]*\{(.+?)\}')
 
