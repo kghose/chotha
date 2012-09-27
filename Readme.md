@@ -217,7 +217,10 @@ and not have annoying duplicate entries in the table
 
 
 Todo:
-* Use the word "cite" instead of "source" to save typing?
+
+* (done) Bugfix: reverse escape bibtex, such that we don't get exploding lists of backslashes.
+
+* (done, using :) Use the word "cite" instead of "source" to save typing?
 
 * (done) Add a word cloud page that will display words in the db 
   (especially low frequency ones) that will allow me to dive into notes and
