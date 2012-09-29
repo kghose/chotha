@@ -23,27 +23,19 @@ and citations using your webbrowser. All data is stored locally.
 
 Usage
 -----
-1. Quickly type in a note (research idea, meeting notes) and file it using
-keywords
-2. Grab a citation info for a paper from pubmed you are reading and type in
-notes about it
-3. Manually enter citation info for a book that you are reading and/or will be
-referencing in a paper
-4. Search for a paper/note by keyword intersection and text search on multiple
+(See the manual for full instructions)
 
-UI Design
----------
-1. Two "panel" paged design 
-2. Left has a search box and a keyword list, arranged vertically
-3. Right contains the results of the search paged. Full text of the items
-is displayed (which inclines us to making shorter notes)
-4. Clicking on 'edit' takes us to an edit page for that item.
-5. Saving an item takes us to the conjunction page - search page with the same
-keyword conjunction as that item
-6. Clicking new note or new sourc on a search page (i.e. other than the
-opening page) will populate the keywords with the current conjunction
-7. Creating a new note/source will present it on a search page having the
-same conjunction of keywords as it has
+1. Quickly type in a note (research idea, meeting notes) and file it using
+keywords.
+2. Grab a citation info for a paper from pubmed you are reading and type in
+notes about it.
+3. Do a search on Google Scholar, export the citation to BibTeX, paste it into the source editor.
+4. Manually enter citation info for a book that you are reading and/or will be
+referencing in a paper.
+5. Search for a paper/note by keyword intersection and text search.
+
+
+
 
 Setting up as a service on Mac OS X
 ===================================
