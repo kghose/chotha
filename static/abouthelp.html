@@ -27,7 +27,15 @@ academic research. </p>
 Most operations are self explanatory, especially with the help in the popup text.
 Only the more non-intuitive operations are described here:
 
-<h3>Creating a source</h3>
+<h2>Links between items</h2>
+<p>You can make links to another note or source. To make a link to another note,
+in the text field type <code>[text to link][note:XXX]</code> where XXX is the
+note id. To make a link to a source type in <code>[:citekey]</code>
+where citekey is the citekey of the source (e.g. savitzky1964)</p>
+
+<p><b>Historical note:</b> Chotha also lets you use [source:citekey] to indicate sources, but this is deprecated and <b>tags</b> won't work with this old form</p>
+
+<h2>Creating a source</h2>
 <p>Type in a pubmed id, a DOI or any other pubmed query into the title box (where
 you would otherwise type in the title of the note you are creating). Check the
 'this is a paper' checkbox right below that. Type in your notes about the paper
@@ -53,11 +61,33 @@ only the first.</p>
 retrieving targeted individual papers at a time.</p>
 
 
+<h2>Source management</h2>
+<h3>Organising sources into a bibliography</h3>
+<p>A bibliography is simply a collection of sources in a note (inserted by typing <code>[:citekey]</code>).</p>
 
-<h3>Exporting sources</h3>
+<p>You could simply order the sources alphabetically or any other way in a note, perhaps by writing a narrative (as if you were writing a paper) and insert citations as you build the text. Chotha is not optimal in this later case, since the text editor is very primitive and Chotha uses plain text as its basic storage form.</p>
+
+<p> A more convenient way of arranging a bibliography is to use <b>tags</b> after the citation
+
+<blockquote><code>[:schultz1992][t:tag1, tag2, tag3]</code></blockquote>
+
+So, to build up a bibliography of Basal Ganglia function you would do something like
+
+<blockquote>
+    <code>
+    [:hasegawa2004][t:dlPFC, principal sulcus, objects] - My brief note about this paper<br/>
+    [:battig1960][t: caudate, dlPFC]
+    </code>
+</blockquote>
+</p>
+
+<p>When Chotha detects these tags it will build up an alphabetical list of them which it will present at the beginning of the displayed note. This followed by the sources being listed under each tag appropriately such that clicking on a tag will show you the list of relevant sources. The actual note you type will be available under this sectioned list.
+</p>
+
+
+<h3>Exporting sources in a bibliography</h3>
 <p>In the show note page there is a link that says 'export sources'. If you have
-added any sources to the note (by typing in <code>[source:citekey]</code>, see
-below) then clicking this link will let you export the sources to a file of
+added any sources to the note then clicking this link will let you export the sources to a file of
 your choice in a format of your choice.</p>
 
 <p>Somewhere in the note, on a new line type
@@ -103,12 +133,6 @@ becareful what you type.</b>
 <h3>Formatting notes</h3> 
 Chotha uses 'markdown' to allow you to format notes. 
 <a href="markdownhelp.html">Formatting cheat sheet</a>
- 
-<h3>Links between items</h3>
-You can make links to another note or source. To make a link to another note, 
-in the text field type <code>[text to link][note:XXX]</code> where XXX is the 
-note id. To make a link to a source type in <code>[source:citekey]</code> 
-where citekey is the citekey of the source (e.g. savitzky1964)
 
 <h3>Math text</h3>
 Chotha uses Peter Jipsen's <a href="http://www1.chapman.edu/~jipsen/mathml/asciimath.html">ASCIIMathML</a> 

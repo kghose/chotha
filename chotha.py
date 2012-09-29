@@ -243,31 +243,78 @@ def save_note(note):
   update_word_cloud(old_note['body'], note['body'])
 
 #TODO handle flag for sources
-def format_notes(rows_in):
+def format_notes(rows_in, taglist=False):
   """Formats notes by converting markdown, creating source and note links and
   making a nice format for the dates.
 
   Given a list of row objects returned by a fetch, copy the data into a new
-  dictionary after running each entry through the markdown parser."""
+  dictionary after running each entry through the markdown parser.
 
-#  md = markdown.markdown #To save time
+  If taglist is true then we organize sources in the note by tag. This is a
+  potentially time-consuming operation and we only do this when we are showing
+  a single note.
+  """
+
   md = markdown.Markdown(extensions=['chothamathml']).convert
   pnote = re.compile(r'\[(.+?)\]\[note:(\d+?)\]')#For the wiki links substitution.
   psourceold = re.compile(r'\[source:(.+?)\]')#For the wiki links substitution.
   psource = re.compile(r'\[:(.+?)\]')#shortened source link code
+  ptags = re.compile(r'\[t:(.+?)\]')#Used to remove tags from the text
 
   def nice_date(date):
     nd = datetime.date(int(date[0:4]),int(date[5:7]),int(date[8:10]))
     return nd.strftime('%a %b %d, %Y')
   
-  def format_body(body):
+  def format_body(body, taglist=False):
+    def tagged_bibliography(text):
+      """Go through text, extract sources with tags, build a list of tags
+      and associated sources, make a section of the document repeated lists
+      of the papers (formatted in markdown)."""
+
+      tag_list = {}
+      pst = re.compile(r'\[:(.+?)\]\[t:(.+?)\]')
+      ts_list = pst.findall(text)
+      for ts in ts_list:
+        this_citekey = ts[0]
+        for tt in ts[1].split(','):
+          this_tag = tt.strip()
+          if this_tag is '':
+
+          if this_tag not in tag_list.keys():
+            tag_list[this_tag] = [this_citekey]
+          else:
+            tag_list[this_tag].append(this_citekey)
+
+      if len(tag_list) == 0:
+        return text
+
+      new_text = '# Tagged bibliography\n\n'
+      tags = sorted(tag_list.keys())
+      for n,t in enumerate(tags):
+        new_text += '* [{:s}](#{:d})\n'.format(t,n)
+
+      new_text += '\n\n'
+      for n,t in enumerate(tags):
+        new_text += '\n\n### {:s}<a id="{:d}">\n\n'.format(t,n)
+        for src in sorted(tag_list[t]):
+          new_text += '* [:{:s}]\n'.format(src)
+        new_text += '\n\n'
+
+      return new_text + text
+
+
     def nlinx(match):
       return '<a href="/note/%s">%s</a>' %(match.group(2),match.group(1))
 
     def slinx(match):
       return '<a href="/sourcecitekey/%s">%s</a>' %(match.group(1),match.group(1))
-          
-    text = pnote.sub(nlinx, body)
+
+    if taglist:
+      text = tagged_bibliography(body)
+      text = ptags.sub('', text)#Remove tags so they are not visible
+    else:
+      text = ptags.sub('', body)#Remove tags so they are not visible
+    text = pnote.sub(nlinx, text)
     text = psource.sub(slinx, text)
     text = psourceold.sub(slinx, text)
     
@@ -277,7 +324,7 @@ def format_notes(rows_in):
   for this_row in rows_in:
     new_row = dict(this_row)
     new_row['nicedate'] = nice_date(this_row['date'])
-    new_row['html'] = format_body(this_row['body'])
+    new_row['html'] = format_body(this_row['body'], taglist)
     rows.append(new_row)
   return rows
 
@@ -303,7 +350,7 @@ def fetch_single_note(id):
   """Grab single note from database given its id."""
   rows = dbq('SELECT * FROM notes WHERE id LIKE ?', (id,))
   if len(rows) > 0: 
-    return format_notes(rows)[0]
+    return format_notes(rows, True)[0]#We want the tags analyzed
   else:
     return None
 
