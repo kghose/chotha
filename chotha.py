@@ -279,6 +279,7 @@ def format_notes(rows_in, taglist=False):
         for tt in ts[1].split(','):
           this_tag = tt.strip()
           if this_tag is '':
+            continue
 
           if this_tag not in tag_list.keys():
             tag_list[this_tag] = [this_citekey]
@@ -288,18 +289,18 @@ def format_notes(rows_in, taglist=False):
       if len(tag_list) == 0:
         return text
 
-      new_text = '# Tagged bibliography\n\n'
+      new_text = u'# Tagged bibliography\n\n'
       tags = sorted(tag_list.keys())
       for n,t in enumerate(tags):
-        new_text += '* [{:s}](#{:d})\n'.format(t,n)
+        new_text += u'* [{:s}](#{:d})\n'.format(t,n)
 
       new_text += '\n\n'
       for n,t in enumerate(tags):
-        new_text += '\n\n### {:s}<a id="{:d}">\n\n'.format(t,n)
+        new_text += u'\n\n### {:s}<a id="{:d}">\n\n'.format(t,n)
         for src in sorted(tag_list[t]):
-          new_text += '* [:{:s}]\n'.format(src)
+          new_text += u'* [:{:s}]\n'.format(src)
         new_text += '\n\n'
-
+      new_text += '\n ---- \n\n'
       return new_text + text
 
 
