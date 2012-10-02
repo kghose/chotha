@@ -27,7 +27,7 @@ def pubmed_id_from_query(query, email='kaushik.ghose@gmail.com', tool='Chotha', 
   """
 
   #Clean up query string
-  query = query.strip()
+  query = unicode(query.strip()).encode('utf-8')
 
   #Setup basic parameters
   params = {
@@ -45,7 +45,7 @@ def pubmed_id_from_query(query, email='kaushik.ghose@gmail.com', tool='Chotha', 
       params['field'] =  'titl'
 
   #Construct the query string and retrieve the results
-  url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?' + urllib.urlencode(params)
+  url = u'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?' + urllib.urlencode(params)
   module_logger.debug(url)
   data = urllib.urlopen(url).read()
   xmldoc = minidom.parseString(data)
