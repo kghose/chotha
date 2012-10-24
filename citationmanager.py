@@ -43,7 +43,7 @@ def parse_bibtex_to_source(text, source={}):
   text = reverse_bibtexescape(text)
 
   typeparse = re.compile(r'@(.+?)\{(.*?),')
-  kvparse = re.compile(r',[\s]*(.+?)[\s]*=[\s]*\{(.+?)\}')
+  kvparse = re.compile(r',[\s]*(.+?)[\s]*=[\s]*\{(.+?)\}', re.DOTALL)#DOTALL includes newlines in .
 
   typ = typeparse.findall(text)
   if len(typ):
