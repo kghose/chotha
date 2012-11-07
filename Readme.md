@@ -209,6 +209,10 @@ and not have annoying duplicate entries in the table
 
 
 Todo:
+* In list mode display entries more compactly, as a grid. Use a separate, shadow,
+  html table to keep the converted form of the notes so that we don't have to
+  reprocess markdown each time we show it. Summarize titles and text, only show
+  the full notes on hover.
 
 * (done) Bugfix: reverse escape bibtex, such that we don't get exploding lists of backslashes.
 
