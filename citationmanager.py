@@ -86,7 +86,7 @@ def source_to_bibtex(sources, include_abstract=True):
     for key in source.keys():
       if key not in excluded_keys: #id screws up jabref, for one, and is not a standard bibtex field
         if source[key] != '':
-          bibtex += "%s = {%s},\n" %(key, source[key])
+          bibtex += "%s = {{%s}},\n" %(key, source[key])
       elif key == 'author':
         bibtex += "author = {%s},\n" %add_authors(source)
     bibtex += "}\n\n"
