@@ -289,18 +289,19 @@ def format_notes(rows_in, taglist=False):
       if len(tag_list) == 0:
         return text
 
-      new_text = u'# Tagged bibliography\n\n'
+      #new_text = u'Tags: '
+      new_text = u''
       tags = sorted(tag_list.keys(), key=lambda w: w.lower())
-      for n,t in enumerate(tags):
-        new_text += u'[{:s}](#{:d})'.format(t,n)
-        if n < len(tags) -1:
-          new_text += ', '
+      #for n,t in enumerate(tags):
+      #  if n > 0: new_text += ', '
+      #  new_text += u'[{:s}](#{:d})'.format(t,n)
 
-      new_text += '\n\n'
+      new_text += '\n'
       for n,t in enumerate(tags):
-        new_text += u'\n\n### {:s}<a id="{:d}">\n\n'.format(t,n)
-        for src in sorted(tag_list[t]):
-          new_text += u'* [:{:s}]\n'.format(src)
+        new_text += u'{:s}<a id="{:d}">: '.format(t,n)
+        for idx,src in enumerate(sorted(tag_list[t])):
+          if idx > 0: new_text += ', '
+          new_text += u'[:{:s}]'.format(src)
         new_text += '\n\n'
       new_text += '\n ---- \n\n'
       return new_text + text
