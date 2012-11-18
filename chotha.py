@@ -853,6 +853,19 @@ def set_desktop():
   save_config()
   return index_page()
 
+@route('/firsttime')
+def first_time_setup():
+  """Show a page with some configuration data and some simple stats."""
+  dbinfo = {'note count': 0,
+            'source count': 0,
+            'sqlite version': apsw.sqlitelibversion()}
+  from sys import version
+  dbinfo['python version'] = version
+
+  cfg = {'dbinfo': dbinfo,
+         'cfg file': config}
+  return template('templates/config', cfg=cfg)
+
 @route('/config')
 def show_config_page():
   """Show a page with some configuration data and some simple stats."""
