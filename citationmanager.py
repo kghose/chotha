@@ -36,8 +36,12 @@ def parse_bibtex_to_source(text, source={}):
     backslash explosion."""
     unescape = lambda match: match.group(1).strip('\\')
     esc = re.compile(r'(\\[&|%]+?)')
+    uncurly = lambda match: match.group(1)[1:-1]
+    curly = re.compile(r'(\{\{.+?\}\})', re.DOTALL)
+
     if text is not None:
-      text = esc.sub(unescape,text)
+      text = esc.sub(unescape, text)
+      text = curly.sub(uncurly, text)
     return text
 
   text = reverse_bibtexescape(text)
