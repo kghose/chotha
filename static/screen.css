@@ -208,3 +208,11 @@ h2 {
 }
 
 .wordcloud a {text-decoration: none; color: black;}
+
+pre {
+    background-color: #eeeeee;
+    max-height: 600px;
+    overflow: auto;
+    padding: 5px;
+    width: auto;
+}

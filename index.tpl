@@ -108,7 +108,7 @@
 
 %elif view=='source': #Show us the edited source only
 <div class="content">
-%include templates/show_source source=source  
+%include templates/show_source source=source, bibtex=bibtex
 </div>
 
 %end

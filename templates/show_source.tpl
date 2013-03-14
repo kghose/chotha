@@ -62,4 +62,10 @@
   <p>{{source['abstract']}}</p>
 %end
 
+<hr/>
+<h3>BibTeX</h3>
+<pre>
+{{bibtex}}
+</pre>
+
 %end #If source is None

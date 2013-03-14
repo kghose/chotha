@@ -361,7 +361,8 @@ def fetch_single_note(id):
 def fetch_single_source(id):
   """Grab source data and its linked note id given source id."""
   rows = dbq('SELECT sources.*,notes.id AS nid FROM sources,notes WHERE sources.id LIKE ? AND notes.source_id = sources.id', (id,))
-  if len(rows) > 0: 
+  if len(rows) > 0:
+    #Preprocess to fill out bibtex, because it is useful
     return rows[0]
   else:
     return None
@@ -370,7 +371,7 @@ def fetch_single_source_by_citekey(citekey):
   """Grab source data and its linked note id given source citekey. This is used
   when we click a source link in a note or collate sources in a note for export"""
   rows = dbq('SELECT sources.*,notes.id AS nid FROM sources,notes WHERE sources.citekey LIKE ? AND notes.source_id = sources.id', (unicode(citekey,'utf-8'),))
-  if len(rows) > 0: 
+  if len(rows) > 0:
     return rows[0]
   else:
     return None
@@ -658,6 +659,7 @@ def export_sources_from_note(id):
 def show_source_page(id):
   source = fetch_single_source(id)
   output = wtemplate('index', source=source,
+                    bibtex=cm.source_to_bibtex([source], include_abstract=False),
                     title='%s' %source['citekey'], 
                     view='source')
   return output
@@ -668,7 +670,8 @@ def show_source_page_citekey(citekey):
   if source is not None:
     title = '%s' %source['citekey']
     output = wtemplate('index', source=source,
-                      title=title, view='source')
+                       bibtex=cm.source_to_bibtex([source], include_abstract=False),
+                       title=title, view='source')
 
   else:
     ntitle = citekey[:-4] + ' ' + citekey[-4:]
