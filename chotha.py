@@ -754,6 +754,7 @@ def save_source_action():
   #source = fetch_single_source(source['id']) #We need the note id
   source['nid'] = request.POST.get('nid', None)#We need the note id
   output = wtemplate('index', source=source,
+                     bibtex=cm.source_to_bibtex([source], include_abstract=False),
                     title='Saved %s' %source['citekey'], view='source')
   return output
 
